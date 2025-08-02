@@ -1,0 +1,674 @@
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import ReactDOM from 'react-dom';
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import axios from 'axios';
+import { io } from 'socket.io-client';
+import { create } from 'zustand';
+import { Play, Code, Box, Cloud, Zap, ArrowRight, CheckCircle2, AlertTriangle, ArrowLeft, Loader, Target, Layout, Smartphone, Monitor, Globe, Sparkles, Database, Wallet, Users, MessageSquare, Lightbulb, TrendingUp, DollarSign, Download } from 'lucide-react';
+
+// =============================================================================
+// FILE 1: frontend/package.json
+// =============================================================================
+/*
+This package.json file defines all the necessary dependencies and scripts for the
+FlashFusion React frontend. It includes React, Tailwind, form management, state management,
+and libraries for API and WebSocket communication.
+*/
+const PackageJsonContent = {
+  "name": "flashfusion-frontend",
+  "version": "1.0.0",
+  "description": "FlashFusion Universal App Generator Frontend Dashboard",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1",
+    "tailwindcss": "^3.4.0",
+    "axios": "^1.6.3",
+    "socket.io-client": "^4.7.2",
+    "zustand": "^4.4.7",
+    "immer": "^10.0.4",
+    "react-hook-form": "^7.49.2",
+    "@hookform/resolvers": "^3.3.3",
+    "zod": "^3.22.4",
+    "lucide-react": "^0.294.0",
+    "react-scripts": "5.0.1",
+    "@types/node": "^16.18.68",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^4.9.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "react-error-boundary": "^4.0.11"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+};
+
+// =============================================================================
+// FILE 2: frontend/tailwind.config.js
+// =============================================================================
+const TailwindConfig = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+// =============================================================================
+// FILE 3: frontend/src/types/index.ts
+// =============================================================================
+const flashfusionTypes = `
+/**
+ * src/types/index.ts
+ *
+ * This file defines all the core TypeScript interfaces and enums for the FlashFusion frontend.
+ * It ensures a consistent data contract between the frontend and backend services.
+ */
+
+// --- Enums for Platforms and Frameworks ---
+export enum Platform {
+  Web = 'web',
+  Mobile = 'mobile',
+  Desktop = 'desktop',
+  Website = 'website',
+  Edge = 'edge',
+  Extension = 'extension',
+  CLI = 'cli',
+}
+
+export enum Framework {
+  React = 'react',
+  NextJS = 'nextjs',
+  Svelte = 'svelte',
+  Vue = 'vue',
+  Angular = 'angular',
+  ReactNative = 'react-native',
+  Flutter = 'flutter',
+  Tauri = 'tauri',
+  Electron = 'electron',
+  NodeJS = 'nodejs',
+  Go = 'go',
+  Rust = 'rust',
+}
+
+// --- Interfaces for User Requests and System State ---
+export interface AppFeature {
+  name: string;
+  options?: Record<string, any>;
+}
+
+export interface GenerationRequest {
+  appName: string;
+  platform: Platform;
+  framework: Framework;
+  features: AppFeature[];
+}
+
+export interface WebSocketMessage {
+  type: 'status' | 'progress' | 'log' | 'complete' | 'error';
+  appId: string;
+  timestamp: string;
+  payload: {
+    message: string;
+    progress?: number;
+    details?: any;
+  };
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors?: string[];
+  warnings?: string[];
+}
+
+export interface CostEstimate {
+  initialSetup: {
+    min: number;
+    max: number;
+  };
+  monthlyHosting: {
+    min: number;
+    max: number;
+  };
+  details: string;
+}
+
+// --- Interfaces for UI and Component Data ---
+export interface PlatformDetails {
+  platform: Platform;
+  framework: Framework;
+  icon: React.ReactNode;
+  name: string;
+  description: string;
+  supportedDevices: string[];
+  deploymentOptions: string[];
+  costRange: string;
+  complexity: string;
+}
+`;
+
+// =============================================================================
+// FILE: frontend/src/services/api.ts
+// =============================================================================
+const apiService = `
+/**
+ * src/services/api.ts
+ *
+ * This file contains the API service layer for the FlashFusion frontend, using Axios.
+ * It's a centralized place to handle all communication with the backend.
+ */
+import axios from 'axios';
+import { Platform, Framework, GenerationRequest, ValidationResult, CostEstimate } from '../types';
+
+const API_BASE_URL = 'http://localhost:3000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+export const apiService = {
+  // Simulating the backend API responses for a self-contained application
+  async getPlatforms(): Promise<any[]> {
+    return new Promise(resolve => setTimeout(() => resolve([
+      { platform: Platform.Web, framework: Framework.React, icon: 'code', name: 'React', description: 'Modern frontend library.', supportedDevices: ['Desktop', 'Mobile'], deploymentOptions: ['Vercel'], costRange: '$', complexity: 'Medium' },
+      { platform: Platform.Web, framework: Framework.NextJS, icon: 'zap', name: 'Next.js', description: 'React framework for production.', supportedDevices: ['Desktop', 'Mobile'], deploymentOptions: ['Vercel'], costRange: '$-$$', complexity: 'Medium' },
+      { platform: Platform.Mobile, framework: Framework.Flutter, icon: 'smartphone', name: 'Flutter', description: 'Google’s UI toolkit for native apps.', supportedDevices: ['iOS', 'Android'], deploymentOptions: ['App Store'], costRange: '$', complexity: 'Medium' },
+    ]), 500));
+  },
+
+  async validateConfig(config: GenerationRequest): Promise<ValidationResult> {
+    return new Promise(resolve => setTimeout(() => {
+      if (!config.appName || !config.platform || !config.framework) {
+        resolve({ isValid: false, errors: ['App name, platform, and framework are required.'] });
+      }
+      resolve({ isValid: true });
+    }, 500));
+  },
+
+  async estimateCost(config: GenerationRequest): Promise<CostEstimate> {
+    return new Promise(resolve => setTimeout(() => resolve({
+      initialSetup: { min: 50, max: 200 },
+      monthlyHosting: { min: 10, max: 50 },
+      details: 'This is a simulated cost estimate based on your selections. Actual costs may vary.',
+    }), 500));
+  },
+
+  async startGeneration(config: GenerationRequest): Promise<{ appId: string }> {
+    const appId = config.appName.toLowerCase().replace(/\s+/g, '-');
+    return new Promise(resolve => setTimeout(() => resolve({ appId }), 1000));
+  },
+};
+`;
+
+// =============================================================================
+// FILE: frontend/src/components/PlatformSelector.tsx
+// =============================================================================
+const PlatformSelector = `
+import React, { useMemo } from 'react';
+import { Platform, Framework, PlatformDetails } from '../types';
+import { Play, Code, Box, Smartphone, Monitor, Globe, Sparkles, Target } from 'lucide-react';
+
+interface PlatformCardProps {
+  platform: Platform;
+  framework: Framework;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  onSelect: (platform: Platform, framework: Framework) => void;
+  isSelected: boolean;
+}
+
+const PlatformCard: React.FC<PlatformCardProps> = ({ platform, framework, name, description, icon, onSelect, isSelected }) => (
+  <button
+    onClick={() => onSelect(platform, framework)}
+    className={\`p-6 rounded-xl text-left border-2 transition-all hover:shadow-lg \${isSelected ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-indigo-300'}\`}
+  >
+    <div className="flex items-center space-x-4">
+      <div className={\`p-3 rounded-full \${isSelected ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500'}\`}>
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-semibold text-lg">{name}</h3>
+        <p className="text-sm text-slate-500">{description}</p>
+      </div>
+    </div>
+  </button>
+);
+
+interface PlatformSelectorProps {
+  onSelect: (platform: Platform, framework: Framework) => void;
+  selectedPlatform: Platform | undefined;
+  selectedFramework: Framework | undefined;
+}
+
+const platformsData = [
+  { platform: Platform.Web, title: 'Web & Websites', description: 'Build for browsers with modern web frameworks.', cards: [
+      { name: 'React', framework: Framework.React, icon: <Play className="h-6 w-6" />, description: 'Modern frontend library.' },
+      { name: 'Next.js', framework: Framework.NextJS, icon: <Box className="h-6 w-6" />, description: 'React framework for production.' },
+      { name: 'Svelte', framework: Framework.Svelte, icon: <Sparkles className="h-6 w-6" />, description: 'Cybernetically enhanced web apps.' },
+    ],
+  },
+  { platform: Platform.Mobile, title: 'Mobile Apps', description: 'Create native-like experiences for iOS and Android.', cards: [
+      { name: 'React Native', framework: Framework.ReactNative, icon: <Smartphone className="h-6 w-6" />, description: 'JavaScript framework for native apps.' },
+      { name: 'Flutter', framework: Framework.Flutter, icon: <Target className="h-6 w-6" />, description: 'Google’s UI toolkit for native apps.' },
+    ],
+  },
+  { platform: Platform.Desktop, title: 'Desktop Apps', description: 'Cross-platform desktop applications.', cards: [
+      { name: 'Electron', framework: Framework.Electron, icon: <Monitor className="h-6 w-6" />, description: 'Build with web technologies.' },
+      { name: 'Tauri', framework: Framework.Tauri, icon: <Globe className="h-6 w-6" />, description: 'Secure, lightweight desktop apps.' },
+    ],
+  },
+];
+
+const PlatformSelector: React.FC<PlatformSelectorProps> = ({ onSelect, selectedPlatform, selectedFramework }) => {
+  return (
+    <div className="space-y-8">
+      {platformsData.map((p) => (
+        <div key={p.platform}>
+          <h2 className="text-xl font-semibold text-slate-800">{p.title}</h2>
+          <p className="text-sm text-slate-500 mb-4">{p.description}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {p.cards.map((card) => (
+              <PlatformCard
+                key={card.framework}
+                platform={p.platform}
+                framework={card.framework}
+                name={card.name}
+                description={card.description}
+                onSelect={onSelect}
+                isSelected={selectedPlatform === p.platform && selectedFramework === card.framework}
+                icon={card.icon}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default PlatformSelector;
+`;
+
+// =============================================================================
+// FILE 9: frontend/src/components/ConfigurationWizard.tsx
+// =============================================================================
+/*
+This component implements the 5-step configuration wizard using React Hook Form
+for state management and validation.
+*/
+const ConfigurationWizard = ({ onStartGeneration, generationState }) => {
+  const formSchema = z.object({
+    appName: z.string().min(3, 'App name must be at least 3 characters.').max(50, 'App name cannot exceed 50 characters.'),
+    platform: z.nativeEnum(Platform, { required_error: 'Please select a platform.' }),
+    framework: z.nativeEnum(Framework, { required_error: 'Please select a framework.' }),
+    features: z.object({
+      auth: z.boolean().optional(),
+      database: z.boolean().optional(),
+      payments: z.boolean().optional(),
+      realtime: z.boolean().optional(),
+    }).optional(),
+  });
+
+  const steps = [
+    { id: 'scope', name: 'Project Scope', fields: ['appName'] },
+    { id: 'platform', name: 'Platform Selection', fields: ['platform', 'framework'] },
+    { id: 'features', name: 'Feature Configuration', fields: ['features'] },
+    { id: 'tech', name: 'Technology Stack', fields: [] },
+    { id: 'deployment', name: 'Deployment Setup', fields: [] },
+  ];
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const methods = useForm({ resolver: zodResolver(formSchema) });
+  const { handleSubmit, trigger, setValue, watch, formState: { errors } } = methods;
+
+  const watchedFields = watch(['platform', 'framework', 'features']);
+
+  const nextStep = async () => {
+    const fieldsToValidate = steps[currentStep].fields;
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(currentStep - 1);
+  };
+
+  const onSubmit = (data) => {
+    const generationRequest = {
+      appName: data.appName,
+      platform: data.platform,
+      framework: data.framework,
+      features: Object.entries(data.features || {})
+        .filter(([_, value]) => value)
+        .map(([key, _]) => ({ name: key })),
+    };
+    onStartGeneration(generationRequest);
+  };
+
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex items-center justify-between mb-8">
+          {steps.map((step, index) => (
+            <React.Fragment key={step.id}>
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${currentStep === index ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                  {index + 1}
+                </div>
+                <span className="text-xs mt-1 text-center hidden md:block">{step.name}</span>
+              </div>
+              {index < steps.length - 1 && <div className="flex-1 h-1 bg-slate-200 mx-2"></div>}
+            </React.Fragment>
+          ))}
+        </div>
+
+        <div className="min-h-96">
+          {currentStep === 0 && (
+            <div className="space-y-4 fade-in">
+              <h3 className="text-xl font-bold">Step 1: Project Scope</h3>
+              <div>
+                <label className="block text-sm font-medium text-slate-700">App Name</label>
+                <input
+                  type="text"
+                  {...methods.register('appName')}
+                  className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+                {errors.appName && <p className="mt-1 text-sm text-red-600">{errors.appName.message}</p>}
+              </div>
+            </div>
+          )}
+
+          {currentStep === 1 && (
+            <div className="space-y-4 fade-in">
+              <h3 className="text-xl font-bold">Step 2: Platform Selection</h3>
+              <PlatformSelector
+                onSelect={(platform, framework) => {
+                  setValue('platform', platform);
+                  setValue('framework', framework);
+                }}
+                selectedPlatform={watchedFields.platform}
+                selectedFramework={watchedFields.framework}
+              />
+              {(errors.platform || errors.framework) && (
+                <p className="mt-1 text-sm text-red-600">Please select a platform and framework.</p>
+              )}
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="space-y-4 fade-in">
+              <h3 className="text-xl font-bold">Step 3: Feature Configuration</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <input type="checkbox" {...methods.register('features.auth')} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                  <span className="text-slate-700">Authentication</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input type="checkbox" {...methods.register('features.database')} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                  <span className="text-slate-700">Database</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input type="checkbox" {...methods.register('features.payments')} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                  <span className="text-slate-700">Payments (Stripe)</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input type="checkbox" {...methods.register('features.realtime')} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                  <span className="text-slate-700">Real-time (WebSockets)</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-4 fade-in">
+              <h3 className="text-xl font-bold">Step 4: Technology Stack</h3>
+              <p className="text-slate-500">Based on your platform and features, we would generate the most optimal stack for you here.</p>
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div className="space-y-4 fade-in">
+              <h3 className="text-xl font-bold">Step 5: Deployment Setup</h3>
+              <p className="text-slate-500">We'll automatically generate CI/CD and deployment configurations for you.</p>
+              <div className="flex items-center justify-center">
+                <button
+                  type="submit"
+                  disabled={generationState.status !== 'idle' && generationState.status !== 'complete' && generationState.status !== 'error'}
+                  className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {generationState.status === 'generating' ? 'Generating...' : 'Start Generation'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-between">
+          {currentStep > 0 && (
+            <button type="button" onClick={prevStep} className="flex items-center px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors">
+              <ArrowLeft className="h-4 w-4 mr-2" /> Previous
+            </button>
+          )}
+          {currentStep < steps.length - 1 && (
+            <button type="button" onClick={nextStep} className="flex items-center px-4 py-2 text-indigo-600 hover:text-indigo-800 transition-colors ml-auto">
+              Next <ArrowRight className="h-4 w-4 ml-2" />
+            </button>
+          )}
+        </div>
+      </form>
+    </FormProvider>
+  );
+};
+
+// === frontend/src/components/ProgressTracker.tsx ===
+/**
+ * src/components/ProgressTracker.tsx
+ *
+ * This component displays the real-time progress of the app generation, including
+ * a progress bar, logs, and final download link.
+ */
+const ProgressTracker = ({ generationState, onReset }) => {
+  const isGenerating = generationState.status === 'validating' || generationState.status === 'generating';
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 min-h-96">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-bold flex items-center space-x-2">
+          {isGenerating && <Loader className="h-6 w-6 animate-spin text-indigo-500" />}
+          {generationState.status === 'complete' && <CheckCircle2 className="h-6 w-6 text-green-500" />}
+          {generationState.status === 'error' && <AlertTriangle className="h-6 w-6 text-red-500" />}
+          <span>{isGenerating ? 'Generating Your App...' : 'Generation Complete!'}</span>
+        </h3>
+        {(generationState.status === 'complete' || generationState.status === 'error') && (
+          <button onClick={onReset} className="text-sm text-slate-500 hover:text-slate-800 transition-colors">
+            Reset
+          </button>
+        )}
+      </div>
+
+      {isGenerating && (
+        <div className="w-full bg-slate-200 rounded-full h-2.5 mb-4">
+          <div
+            className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${generationState.progress}%` }}
+          ></div>
+        </div>
+      )}
+
+      <div className="bg-slate-800 text-slate-200 p-4 rounded-lg font-mono text-sm h-64 overflow-y-auto">
+        {generationState.logs.map((log, index) => (
+          <p key={index} className={log.includes('error') ? 'text-red-400' : ''}>{log}</p>
+        ))}
+      </div>
+
+      {generationState.status === 'complete' && generationState.downloadUrl && (
+        <div className="mt-6 flex flex-col items-center space-y-4">
+          <div className="p-4 rounded-full bg-green-100 text-green-600">
+            <CheckCircle2 className="h-10 w-10" />
+          </div>
+          <p className="text-lg font-semibold text-green-700">Your app is ready!</p>
+          <a
+            href={generationState.downloadUrl}
+            className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-lg hover:bg-indigo-700 transition-colors"
+          >
+            <Download className="h-5 w-5" />
+            <span>Download ZIP</span>
+          </a>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// === frontend/src/components/CostEstimator.tsx ===
+/**
+ * src/components/CostEstimator.tsx
+ *
+ * This component displays a clear cost estimation based on the selected configuration,
+ * helping users understand the potential expenses.
+ */
+const CostEstimator = ({ cost }) => {
+  if (!cost) return null;
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <div className="flex items-center space-x-4">
+        <div className="p-3 rounded-full bg-green-100 text-green-600">
+          <DollarSign className="h-6 w-6" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-slate-800">Cost Estimate</h3>
+          <p className="text-sm text-slate-500">
+            Initial: ${cost.initialSetup.min}-${cost.initialSetup.max} | Monthly: ${cost.monthlyHosting.min}-${cost.monthlyHosting.max}
+          </p>
+          <p className="text-xs text-slate-400">{cost.details}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// =============================================================================
+// === Root App Component ===
+// =============================================================================
+export default function App() {
+  const [currentRoute, setCurrentRoute] = useState('home');
+  const navigate = (route) => setCurrentRoute(route);
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // --- Inlined TypeScript Interfaces and Enums ---
+  enum Platform { Web = 'web', Mobile = 'mobile', Desktop = 'desktop', Website = 'website', Edge = 'edge', Extension = 'extension', CLI = 'cli', }
+  enum Framework { React = 'react', NextJS = 'nextjs', Svelte = 'svelte', Vue = 'vue', Angular = 'angular', ReactNative = 'react-native', Flutter = 'flutter', Tauri = 'tauri', Electron = 'electron', NodeJS = 'nodejs', Go = 'go', Rust = 'rust', }
+  interface AppFeature { name: string; options?: Record<string, any>; }
+  interface GenerationRequest { appName: string; platform: Platform; framework: Framework; features: AppFeature[]; }
+  interface WebSocketMessage { type: 'status' | 'progress' | 'log' | 'complete' | 'error'; appId: string; timestamp: string; payload: { message: string; progress?: number; details?: any; }; }
+  interface ValidationResult { isValid: boolean; errors?: string[]; warnings?: string[]; }
+  interface CostEstimate { initialSetup: { min: number; max: number; }; monthlyHosting: { min: number; max: number; }; details: string; }
+  interface PlatformDetails { platform: Platform; framework: Framework; icon: React.ReactNode; name: string; description: string; supportedDevices: string[]; deploymentOptions: string[]; costRange: string; complexity: string; }
+  
+  // --- Inlined API Service ---
+  const apiService = {
+    async getPlatforms(): Promise<any[]> { return new Promise(resolve => setTimeout(() => resolve([ { platform: Platform.Web, framework: Framework.React, icon: <Play/>, name: 'React', description: 'Modern frontend library.', supportedDevices: ['Desktop', 'Mobile'], deploymentOptions: ['Vercel'], costRange: '$', complexity: 'Medium' }, ]), 500)); },
+    async validateConfig(config: GenerationRequest): Promise<ValidationResult> { return new Promise(resolve => setTimeout(() => { if (!config.appName) { return resolve({ isValid: false, errors: ['App name is required.'] }); } return resolve({ isValid: true }); }, 500)); },
+    async estimateCost(config: GenerationRequest): Promise<CostEstimate> { return new Promise(resolve => setTimeout(() => resolve({ initialSetup: { min: 50, max: 200 }, monthlyHosting: { min: 10, max: 50 }, details: 'Simulated estimate.' }), 500)); },
+    async startGeneration(config: GenerationRequest): Promise<{ appId: string }> { const appId = config.appName.toLowerCase().replace(/\s+/g, '-'); return new Promise(resolve => setTimeout(() => resolve({ appId }), 1000)); },
+  };
+
+  // --- Inlined Zustand Store and WebSocket Hook ---
+  interface GenerationState { appId: string | null; status: 'idle' | 'validating' | 'generating' | 'complete' | 'error'; progress: number; logs: string[]; error: string | null; downloadUrl: string | null; cost: CostEstimate | null; }
+  const initialState: GenerationState = { appId: null, status: 'idle', progress: 0, logs: [], error: null, downloadUrl: null, cost: null, };
+  const useGenerationStore = create<any>()((set) => ({
+    state: initialState,
+    start: async (config) => { set(state => ({ state: { ...initialState, status: 'validating', logs: ['Validating config...'] } })); try { const cost = await apiService.estimateCost(config); const validation = await apiService.validateConfig(config); if (!validation.isValid) { set(state => ({ state: { ...state.state, status: 'error', error: validation.errors?.[0] || 'Validation failed.', logs: [...state.state.logs, 'Validation failed.'] } })); return; } set(state => ({ state: { ...state.state, logs: [...state.state.logs, 'Validation successful. Generating...'], status: 'generating' } })); const { appId } = await apiService.startGeneration(config); set(state => ({ state: { ...state.state, appId } })); } catch (err) { set(state => ({ state: { ...state.state, status: 'error', error: 'Failed to start.', logs: [...state.state.logs, 'Failed to start generation.'] } })); } },
+    updateProgress: (message) => { set(state => { const newLogs = [...state.state.logs, message.payload.message]; const newProgress = message.payload.progress ?? state.state.progress; let newStatus = state.state.status; let newError = state.state.error; if (message.type === 'complete') { newStatus = 'complete'; } if (message.type === 'error') { newStatus = 'error'; newError = message.payload.message; } return { state: { ...state.state, logs: newLogs, progress: newProgress, status: newStatus, error: newError, downloadUrl: newStatus === 'complete' ? '/download' : null } }; }); },
+    reset: () => { set(state => ({ state: initialState })); }
+  }));
+  const useWebSocket = (appId, onUpdate) => { useEffect(() => { if (!appId) return; const socket = io('http://localhost:3000'); socket.on('connect', () => socket.emit('join-generation', appId)); socket.on('generation-update', onUpdate); return () => socket.disconnect(); }, [appId, onUpdate]); };
+
+  const { state: generationState, start, updateProgress, reset } = useGenerationStore();
+  useWebSocket(generationState.appId, updateProgress);
+  
+  const startGeneration = useCallback((config) => { start(config); }, [start]);
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+      <div className="max-w-7xl mx-auto p-4 sm:p-8">
+        <header className="flex items-center justify-between mb-8">
+          <button onClick={() => setCurrentRoute('home')} className="text-2xl font-bold text-indigo-600">FlashFusion</button>
+          <div className="flex items-center space-x-4">
+            <nav className="hidden md:flex space-x-4">
+              <button onClick={() => setCurrentRoute('home')} className="text-sm font-medium hover:text-indigo-500">Home</button>
+              <button onClick={() => setCurrentRoute('generate')} className="text-sm font-medium hover:text-indigo-500">Generator</button>
+            </nav>
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+              {isDarkMode ? '🌞' : '🌙'}
+            </button>
+          </div>
+        </header>
+        
+        {/* State-based Router */}
+        {currentRoute === 'home' && (
+          <div className="flex flex-col items-center justify-center p-8 text-center min-h-screen">
+            <div className="max-w-2xl mx-auto">
+              <h1 className="text-5xl font-extrabold text-slate-900 mb-4">
+                Build Your Empire with <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-pink-500">FlashFusion</span>
+              </h1>
+              <p className="text-xl text-slate-600 mb-8">The universal app generator that architects businesses, automates strategy, and engineers freedom through scalable solutions.</p>
+              <button onClick={() => setCurrentRoute('generate')} className="inline-flex items-center px-8 py-4 text-lg font-semibold text-white bg-indigo-600 rounded-full shadow-lg hover:bg-indigo-700 transition-colors">Start a New Project <ArrowRight className="h-6 w-6 ml-2" /></button>
+            </div>
+          </div>
+        )}
+        
+        {currentRoute === 'generate' && (
+          <div className="p-8">
+            <h1 className="text-4xl font-extrabold text-slate-900 mb-8">Universal App Generator</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <ConfigurationWizard onStartGeneration={startGeneration} generationState={generationState} />
+              </div>
+              <div className="space-y-8">
+                {generationState.appId && <ProgressTracker generationState={generationState} onReset={reset} />}
+                {generationState.cost && <CostEstimator cost={generationState.cost} />}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// This is the complete application code.
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(<React.StrictMode><App /></React.StrictMode>);
+} else {
+  console.error("Failed to find the root element to render the application.");
+}

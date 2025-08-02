@@ -1,0 +1,5172 @@
+import React, { useState, useEffect, useRef } from 'react'; 
+
+import { 
+
+
+  MessageCircle, Code, Database, Rocket, Shield, BarChart3, 
+
+
+  Settings, User, Plus, Play, Pause, Save, Download, Upload,
+
+
+  Terminal, Eye, GitBranch, Layers, Cloud, Smartphone, Monitor,
+
+
+  Globe, Zap, Lock, CheckCircle, AlertTriangle, Clock, Users,
+
+
+  FileText, Search, Filter, Maximize2, Minimize2, RefreshCw,
+
+
+  Send, Mic, Image, Paperclip, Bot, Brain, Cpu, Activity,
+
+
+  Star, Folder, Package, TestTube, Target, Workflow, PieChart,
+
+
+  TrendingUp, DollarSign, Bell, Palette, Layout, Component,
+
+
+  Cog, HelpCircle, ExternalLink, Copy, Share2, X
+
+
+} from 'lucide-react';
+
+
+
+
+
+const UniversalAppGenerator = () => {
+
+
+  const [activeTab, setActiveTab] = useState('chat');
+
+
+  const [activeSubTab, setActiveSubTab] = useState('overview');
+
+
+  const [chatMessages, setChatMessages] = useState([
+
+
+    {
+
+
+      id: 1,
+
+
+      type: 'assistant',
+
+
+      agent: 'Master Orchestrator',
+
+
+      content: 'Welcome to the Universal AI App Generator! I can create any type of application across web, mobile, desktop, and edge platforms. What would you like to build today?',
+
+
+      timestamp: new Date().toISOString(),
+
+
+      status: 'delivered'
+
+
+    }
+
+
+  ]);
+
+
+  const [currentMessage, setCurrentMessage] = useState('');
+
+
+  const [isGenerating, setIsGenerating] = useState(false);
+
+
+  const [selectedAgent, setSelectedAgent] = useState('orchestrator');
+
+
+  const [generationProgress, setGenerationProgress] = useState(0);
+
+
+  const [activeProject, setActiveProject] = useState('social-media-app');
+
+
+  const scrollRef = useRef(null);
+
+
+
+
+
+  // Enhanced project statistics with real-time updates
+
+
+  const [projectStats, setProjectStats] = useState({
+
+
+    totalProjects: 127,
+
+
+    activeDeployments: 43,
+
+
+    securityScore: 98.5,
+
+
+    uptime: '99.97%',
+
+
+    monthlyActiveUsers: '2.4M',
+
+
+    costOptimizationSaved: '$12,847',
+
+
+    codeQualityScore: 9.2,
+
+
+    testCoverage: 94
+
+
+  });
+
+
+
+
+
+  // Comprehensive agent system with specialized capabilities
+
+
+  const agents = [
+
+
+    { 
+
+
+      id: 'orchestrator', 
+
+
+      name: 'Master Orchestrator', 
+
+
+      icon: Brain, 
+
+
+      color: 'bg-gradient-to-r from-purple-500 to-pink-500', 
+
+
+      status: 'active',
+
+
+      description: 'Coordinates all agents and manages project lifecycle',
+
+
+      capabilities: ['Project Planning', 'Agent Coordination', 'Risk Assessment', 'Quality Control']
+
+
+    },
+
+
+    { 
+
+
+      id: 'codegen', 
+
+
+      name: 'Code Generation Agent', 
+
+
+      icon: Code, 
+
+
+      color: 'bg-gradient-to-r from-blue-500 to-cyan-500', 
+
+
+      status: 'active',
+
+
+      description: 'Generates production-ready code across all platforms',
+
+
+      capabilities: ['Full-Stack Development', 'Multi-Language Support', 'Framework Integration', 'API Development']
+
+
+    },
+
+
+    { 
+
+
+      id: 'security', 
+
+
+      name: 'Security Guardian', 
+
+
+      icon: Shield, 
+
+
+      color: 'bg-gradient-to-r from-red-500 to-rose-500', 
+
+
+      status: 'active',
+
+
+      description: 'Ensures enterprise-grade security across all applications',
+
+
+      capabilities: ['OWASP Compliance', 'Penetration Testing', 'Compliance Auditing', 'Threat Detection']
+
+
+    },
+
+
+    { 
+
+
+      id: 'deploy', 
+
+
+      name: 'Deployment Specialist', 
+
+
+      icon: Rocket, 
+
+
+      color: 'bg-gradient-to-r from-green-500 to-emerald-500', 
+
+
+      status: 'active',
+
+
+      description: 'Handles multi-platform deployment and infrastructure',
+
+
+      capabilities: ['CI/CD Pipelines', 'Cloud Integration', 'Auto-Scaling', 'Performance Optimization']
+
+
+    },
+
+
+    { 
+
+
+      id: 'database', 
+
+
+      name: 'Data Architect', 
+
+
+      icon: Database, 
+
+
+      color: 'bg-gradient-to-r from-yellow-500 to-orange-500', 
+
+
+      status: 'active',
+
+
+      description: 'Designs and optimizes database architecture',
+
+
+      capabilities: ['Schema Design', 'Query Optimization', 'Data Migration', 'Real-time Sync']
+
+
+    },
+
+
+    { 
+
+
+      id: 'qa', 
+
+
+      name: 'Quality Engineer', 
+
+
+      icon: TestTube, 
+
+
+      color: 'bg-gradient-to-r from-indigo-500 to-purple-500', 
+
+
+      status: 'active',
+
+
+      description: 'Ensures code quality and comprehensive testing',
+
+
+      capabilities: ['Automated Testing', 'Performance Testing', 'A11y Testing', 'Visual Regression']
+
+
+    },
+
+
+    { 
+
+
+      id: 'ux', 
+
+
+      name: 'UX Optimizer', 
+
+
+      icon: Palette, 
+
+
+      color: 'bg-gradient-to-r from-pink-500 to-purple-500', 
+
+
+      status: 'active',
+
+
+      description: 'Optimizes user experience and interface design',
+
+
+      capabilities: ['Design Systems', 'User Research', 'A/B Testing', 'Accessibility']
+
+
+    },
+
+
+    { 
+
+
+      id: 'cost', 
+
+
+      name: 'Cost Intelligence', 
+
+
+      icon: DollarSign, 
+
+
+      color: 'bg-gradient-to-r from-orange-500 to-red-500', 
+
+
+      status: 'active',
+
+
+      description: 'Monitors and optimizes resource costs in real-time',
+
+
+      capabilities: ['Cost Analysis', 'Resource Optimization', 'Budget Alerts', 'ROI Tracking']
+
+
+    },
+
+
+    { 
+
+
+      id: 'docs', 
+
+
+      name: 'Documentation AI', 
+
+
+      icon: FileText, 
+
+
+      color: 'bg-gradient-to-r from-teal-500 to-green-500', 
+
+
+      status: 'active',
+
+
+      description: 'Generates comprehensive documentation and guides',
+
+
+      capabilities: ['API Documentation', 'User Guides', 'Code Comments', 'Video Tutorials']
+
+
+    },
+
+
+    { 
+
+
+      id: 'compliance', 
+
+
+      name: 'Compliance Monitor', 
+
+
+      icon: CheckCircle, 
+
+
+      color: 'bg-gradient-to-r from-emerald-500 to-teal-500', 
+
+
+      status: 'active',
+
+
+      description: 'Ensures regulatory compliance and governance',
+
+
+      capabilities: ['GDPR Compliance', 'HIPAA Auditing', 'SOC2 Standards', 'Data Governance']
+
+
+    }
+
+
+  ];
+
+
+
+
+
+  // Enhanced platform support with detailed capabilities
+
+
+  const platforms = [
+
+
+    { 
+
+
+      id: 'web', 
+
+
+      name: 'Web Applications', 
+
+
+      icon: Globe, 
+
+
+      tech: 'React, Vue, Angular, Next.js', 
+
+
+      status: 'ready',
+
+
+      deployment: ['Vercel', 'Netlify', 'AWS', 'Azure'],
+
+
+      features: ['PWA Support', 'SSR/SSG', 'Edge Computing', 'Real-time Features']
+
+
+    },
+
+
+    { 
+
+
+      id: 'mobile', 
+
+
+      name: 'Mobile Applications', 
+
+
+      icon: Smartphone, 
+
+
+      tech: 'React Native, Flutter, Ionic', 
+
+
+      status: 'ready',
+
+
+      deployment: ['App Store', 'Google Play', 'TestFlight', 'Firebase'],
+
+
+      features: ['Native APIs', 'Push Notifications', 'Offline Sync', 'Deep Linking']
+
+
+    },
+
+
+    { 
+
+
+      id: 'desktop', 
+
+
+      name: 'Desktop Applications', 
+
+
+      icon: Monitor, 
+
+
+      tech: 'Electron, Tauri, .NET MAUI', 
+
+
+      status: 'ready',
+
+
+      deployment: ['Windows Store', 'Mac App Store', 'Linux Repos', 'Direct Download'],
+
+
+      features: ['Auto-Updates', 'System Integration', 'Native Performance', 'Cross-Platform']
+
+
+    },
+
+
+    { 
+
+
+      id: 'edge', 
+
+
+      name: 'Edge Functions', 
+
+
+      icon: Zap, 
+
+
+      tech: 'Cloudflare Workers, Vercel Edge', 
+
+
+      status: 'ready',
+
+
+      deployment: ['Cloudflare', 'Vercel', 'AWS Lambda@Edge', 'Fastly'],
+
+
+      features: ['Global Distribution', 'Sub-50ms Latency', 'Auto-Scaling', 'Pay-per-Request']
+
+
+    }
+
+
+  ];
+
+
+
+
+
+  // Comprehensive security monitoring
+
+
+  const securityChecks = [
+
+
+    { name: 'OWASP Top 10', status: 'passed', score: 100, lastCheck: '2 min ago' },
+
+
+    { name: 'Dependency Vulnerabilities', status: 'passed', score: 98, lastCheck: '5 min ago' },
+
+
+    { name: 'Code Quality Analysis', status: 'passed', score: 95, lastCheck: '1 min ago' },
+
+
+    { name: 'Access Control Audit', status: 'passed', score: 100, lastCheck: '10 min ago' },
+
+
+    { name: 'Data Encryption Check', status: 'passed', score: 100, lastCheck: '3 min ago' },
+
+
+    { name: 'API Security Scan', status: 'warning', score: 92, lastCheck: '1 min ago' },
+
+
+    { name: 'Compliance Standards', status: 'passed', score: 97, lastCheck: '15 min ago' },
+
+
+    { name: 'Penetration Test', status: 'passed', score: 96, lastCheck: '1 hour ago' }
+
+
+  ];
+
+
+
+
+
+  // Enhanced deployment targets with cost tracking
+
+
+  const deploymentTargets = [
+
+
+    { 
+
+
+      name: 'Vercel Production', 
+
+
+      status: 'deployed', 
+
+
+      url: 'social-app.vercel.app', 
+
+
+      cost: '$12/mo',
+
+
+      users: '24.5K',
+
+
+      uptime: '99.9%',
+
+
+      lastDeploy: '2 hours ago'
+
+
+    },
+
+
+    { 
+
+
+      name: 'iOS App Store', 
+
+
+      status: 'review', 
+
+
+      url: 'pending review', 
+
+
+      cost: '$99/year',
+
+
+      users: 'pending',
+
+
+      uptime: 'N/A',
+
+
+      lastDeploy: '1 day ago'
+
+
+    },
+
+
+    { 
+
+
+      name: 'Android Play Store', 
+
+
+      status: 'deployed', 
+
+
+      url: 'play.google.com/store/apps', 
+
+
+      cost: '$25/year',
+
+
+      users: '15.2K',
+
+
+      uptime: '99.8%',
+
+
+      lastDeploy: '3 days ago'
+
+
+    },
+
+
+    { 
+
+
+      name: 'AWS Production', 
+
+
+      status: 'configuring', 
+
+
+      url: 'pending', 
+
+
+      cost: '$45/mo',
+
+
+      users: 'pending',
+
+
+      uptime: 'N/A',
+
+
+      lastDeploy: 'never'
+
+
+    }
+
+
+  ];
+
+
+
+
+
+  // Real-time project metrics
+
+
+  const projectMetrics = [
+
+
+    { name: 'Response Time', value: '127ms', trend: 'down', good: true },
+
+
+    { name: 'Error Rate', value: '0.02%', trend: 'down', good: true },
+
+
+    { name: 'Throughput', value: '2.4K req/min', trend: 'up', good: true },
+
+
+    { name: 'Database Queries', value: '156ms avg', trend: 'down', good: true },
+
+
+    { name: 'Memory Usage', value: '68%', trend: 'stable', good: true },
+
+
+    { name: 'CPU Utilization', value: '23%', trend: 'down', good: true }
+
+
+  ];
+
+
+
+
+
+  const handleSendMessage = () => {
+
+
+    if (!currentMessage.trim() || isGenerating) return;
+
+
+
+
+
+    const newMessage = {
+
+
+      id: Date.now(),
+
+
+      type: 'user',
+
+
+      content: currentMessage,
+
+
+      timestamp: new Date().toISOString(),
+
+
+      status: 'sent'
+
+
+    };
+
+
+
+
+
+    setChatMessages(prev => [...prev, newMessage]);
+
+
+    setCurrentMessage('');
+
+
+    setIsGenerating(true);
+
+
+    setGenerationProgress(0);
+
+
+
+
+
+    // Simulate realistic AI agent coordination with progress updates
+
+
+    const progressInterval = setInterval(() => {
+
+
+      setGenerationProgress(prev => {
+
+
+        if (prev >= 100) {
+
+
+          clearInterval(progressInterval);
+
+
+          return 100;
+
+
+        }
+
+
+        return prev + Math.random() * 15;
+
+
+      });
+
+
+    }, 300);
+
+
+
+
+
+    setTimeout(() => {
+
+
+      const agentResponses = [
+
+
+        {
+
+
+          agent: 'Master Orchestrator',
+
+
+          content: "Perfect! I'm coordinating with our specialized agents to create your social media platform. Here's our execution plan:\n\n✅ **Code Generation Agent**: Building React Native frontend + Node.js backend\n✅ **Security Guardian**: Implementing OAuth 2.0 + JWT authentication\n✅ **Data Architect**: Designing PostgreSQL schema with Redis caching\n✅ **Quality Engineer**: Setting up Jest + Cypress testing suite\n✅ **Deployment Specialist**: Configuring AWS ECS with auto-scaling\n\nEstimated completion: 4 minutes",
+
+
+          progress: 15
+
+
+        },
+
+
+        {
+
+
+          agent: 'Code Generation Agent',
+
+
+          content: "🚀 **Frontend Generated**: React Native app with 12 screens including:\n• User authentication & profiles\n• Real-time chat with Socket.io\n• Photo/video sharing with filters\n• Push notifications\n• Dark mode support\n\n🔧 **Backend Created**: Node.js API with:\n• RESTful endpoints + GraphQL\n• Real-time messaging\n• File upload handling\n• Rate limiting & caching\n\n📱 **Mobile Features**: Camera integration, geolocation, offline sync",
+
+
+          progress: 45
+
+
+        },
+
+
+        {
+
+
+          agent: 'Security Guardian',
+
+
+          content: "🛡️ **Security Implementation Complete**:\n\n✅ Multi-factor authentication (TOTP + SMS)\n✅ Input sanitization & SQL injection protection\n✅ XSS prevention with CSP headers\n✅ API rate limiting (100 req/min per user)\n✅ End-to-end encryption for messages\n✅ GDPR compliance with data deletion\n✅ Vulnerability scanning integrated\n\n**Security Score: 98.5%** (Industry leading)",
+
+
+          progress: 70
+
+
+        },
+
+
+        {
+
+
+          agent: 'Deployment Specialist',
+
+
+          content: "🚀 **Deployment Pipeline Ready**:\n\n✅ **Web**: Deployed to Vercel with CDN\n✅ **Mobile**: Built for iOS/Android app stores\n✅ **Backend**: AWS ECS with auto-scaling\n✅ **Database**: RDS PostgreSQL with read replicas\n✅ **Monitoring**: CloudWatch + Sentry error tracking\n\n🌍 **Global Distribution**: 5 regions, <100ms latency\n💰 **Cost Optimized**: $47/month for 10K users\n\n**Live URLs:**\n• Web: https://your-social-app.vercel.app\n• API: https://api.your-social-app.com\n• Admin: https://admin.your-social-app.com",
+
+
+          progress: 100
+
+
+        }
+
+
+      ];
+
+
+
+
+
+      agentResponses.forEach((response, index) => {
+
+
+        setTimeout(() => {
+
+
+          const agentMessage = {
+
+
+            id: Date.now() + index,
+
+
+            type: 'assistant',
+
+
+            agent: response.agent,
+
+
+            content: response.content,
+
+
+            timestamp: new Date().toISOString(),
+
+
+            status: 'delivered',
+
+
+            progress: response.progress
+
+
+          };
+
+
+
+
+
+          setChatMessages(prev => [...prev, agentMessage]);
+
+
+          
+
+
+          if (index === agentResponses.length - 1) {
+
+
+            setIsGenerating(false);
+
+
+            clearInterval(progressInterval);
+
+
+            setGenerationProgress(100);
+
+
+          }
+
+
+        }, index * 2000);
+
+
+      });
+
+
+    }, 1000);
+
+
+  };
+
+
+
+
+
+  // Auto-scroll chat to bottom
+
+
+  useEffect(() => {
+
+
+    if (scrollRef.current) {
+
+
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+
+
+    }
+
+
+  }, [chatMessages]);
+
+
+
+
+
+  const NavigationSidebar = () => (
+
+
+    <div className="w-72 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 text-white h-full flex flex-col shadow-2xl">
+
+
+      <div className="p-6 border-b border-gray-700/50">
+
+
+        <h1 className="text-xl font-bold flex items-center gap-3">
+
+
+          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+
+
+            <Brain className="w-5 h-5 text-white" />
+
+
+          </div>
+
+
+          <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+
+
+            Universal AI Generator
+
+
+          </span>
+
+
+        </h1>
+
+
+        <div className="text-xs text-gray-400 mt-1">Enterprise Edition v2.1</div>
+
+
+      </div>
+
+
+      
+
+
+      <nav className="flex-1 p-4 space-y-1">
+
+
+        {[
+
+
+          { id: 'chat', name: 'AI Command Center', icon: MessageCircle, badge: '4' },
+
+
+          { id: 'editor', name: 'Code Studio', icon: Code, badge: null },
+
+
+          { id: 'database', name: 'Data Architect', icon: Database, badge: null },
+
+
+          { id: 'deploy', name: 'Global Deploy', icon: Rocket, badge: '3' },
+
+
+          { id: 'security', name: 'Security Shield', icon: Shield, badge: null },
+
+
+          { id: 'analytics', name: 'Intelligence Hub', icon: BarChart3, badge: null },
+
+
+          { id: 'testing', name: 'Quality Labs', icon: TestTube, badge: '12' },
+
+
+          { id: 'projects', name: 'Project Galaxy', icon: Layers, badge: null },
+
+
+          { id: 'settings', name: 'Command Center', icon: Settings, badge: null }
+
+
+        ].map(item => (
+
+
+          <button
+
+
+            key={item.id}
+
+
+            onClick={() => setActiveTab(item.id)}
+
+
+            className={w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+
+
+              activeTab === item.id 
+
+
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg transform scale-[1.02]' 
+
+
+                : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+
+
+            }}
+
+
+          >
+
+
+            <div className="flex items-center gap-3">
+
+
+              <item.icon className={w-5 h-5 ${activeTab === item.id ? 'text-white' : 'text-gray-400 group-hover:text-purple-400'}} />
+
+
+              <span className="font-medium">{item.name}</span>
+
+
+            </div>
+
+
+            {item.badge && (
+
+
+              <span className="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full font-bold">
+
+
+                {item.badge}
+
+
+              </span>
+
+
+            )}
+
+
+          </button>
+
+
+        ))}
+
+
+      </nav>
+
+
+
+
+
+      <div className="p-4 border-t border-gray-700/50">
+
+
+        <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-xl p-4 border border-purple-500/20">
+
+
+          <div className="flex items-center gap-3 mb-3">
+
+
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+
+
+              <User className="w-5 h-5 text-white" />
+
+
+            </div>
+
+
+            <div>
+
+
+              <div className="text-sm font-semibold text-white">Sarah Chen</div>
+
+
+              <div className="text-xs text-purple-300">Enterprise Developer</div>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+
+
+            <div className="bg-black/20 rounded-lg p-2 text-center">
+
+
+              <div className="text-purple-300 font-bold">{projectStats.totalProjects}</div>
+
+
+              <div className="text-gray-400">Projects</div>
+
+
+            </div>
+
+
+            <div className="bg-black/20 rounded-lg p-2 text-center">
+
+
+              <div className="text-green-300 font-bold">{projectStats.securityScore}%</div>
+
+
+              <div className="text-gray-400">Security</div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+
+
+
+  const ChatInterface = () => (
+
+
+    <div className="flex h-full">
+
+
+      {/* Enhanced Agent Selection Panel */}
+
+
+      <div className="w-96 bg-gradient-to-b from-gray-50 to-white border-r border-gray-200 p-6">
+
+
+        <div className="flex items-center justify-between mb-6">
+
+
+          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+
+
+            <Bot className="w-6 h-6 text-purple-600" />
+
+
+            AI Agent Fleet
+
+
+          </h3>
+
+
+          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full">
+
+
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+
+
+            All Systems Active
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <div className="space-y-3">
+
+
+          {agents.map(agent => (
+
+
+            <div
+
+
+              key={agent.id}
+
+
+              onClick={() => setSelectedAgent(agent.id)}
+
+
+              className={group cursor-pointer p-4 rounded-xl border transition-all duration-200 hover:shadow-lg ${
+
+
+                selectedAgent === agent.id 
+
+
+                  ? 'border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 shadow-md' 
+
+
+                  : 'border-gray-200 hover:border-purple-200 bg-white'
+
+
+              }}
+
+
+            >
+
+
+              <div className="flex items-start gap-3">
+
+
+                <div className={w-10 h-10 ${agent.color} rounded-xl flex items-center justify-center shadow-lg}>
+
+
+                  <agent.icon className="w-5 h-5 text-white" />
+
+
+                </div>
+
+
+                <div className="flex-1 min-w-0">
+
+
+                  <div className="flex items-center gap-2 mb-1">
+
+
+                    <h4 className="font-semibold text-gray-900 text-sm">{agent.name}</h4>
+
+
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+
+
+                  </div>
+
+
+                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">{agent.description}</p>
+
+
+                  <div className="flex flex-wrap gap-1">
+
+
+                    {agent.capabilities.slice(0, 2).map(cap => (
+
+
+                      <span key={cap} className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-md">
+
+
+                        {cap}
+
+
+                      </span>
+
+
+                    ))}
+
+
+                    {agent.capabilities.length > 2 && (
+
+
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-md">
+
+
+                        +{agent.capabilities.length - 2} more
+
+
+                      </span>
+
+
+                    )}
+
+
+                  </div>
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+          ))}
+
+
+        </div>
+
+
+
+
+
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+
+
+          <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+
+
+            <Zap className="w-4 h-4 text-blue-600" />
+
+
+            Quick Actions
+
+
+          </h4>
+
+
+          <div className="space-y-2">
+
+
+            {[
+
+
+              { icon: '🌐', text: 'Generate Web App', gradient: 'from-blue-500 to-cyan-500' },
+
+
+              { icon: '📱', text: 'Build Mobile App', gradient: 'from-green-500 to-emerald-500' },
+
+
+              { icon: '🖥️', text: 'Create Desktop App', gradient: 'from-purple-500 to-pink-500' },
+
+
+              { icon: '⚡', text: 'Deploy Edge Functions', gradient: 'from-orange-500 to-red-500' }
+
+
+            ].map(action => (
+
+
+              <button 
+
+
+                key={action.text}
+
+
+                className={w-full p-3 bg-gradient-to-r ${action.gradient} hover:shadow-lg rounded-lg text-white text-sm font-medium transition-all duration-200 transform hover:scale-[1.02]}
+
+
+              >
+
+
+                <span className="mr-2">{action.icon}</span>
+
+
+                {action.text}
+
+
+              </button>
+
+
+            ))}
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* Enhanced Chat Messages Area */}
+
+
+      <div className="flex-1 flex flex-col bg-gradient-to-b from-gray-50 to-white">
+
+
+        {/* Chat Header */}
+
+
+        <div className="border-b border-gray-200 p-4 bg-white/80 backdrop-blur-sm">
+
+
+          <div className="flex items-center justify-between">
+
+
+            <div className="flex items-center gap-3">
+
+
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+
+
+                <MessageCircle className="w-4 h-4 text-white" />
+
+
+              </div>
+
+
+              <div>
+
+
+                <h2 className="font-semibold text-gray-900">AI Command Center</h2>
+
+
+                <div className="text-sm text-gray-500">
+
+
+                  {isGenerating ? (
+
+
+                    <span className="flex items-center gap-2">
+
+
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+
+
+                      Agents coordinating... ({Math.round(generationProgress)}%)
+
+
+                    </span>
+
+
+                  ) : (
+
+
+                    'Ready for your next command'
+
+
+                  )}
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+            
+
+
+            {isGenerating && (
+
+
+              <div className="flex items-center gap-3">
+
+
+                <div className="w-24 bg-gray-200 rounded-full h-2">
+
+
+                  <div 
+
+
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+
+
+                    style={{ width: ${generationProgress}% }}
+
+
+                  ></div>
+
+
+                </div>
+
+
+                <button className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm">
+
+
+                  Stop
+
+
+                </button>
+
+
+              </div>
+
+
+            )}
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* Messages Container */}
+
+
+        <div ref={scrollRef} className="flex-1 p-6 overflow-y-auto space-y-6">
+
+
+          {chatMessages.map(message => (
+
+
+            <div key={message.id} className={flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}}>
+
+
+              <div className={max-w-4xl ${message.type === 'user' ? 'order-2' : 'order-1'}}>
+
+
+                {message.agent && (
+
+
+                  <div className="flex items-center gap-2 mb-2">
+
+
+                    <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+
+
+                      <Bot className="w-3 h-3 text-white" />
+
+
+                    </div>
+
+
+                    <span className="text-sm font-medium text-gray-700">{message.agent}</span>
+
+
+                    <span className="text-xs text-gray-500">{new Date(message.timestamp).toLocaleTimeString()}</span>
+
+
+                  </div>
+
+
+                )}
+
+
+                
+
+
+                <div className={p-4 rounded-2xl shadow-sm ${
+
+
+                  message.type === 'user' 
+
+
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+
+
+                    : 'bg-white border border-gray-200 text-gray-900'
+
+
+                }}>
+
+
+                  <div className="prose prose-sm max-w-none">
+
+
+                    {message.content.split('\n').map((line, index) => {
+
+
+                      if (line.includes('✅') || line.includes('🚀') || line.includes('🛡️') || line.includes('🌍') || line.includes('💰')) {
+
+
+                        return (
+
+
+                          <div key={index} className={${index > 0 ? 'mt-2' : ''} ${message.type === 'assistant' ? 'text-gray-800' : 'text-white'}}>
+
+
+                            {line}
+
+
+                          </div>
+
+
+                        );
+
+
+                      }
+
+
+                      return line && (
+
+
+                        <p key={index} className={${index > 0 ? 'mt-1' : ''} ${message.type === 'assistant' ? 'text-gray-700' : 'text-white'}}>
+
+
+                          {line}
+
+
+                        </p>
+
+
+                      );
+
+
+                    })}
+
+
+                  </div>
+
+
+                  
+
+
+                  {message.progress && (
+
+
+                    <div className="mt-3 flex items-center gap-2">
+
+
+                      <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+
+
+                        <div 
+
+
+                          className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full transition-all duration-500"
+
+
+                          style={{ width: ${message.progress}% }}
+
+
+                        ></div>
+
+
+                      </div>
+
+
+                      <span className="text-xs text-gray-500">{message.progress}%</span>
+
+
+                    </div>
+
+
+                  )}
+
+
+                </div>
+
+
+                
+
+
+                {message.type === 'assistant' && (
+
+
+                  <div className="flex items-center gap-2 mt-2">
+
+
+                    <button className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600">
+
+
+                      <Copy className="w-4 h-4" />
+
+
+                    </button>
+
+
+                    <button className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600">
+
+
+                      <Share2 className="w-4 h-4" />
+
+
+                    </button>
+
+
+                    <button className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600">
+
+
+                      <Star className="w-4 h-4" />
+
+
+                    </button>
+
+
+                  </div>
+
+
+                )}
+
+
+              </div>
+
+
+            </div>
+
+
+          ))}
+
+
+          
+
+
+          {isGenerating && (
+
+
+            <div className="flex justify-start">
+
+
+              <div className="bg-white border border-gray-200 p-4 rounded-2xl shadow-sm">
+
+
+                <div className="flex items-center gap-3">
+
+
+                  <div className="flex space-x-1">
+
+
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+
+
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+
+
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+
+
+                  </div>
+
+
+                  <span className="text-sm text-gray-600">AI agents are coordinating your request...</span>
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+          )}
+
+
+        </div>
+
+
+
+
+
+        {/* Enhanced Message Input */}
+
+
+        <div className="border-t border-gray-200 p-4 bg-white/80 backdrop-blur-sm">
+
+
+          <div className="flex items-end gap-3">
+
+
+            <div className="flex-1">
+
+
+              <div className="relative">
+
+
+                <textarea
+
+
+                  value={currentMessage}
+
+
+                  onChange={(e) => setCurrentMessage(e.target.value)}
+
+
+                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSendMessage())}
+
+
+                  placeholder="Describe your app idea... (e.g., 'Create a full-stack e-commerce platform with AI recommendations')"
+
+
+                  className="w-full p-4 pr-16 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[60px] max-h-32"
+
+
+                  rows="2"
+
+
+                />
+
+
+                <div className="absolute right-3 bottom-3 flex items-center gap-2">
+
+
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+
+
+                    <Paperclip className="w-4 h-4" />
+
+
+                  </button>
+
+
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+
+
+                    <Image className="w-4 h-4" />
+
+
+                  </button>
+
+
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+
+
+                    <Mic className="w-4 h-4" />
+
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+
+
+              <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+
+
+                <div className="flex items-center gap-4">
+
+
+                  <span>💡 Try: "Build a social media app with AI moderation"</span>
+
+
+                </div>
+
+
+                <div>{currentMessage.length}/2000</div>
+
+
+              </div>
+
+
+            </div>
+
+
+            <button
+
+
+              onClick={handleSendMessage}
+
+
+              disabled={!currentMessage.trim() || isGenerating}
+
+
+              className="px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-2xl transition-all duration-200 transform hover:scale-105 disabled:scale-100 shadow-lg"
+
+
+            >
+
+
+              <Send className="w-5 h-5" />
+
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+
+
+
+  const CodeEditor = () => (
+
+
+    <div className="flex h-full bg-gray-50">
+
+
+      {/* Enhanced File Explorer */}
+
+
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+
+
+        <div className="p-4 border-b border-gray-100">
+
+
+          <div className="flex items-center justify-between mb-3">
+
+
+            <h3 className="font-semibold text-gray-900">Project Explorer</h3>
+
+
+            <div className="flex items-center gap-1">
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <Plus className="w-4 h-4" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <Search className="w-4 h-4" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <Filter className="w-4 h-4" />
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+          <div className="text-sm text-gray-600 bg-green-50 border border-green-200 rounded-lg p-2">
+
+
+            <div className="flex items-center gap-2">
+
+
+              <GitBranch className="w-4 h-4 text-green-600" />
+
+
+              <span>main</span>
+
+
+              <span className="text-green-600">• 23 commits ahead</span>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <div className="flex-1 overflow-auto p-2">
+
+
+          <div className="space-y-1 text-sm">
+
+
+            {[
+
+
+              { type: 'folder', name: 'src', expanded: true, level: 0 },
+
+
+              { type: 'folder', name: 'components', expanded: true, level: 1 },
+
+
+              { type: 'file', name: 'ChatInterface.tsx', active: true, level: 2, language: 'typescript' },
+
+
+              { type: 'file', name: 'AgentPanel.tsx', level: 2, language: 'typescript' },
+
+
+              { type: 'file', name: 'CodeEditor.tsx', level: 2, language: 'typescript' },
+
+
+              { type: 'folder', name: 'hooks', expanded: false, level: 1 },
+
+
+              { type: 'folder', name: 'utils', expanded: false, level: 1 },
+
+
+              { type: 'file', name: 'App.tsx', level: 1, language: 'typescript' },
+
+
+              { type: 'file', name: 'index.tsx', level: 1, language: 'typescript' },
+
+
+              { type: 'folder', name: 'public', expanded: false, level: 0 },
+
+
+              { type: 'folder', name: 'api', expanded: true, level: 0 },
+
+
+              { type: 'file', name: 'server.js', level: 1, language: 'javascript' },
+
+
+              { type: 'file', name: 'package.json', level: 0, language: 'json' },
+
+
+              { type: 'file', name: 'README.md', level: 0, language: 'markdown' }
+
+
+            ].map((item, index) => (
+
+
+              <div
+
+
+                key={index}
+
+
+                className={flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+
+
+                  item.active ? 'bg-purple-50 border border-purple-200' : 'hover:bg-gray-50'
+
+
+                }}
+
+
+                style={{ paddingLeft: ${8 + item.level * 16}px }}
+
+
+              >
+
+
+                {item.type === 'folder' ? (
+
+
+                  <Folder className={w-4 h-4 ${item.expanded ? 'text-blue-500' : 'text-gray-400'}} />
+
+
+                ) : (
+
+
+                  <div className={w-4 h-4 rounded flex items-center justify-center text-xs font-bold text-white ${
+
+
+                    item.language === 'typescript' ? 'bg-blue-500' :
+
+
+                    item.language === 'javascript' ? 'bg-yellow-500' :
+
+
+                    item.language === 'json' ? 'bg-green-500' :
+
+
+                    'bg-gray-500'
+
+
+                  }}>
+
+
+                    {item.language === 'typescript' ? 'TS' :
+
+
+                     item.language === 'javascript' ? 'JS' :
+
+
+                     item.language === 'json' ? 'JSON' : 'MD'}
+
+
+                  </div>
+
+
+                )}
+
+
+                <span className={flex-1 ${item.active ? 'font-medium text-purple-700' : 'text-gray-700'}}>
+
+
+                  {item.name}
+
+
+                </span>
+
+
+                {item.name === 'ChatInterface.tsx' && (
+
+
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+
+
+                )}
+
+
+              </div>
+
+
+            ))}
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* AI Code Assistant */}
+
+
+        <div className="p-3 border-t border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+
+
+          <div className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
+
+
+            <Bot className="w-4 h-4 text-purple-600" />
+
+
+            AI Code Assistant
+
+
+          </div>
+
+
+          <div className="space-y-2">
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
+
+
+              🔧 Optimize this component
+
+
+            </button>
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
+
+
+              🧪 Generate unit tests
+
+
+            </button>
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
+
+
+              📝 Add documentation
+
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* Enhanced Editor Area */}
+
+
+      <div className="flex-1 flex flex-col">
+
+
+        {/* Editor Tabs */}
+
+
+        <div className="border-b border-gray-200 bg-white flex items-center justify-between px-4 py-2">
+
+
+          <div className="flex items-center gap-1">
+
+
+            <div className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium flex items-center gap-2">
+
+
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+
+
+              ChatInterface.tsx
+
+
+              <button className="text-purple-500 hover:text-purple-700">
+
+
+                <X className="w-3 h-3" />
+
+
+              </button>
+
+
+            </div>
+
+
+            <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm">
+
+
+              AgentPanel.tsx
+
+
+            </button>
+
+
+          </div>
+
+
+          
+
+
+          <div className="flex items-center gap-2">
+
+
+            <div className="flex items-center gap-1 text-sm text-green-600">
+
+
+              <CheckCircle className="w-4 h-4" />
+
+
+              <span>Auto-saved</span>
+
+
+            </div>
+
+
+            <div className="w-px h-4 bg-gray-300"></div>
+
+
+            <button className="p-1 hover:bg-gray-100 rounded text-gray-600">
+
+
+              <Save className="w-4 h-4" />
+
+
+            </button>
+
+
+            <button className="p-1 hover:bg-gray-100 rounded text-gray-600">
+
+
+              <Play className="w-4 h-4 text-green-600" />
+
+
+            </button>
+
+
+            <button className="p-1 hover:bg-gray-100 rounded text-gray-600">
+
+
+              <Eye className="w-4 h-4" />
+
+
+            </button>
+
+
+            <button className="p-1 hover:bg-gray-100 rounded text-gray-600">
+
+
+              <Share2 className="w-4 h-4" />
+
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* Code Editor */}
+
+
+        <div className="flex-1 bg-gray-900 text-gray-100 font-mono text-sm overflow-auto relative">
+
+
+          <div className="flex">
+
+
+            {/* Line Numbers */}
+
+
+            <div className="bg-gray-800 text-gray-500 p-4 select-none text-right" style={{minWidth: '60px'}}>
+
+
+              {Array.from({length: 50}, (_, i) => (
+
+
+                <div key={i + 1} className="leading-6">{i + 1}</div>
+
+
+              ))}
+
+
+            </div>
+
+
+            
+
+
+            {/* Code Content */}
+
+
+            <div className="flex-1 p-4">
+
+
+              <pre className="whitespace-pre-wrap leading-6">
+
+
+{import React, { useState, useEffect } from 'react';
+
+
+import { MessageCircle, Bot, Send, Brain, Zap } from 'lucide-react';
+
+
+
+
+
+interface Message {
+
+
+  id: number;
+
+
+  type: 'user' | 'assistant';
+
+
+  content: string;
+
+
+  agent?: string;
+
+
+  timestamp: string;
+
+
+  progress?: number;
+
+
+}
+
+
+
+
+
+interface Agent {
+
+
+  id: string;
+
+
+  name: string;
+
+
+  icon: React.ComponentType;
+
+
+  color: string;
+
+
+  status: 'active' | 'busy' | 'idle';
+
+
+  capabilities: string[];
+
+
+}
+
+
+
+
+
+export const ChatInterface: React.FC = () => {
+
+
+  const [messages, setMessages] = useState<Message[]>([
+
+
+    {
+
+
+      id: 1,
+
+
+      type: 'assistant',
+
+
+      agent: 'Master Orchestrator',
+
+
+      content: 'Welcome! I coordinate our AI agents to build any application you need.',
+
+
+      timestamp: new Date().toISOString()
+
+
+    }
+
+
+  ]);
+
+
+  const [input, setInput] = useState('');
+
+
+  const [isGenerating, setIsGenerating] = useState(false);
+
+
+  const [selectedAgent, setSelectedAgent] = useState('orchestrator');
+
+
+
+
+
+  const agents: Agent[] = [
+
+
+    {
+
+
+      id: 'orchestrator',
+
+
+      name: 'Master Orchestrator',
+
+
+      icon: Brain,
+
+
+      color: 'bg-gradient-to-r from-purple-500 to-pink-500',
+
+
+      status: 'active',
+
+
+      capabilities: ['Project Planning', 'Agent Coordination', 'Quality Control']
+
+
+    },
+
+
+    {
+
+
+      id: 'codegen',
+
+
+      name: 'Code Generation Agent',
+
+
+      icon: Code,
+
+
+      color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
+
+
+      status: 'active',
+
+
+      capabilities: ['Full-Stack Development', 'Multi-Platform Support']
+
+
+    },
+
+
+    {
+
+
+      id: 'security',
+
+
+      name: 'Security Guardian',
+
+
+      icon: Shield,
+
+
+      color: 'bg-gradient-to-r from-red-500 to-rose-500',
+
+
+      status: 'active',
+
+
+      capabilities: ['OWASP Compliance', 'Penetration Testing']
+
+
+    }
+
+
+  ];
+
+
+
+
+
+  const handleSend = async () => {
+
+
+    if (!input.trim() || isGenerating) return;
+
+
+    
+
+
+    const newMessage: Message = {
+
+
+      id: Date.now(),
+
+
+      type: 'user',
+
+
+      content: input,
+
+
+      timestamp: new Date().toISOString()
+
+
+    };
+
+
+    
+
+
+    setMessages(prev => [...prev, newMessage]);
+
+
+    setInput('');
+
+
+    setIsGenerating(true);
+
+
+    
+
+
+    // AI Agent Coordination System
+
+
+    await coordinateAgents(input);
+
+
+  };
+
+
+
+
+
+  const coordinateAgents = async (userInput: string) => {
+
+
+    try {
+
+
+      // 1. Master Orchestrator analyzes requirements
+
+
+      const analysis = await orchestratorAgent.analyze(userInput);
+
+
+      
+
+
+      // 2. Create execution plan with specialized agents
+
+
+      const executionPlan = await orchestratorAgent.createPlan(analysis);
+
+
+      
+
+
+      // 3. Coordinate agents based on platform requirements
+
+
+      const tasks = await Promise.all([
+
+
+        codeGenAgent.generateApplication(executionPlan.frontend),
+
+
+        securityAgent.implementSafeguards(executionPlan.security),
+
+
+        deployAgent.setupInfrastructure(executionPlan.deployment),
+
+
+        qaAgent.createTestSuite(executionPlan.testing)
+
+
+      ]);
+
+
+      
+
+
+      // 4. Validate and integrate results
+
+
+      const result = await orchestratorAgent.validateAndIntegrate(tasks);
+
+
+      
+
+
+      // 5. Deploy to target platforms
+
+
+      await deployAgent.deployToAllPlatforms(result);
+
+
+      
+
+
+      setIsGenerating(false);
+
+
+    } catch (error) {
+
+
+      console.error('Agent coordination failed:', error);
+
+
+      setIsGenerating(false);
+
+
+    }
+
+
+  };
+
+
+
+
+
+  return (
+
+
+    <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-white">
+
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+
+
+        {messages.map(message => (
+
+
+          <MessageComponent key={message.id} message={message} />
+
+
+        ))}
+
+
+        {isGenerating && <LoadingIndicator />}
+
+
+      </div>
+
+
+      
+
+
+      <div className="border-t border-gray-200 p-4 bg-white/80 backdrop-blur-sm">
+
+
+        <div className="flex gap-3">
+
+
+          <input
+
+
+            value={input}
+
+
+            onChange={(e) => setInput(e.target.value)}
+
+
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+
+
+            placeholder="Describe your application... (e.g., 'Build a social media platform with AI moderation')"
+
+
+            className="flex-1 p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500"
+
+
+            disabled={isGenerating}
+
+
+          />
+
+
+          <button 
+
+
+            onClick={handleSend}
+
+
+            disabled={!input.trim() || isGenerating}
+
+
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg transition-all"
+
+
+          >
+
+
+            <Send className="w-5 h-5" />
+
+
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+};}
+
+
+              </pre>
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          {/* AI Code Suggestions Overlay */}
+
+
+          <div className="absolute top-4 right-4 bg-black/80 text-white p-3 rounded-lg max-w-sm">
+
+
+            <div className="flex items-center gap-2 mb-2">
+
+
+              <Bot className="w-4 h-4 text-purple-400" />
+
+
+              <span className="text-sm font-medium">AI Suggestion</span>
+
+
+            </div>
+
+
+            <div className="text-xs text-gray-300 mb-2">
+
+
+              Consider adding error boundaries for better resilience
+
+
+            </div>
+
+
+            <div className="flex gap-2">
+
+
+              <button className="px-2 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs">Apply</button>
+
+
+              <button className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs">Dismiss</button>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* Enhanced Terminal */}
+
+
+        <div className="h-40 bg-black text-green-400 border-t border-gray-700 flex flex-col">
+
+
+          <div className="flex items-center justify-between p-2 border-b border-gray-700">
+
+
+            <div className="flex items-center gap-2">
+
+
+              <Terminal className="w-4 h-4" />
+
+
+              <span className="text-sm font-medium">Integrated Terminal</span>
+
+
+            </div>
+
+
+            <div className="flex items-center gap-1">
+
+
+              <button className="p-1 hover:bg-gray-700 rounded text-gray-400">
+
+
+                <Plus className="w-3 h-3" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-700 rounded text-gray-400">
+
+
+                <Maximize2 className="w-3 h-3" />
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+          
+
+
+          <div className="flex-1 p-3 font-mono text-xs overflow-auto">
+
+
+            <div className="space-y-1">
+
+
+              <div>$ npm run dev</div>
+
+
+              <div className="text-green-300">✓ Local development server started on http://localhost:3000</div>
+
+
+              <div>$ npm run build</div>
+
+
+              <div className="text-green-300">✓ Build completed successfully in 12.3s</div>
+
+
+              <div>$ npm run test</div>
+
+
+              <div className="text-green-300">✓ All 47 tests passed</div>
+
+
+              <div className="text-blue-300">ℹ Code coverage: 94.2%</div>
+
+
+              <div className="flex items-center">
+
+
+                <span>$ </span>
+
+
+                <span className="bg-green-400 w-2 h-4 ml-1 animate-pulse"></span>
+
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* Enhanced Live Preview Panel */}
+
+
+      <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+
+
+        <div className="border-b border-gray-200 p-3">
+
+
+          <div className="flex items-center justify-between mb-3">
+
+
+            <h4 className="font-semibold text-gray-900">Live Preview</h4>
+
+
+            <div className="flex items-center gap-1">
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <RefreshCw className="w-4 h-4" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <ExternalLink className="w-4 h-4" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <Maximize2 className="w-4 h-4" />
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+          
+
+
+          <div className="flex items-center gap-2 text-sm">
+
+
+            <div className="flex items-center gap-1 text-green-600">
+
+
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+
+
+              <span>Live</span>
+
+
+            </div>
+
+
+            <div className="text-gray-500">•</div>
+
+
+            <div className="text-gray-600">localhost:3000</div>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <div className="flex-1 bg-gray-100 flex flex-col">
+
+
+          {/* Device Mockup Controls */}
+
+
+          <div className="p-3 bg-white border-b border-gray-200">
+
+
+            <div className="flex items-center gap-2">
+
+
+              <button className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium">
+
+
+                Desktop
+
+
+              </button>
+
+
+              <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-sm">
+
+
+                Tablet
+
+
+              </button>
+
+
+              <button className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-sm">
+
+
+                Mobile
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          {/* Preview Frame */}
+
+
+          <div className="flex-1 p-4">
+
+
+            <div className="bg-white rounded-lg shadow-lg h-full border border-gray-200 overflow-hidden">
+
+
+              <div className="bg-gray-100 p-3 border-b border-gray-200">
+
+
+                <div className="flex items-center gap-2">
+
+
+                  <div className="flex gap-1">
+
+
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+
+
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+
+
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+
+
+                  </div>
+
+
+                  <div className="flex-1 text-center text-sm text-gray-600">
+
+
+                    localhost:3000
+
+
+                  </div>
+
+
+                </div>
+
+
+              </div>
+
+
+              
+
+
+              <div className="p-6 h-full bg-gradient-to-br from-purple-50 to-pink-50">
+
+
+                <div className="text-center">
+
+
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl mx-auto mb-4 flex items-center justify-center">
+
+
+                    <MessageCircle className="w-8 h-8 text-white" />
+
+
+                  </div>
+
+
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">AI Chat Interface</h2>
+
+
+                  <p className="text-gray-600 mb-6">Real-time preview of your application</p>
+
+
+                  
+
+
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-left">
+
+
+                    <div className="flex items-center gap-3 mb-3">
+
+
+                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+
+
+                        <Bot className="w-4 h-4 text-white" />
+
+
+                      </div>
+
+
+                      <div>
+
+
+                        <div className="font-medium text-sm">Master Orchestrator</div>
+
+
+                        <div className="text-xs text-gray-500">Just now</div>
+
+
+                      </div>
+
+
+                    </div>
+
+
+                    <div className="text-sm text-gray-700">
+
+
+                      Your application is being generated with enterprise-grade security and multi-platform deployment.
+
+
+                    </div>
+
+
+                  </div>
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* Performance Metrics */}
+
+
+        <div className="p-3 border-t border-gray-200 bg-white">
+
+
+          <div className="text-sm font-medium text-gray-900 mb-2">Performance</div>
+
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+
+
+            <div className="bg-green-50 p-2 rounded text-center">
+
+
+              <div className="font-bold text-green-700">98</div>
+
+
+              <div className="text-green-600">Lighthouse</div>
+
+
+            </div>
+
+
+            <div className="bg-blue-50 p-2 rounded text-center">
+
+
+              <div className="font-bold text-blue-700">127ms</div>
+
+
+              <div className="text-blue-600">Load Time</div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+
+
+
+  // Enhanced Database Designer with visual schema builder
+
+
+  const DatabaseDesigner = () => (
+
+
+    <div className="flex h-full bg-gray-50">
+
+
+      {/* Schema Explorer */}
+
+
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+
+
+        <div className="p-4 border-b border-gray-100">
+
+
+          <div className="flex items-center justify-between mb-3">
+
+
+            <h3 className="font-semibold text-gray-900">Database Schema</h3>
+
+
+            <div className="flex items-center gap-1">
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <Plus className="w-4 h-4" />
+
+
+              </button>
+
+
+              <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                <RefreshCw className="w-4 h-4" />
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+          
+
+
+          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+
+
+            <CheckCircle className="w-4 h-4" />
+
+
+            <span>Connected to PostgreSQL</span>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <div className="flex-1 overflow-auto p-3">
+
+
+          <div className="space-y-3">
+
+
+            {[
+
+
+              { name: 'users', fields: 8, relations: 3, status: 'optimized' },
+
+
+              { name: 'posts', fields: 12, relations: 2, status: 'optimized' },
+
+
+              { name: 'comments', fields: 6, relations: 2, status: 'warning' },
+
+
+              { name: 'likes', fields: 4, relations: 2, status: 'optimized' },
+
+
+              { name: 'messages', fields: 7, relations: 2, status: 'optimized' },
+
+
+              { name: 'media_files', fields: 9, relations: 1, status: 'new' }
+
+
+            ].map(table => (
+
+
+              <div key={table.name} className="p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 cursor-pointer transition-all">
+
+
+                <div className="flex items-center justify-between mb-2">
+
+
+                  <div className="flex items-center gap-2">
+
+
+                    <Database className="w-5 h-5 text-blue-500" />
+
+
+                    <span className="font-semibold text-gray-900">{table.name}</span>
+
+
+                  </div>
+
+
+                  <div className={w-2 h-2 rounded-full ${
+
+
+                    table.status === 'optimized' ? 'bg-green-500' :
+
+
+                    table.status === 'warning' ? 'bg-yellow-500' :
+
+
+                    'bg-blue-500'
+
+
+                  }}></div>
+
+
+                </div>
+
+
+                <div className="text-sm text-gray-600 space-y-1">
+
+
+                  <div>{table.fields} fields • {table.relations} relations</div>
+
+
+                  <div className="flex items-center gap-2">
+
+
+                    <span className={px-2 py-0.5 rounded text-xs ${
+
+
+                      table.status === 'optimized' ? 'bg-green-100 text-green-700' :
+
+
+                      table.status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+
+
+                      'bg-blue-100 text-blue-700'
+
+
+                    }}>
+
+
+                      {table.status}
+
+
+                    </span>
+
+
+                  </div>
+
+
+                </div>
+
+
+              </div>
+
+
+            ))}
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* AI Data Assistant */}
+
+
+        <div className="p-3 border-t border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
+
+
+          <div className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
+
+
+            <Brain className="w-4 h-4 text-blue-600" />
+
+
+            Data AI Assistant
+
+
+          </div>
+
+
+          <div className="space-y-2">
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+
+
+              🔍 Optimize table indexes
+
+
+            </button>
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+
+
+              ⚡ Suggest query improvements
+
+
+            </button>
+
+
+            <button className="w-full text-left p-2 bg-white hover:bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+
+
+              🔗 Auto-detect relationships
+
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* Visual Schema Designer */}
+
+
+      <div className="flex-1 flex flex-col">
+
+
+        <div className="border-b border-gray-200 p-4 bg-white">
+
+
+          <div className="flex items-center justify-between">
+
+
+            <h3 className="text-lg font-semibold text-gray-900">Visual Schema Designer</h3>
+
+
+            <div className="flex items-center gap-2">
+
+
+              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium">
+
+
+                Add Table
+
+
+              </button>
+
+
+              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium">
+
+
+                Generate API
+
+
+              </button>
+
+
+              <button className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium">
+
+
+                Deploy Schema
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+        
+
+
+        <div className="flex-1 p-6 overflow-auto bg-gray-50">
+
+
+          <div className="grid grid-cols-3 gap-6 h-full">
+
+
+            {/* Users Table */}
+
+
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 h-fit">
+
+
+              <div className="flex items-center justify-between mb-4">
+
+
+                <h4 className="font-bold text-blue-900 flex items-center gap-2">
+
+
+                  <Database className="w-5 h-5" />
+
+
+                  users
+
+
+                </h4>
+
+
+                <div className="flex items-center gap-1">
+
+
+                  <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                    <Settings className="w-4 h-4" />
+
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+
+
+              <div className="space-y-2 text-sm">
+
+
+                {[
+
+
+                  { name: 'id', type: 'UUID', constraint: 'PK', icon: '🔑' },
+
+
+                  { name: 'email', type: 'VARCHAR(255)', constraint: 'UNIQUE', icon: '📧' },
+
+
+                  { name: 'username', type: 'VARCHAR(50)', constraint: 'UNIQUE', icon: '👤' },
+
+
+                  { name: 'password_hash', type: 'VARCHAR(255)', constraint: 'NOT NULL', icon: '🔒' },
+
+
+                  { name: 'first_name', type: 'VARCHAR(100)', constraint: '', icon: '👤' },
+
+
+                  { name: 'last_name', type: 'VARCHAR(100)', constraint: '', icon: '👤' },
+
+
+                  { name: 'avatar_url', type: 'TEXT', constraint: '', icon: '🖼️' },
+
+
+                  { name: 'created_at', type: 'TIMESTAMP', constraint: 'DEFAULT NOW()', icon: '⏰' }
+
+
+                ].map(field => (
+
+
+                  <div key={field.name} className="flex items-center justify-between p-2 hover:bg-blue-50 rounded">
+
+
+                    <div className="flex items-center gap-2">
+
+
+                      <span>{field.icon}</span>
+
+
+                      <span className="font-medium">{field.name}</span>
+
+
+                    </div>
+
+
+                    <div className="text-right">
+
+
+                      <div className="text-gray-600 text-xs">{field.type}</div>
+
+
+                      {field.constraint && (
+
+
+                        <div className="text-blue-600 text-xs font-medium">{field.constraint}</div>
+
+
+                      )}
+
+
+                    </div>
+
+
+                  </div>
+
+
+                ))}
+
+
+              </div>
+
+
+            </div>
+
+
+
+
+
+            {/* Posts Table */}
+
+
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 h-fit">
+
+
+              <div className="flex items-center justify-between mb-4">
+
+
+                <h4 className="font-bold text-green-900 flex items-center gap-2">
+
+
+                  <Database className="w-5 h-5" />
+
+
+                  posts
+
+
+                </h4>
+
+
+                <div className="flex items-center gap-1">
+
+
+                  <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                    <Settings className="w-4 h-4" />
+
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+
+
+              <div className="space-y-2 text-sm">
+
+
+                {[
+
+
+                  { name: 'id', type: 'UUID', constraint: 'PK', icon: '🔑' },
+
+
+                  { name: 'user_id', type: 'UUID', constraint: 'FK → users.id', icon: '👤' },
+
+
+                  { name: 'title', type: 'VARCHAR(255)', constraint: 'NOT NULL', icon: '📝' },
+
+
+                  { name: 'content', type: 'TEXT', constraint: '', icon: '📄' },
+
+
+                  { name: 'media_urls', type: 'JSON', constraint: '', icon: '📱' },
+
+
+                  { name: 'likes_count', type: 'INTEGER', constraint: 'DEFAULT 0', icon: '❤️' },
+
+
+                  { name: 'comments_count', type: 'INTEGER', constraint: 'DEFAULT 0', icon: '💬' },
+
+
+                  { name: 'is_published', type: 'BOOLEAN', constraint: 'DEFAULT true', icon: '🌐' },
+
+
+                  { name: 'created_at', type: 'TIMESTAMP', constraint: 'DEFAULT NOW()', icon: '⏰' },
+
+
+                  { name: 'updated_at', type: 'TIMESTAMP', constraint: 'DEFAULT NOW()', icon: '🔄' }
+
+
+                ].map(field => (
+
+
+                  <div key={field.name} className="flex items-center justify-between p-2 hover:bg-green-50 rounded">
+
+
+                    <div className="flex items-center gap-2">
+
+
+                      <span>{field.icon}</span>
+
+
+                      <span className="font-medium">{field.name}</span>
+
+
+                    </div>
+
+
+                    <div className="text-right">
+
+
+                      <div className="text-gray-600 text-xs">{field.type}</div>
+
+
+                      {field.constraint && (
+
+
+                        <div className="text-green-600 text-xs font-medium">{field.constraint}</div>
+
+
+                      )}
+
+
+                    </div>
+
+
+                  </div>
+
+
+                ))}
+
+
+              </div>
+
+
+            </div>
+
+
+
+
+
+            {/* Comments Table */}
+
+
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 h-fit">
+
+
+              <div className="flex items-center justify-between mb-4">
+
+
+                <h4 className="font-bold text-purple-900 flex items-center gap-2">
+
+
+                  <Database className="w-5 h-5" />
+
+
+                  comments
+
+
+                </h4>
+
+
+                <div className="flex items-center gap-1">
+
+
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+
+
+                  <button className="p-1 hover:bg-gray-100 rounded text-gray-500">
+
+
+                    <Settings className="w-4 h-4" />
+
+
+                  </button>
+
+
+                </div>
+
+
+              </div>
+
+
+              <div className="space-y-2 text-sm">
+
+
+                {[
+
+
+                  { name: 'id', type: 'UUID', constraint: 'PK', icon: '🔑' },
+
+
+                  { name: 'post_id', type: 'UUID', constraint: 'FK → posts.id', icon: '📝' },
+
+
+                  { name: 'user_id', type: 'UUID', constraint: 'FK → users.id', icon: '👤' },
+
+
+                  { name: 'parent_id', type: 'UUID', constraint: 'FK → comments.id', icon: '🔗' },
+
+
+                  { name: 'content', type: 'TEXT', constraint: 'NOT NULL', icon: '💬' },
+
+
+                  { name: 'likes_count', type: 'INTEGER', constraint: 'DEFAULT 0', icon: '❤️' },
+
+
+                  { name: 'created_at', type: 'TIMESTAMP', constraint: 'DEFAULT NOW()', icon: '⏰' }
+
+
+                ].map(field => (
+
+
+                  <div key={field.name} className="flex items-center justify-between p-2 hover:bg-purple-50 rounded">
+
+
+                    <div className="flex items-center gap-2">
+
+
+                      <span>{field.icon}</span>
+
+
+                      <span className="font-medium">{field.name}</span>
+
+
+                    </div>
+
+
+                    <div className="text-right">
+
+
+                      <div className="text-gray-600 text-xs">{field.type}</div>
+
+
+                      {field.constraint && (
+
+
+                        <div className="text-purple-600 text-xs font-medium">{field.constraint}</div>
+
+
+                      )}
+
+
+                    </div>
+
+
+                  </div>
+
+
+                ))}
+
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          {/* Relationship Lines - SVG Overlay */}
+
+
+          <svg className="absolute inset-0 pointer-events-none" style={{zIndex: 1}}>
+
+
+            {/* User to Posts relationship */}
+
+
+            <line x1="320" y1="150" x2="380" y2="180" stroke="#10b981" strokeWidth="2" markerEnd="url(#arrowhead)" />
+
+
+            {/* User to Comments relationship */}
+
+
+            <line x1="320" y1="200" x2="760" y2="180" stroke="#8b5cf6" strokeWidth="2" markerEnd="url(#arrowhead)" />
+
+
+            {/* Post to Comments relationship */}
+
+
+            <line x1="700" y1="250" x2="760" y2="220" stroke="#f59e0b" strokeWidth="2" markerEnd="url(#arrowhead)" />
+
+
+            
+
+
+            <defs>
+
+
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+
+
+                <polygon points="0 0, 10 3.5, 0 7" fill="#374151" />
+
+
+              </marker>
+
+
+            </defs>
+
+
+          </svg>
+
+
+        </div>
+
+
+      </div>
+
+
+
+
+
+      {/* Enhanced Query Builder */}
+
+
+      <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+
+
+        <div className="p-4 border-b border-gray-100">
+
+
+          <h3 className="font-semibold text-gray-900 mb-3">Smart Query Builder</h3>
+
+
+          <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
+
+
+            <Zap className="w-4 h-4" />
+
+
+            <span>AI-Powered Optimization</span>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        <div className="flex-1 overflow-auto p-4 space-y-4">
+
+
+          <div>
+
+
+            <label className="text-sm font-medium text-gray-700 mb-2 block">Table</label>
+
+
+            <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+
+
+              <option>users</option>
+
+
+              <option>posts</option>
+
+
+              <option>comments</option>
+
+
+              <option>likes</option>
+
+
+            </select>
+
+
+          </div>
+
+
+
+
+
+          <div>
+
+
+            <label className="text-sm font-medium text-gray-700 mb-2 block">Operation</label>
+
+
+            <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+
+
+              <option>SELECT</option>
+
+
+              <option>INSERT</option>
+
+
+              <option>UPDATE</option>
+
+
+              <option>DELETE</option>
+
+
+            </select>
+
+
+          </div>
+
+
+
+
+
+          <div>
+
+
+            <label className="text-sm font-medium text-gray-700 mb-2 block">Fields</label>
+
+
+            <div className="space-y-2 max-h-32 overflow-auto border border-gray-200 rounded-lg p-2">
+
+
+              {['id', 'email', 'username', 'first_name', 'last_name', 'created_at'].map(field => (
+
+
+                <label key={field} className="flex items-center gap-2">
+
+
+                  <input type="checkbox" defaultChecked className="text-purple-600" />
+
+
+                  <span className="text-sm text-gray-700">{field}</span>
+
+
+                </label>
+
+
+              ))}
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          <div>
+
+
+            <label className="text-sm font-medium text-gray-700 mb-2 block">Conditions</label>
+
+
+            <div className="space-y-2">
+
+
+              <input 
+
+
+                type="text" 
+
+
+                placeholder="WHERE condition..."
+
+
+                className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-purple-500"
+
+
+              />
+
+
+              <input 
+
+
+                type="text" 
+
+
+                placeholder="ORDER BY..."
+
+
+                className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-purple-500"
+
+
+              />
+
+
+              <input 
+
+
+                type="text" 
+
+
+                placeholder="LIMIT..."
+
+
+                className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-purple-500"
+
+
+              />
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          {/* Generated Query Preview */}
+
+
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+
+
+            <div className="text-sm font-medium text-gray-700 mb-2">Generated Query</div>
+
+
+            <div className="bg-gray-900 text-green-400 p-3 rounded font-mono text-xs">
+
+
+              SELECT id, email, username, first_name, last_name, created_at<br/>
+
+
+              FROM users<br/>
+
+
+              WHERE created_at &gt; '2024-01-01'<br/>
+
+
+              ORDER BY created_at DESC<br/>
+
+
+              LIMIT 50;
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          <div className="space-y-2">
+
+
+            <button className="w-full p-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium">
+
+
+              Execute Query
+
+
+            </button>
+
+
+            <button className="w-full p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
+
+
+              Optimize Query
+
+
+            </button>
+
+
+            <button className="w-full p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm">
+
+
+              Explain Plan
+
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+        {/* Query Results Preview */}
+
+
+        <div className="border-t border-gray-100 p-4">
+
+
+          <div className="text-sm font-medium text-gray-700 mb-2">Query Results (3 rows)</div>
+
+
+          <div className="bg-gray-50 rounded-lg p-3 text-xs">
+
+
+            <div className="grid grid-cols-2 gap-2 font-mono">
+
+
+              <div className="font-semibold">id</div>
+
+
+              <div className="font-semibold">username</div>
+
+
+              <div>usr_001</div>
+
+
+              <div>sarah.chen</div>
+
+
+              <div>usr_002</div>
+
+
+              <div>mike.dev</div>
+
+
+              <div>usr_003</div>
+
+
+              <div>alex.ui</div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+
+
+
+  // Rest of the component methods...
+
+
+  const renderTabContent = () => {
+
+
+    switch (activeTab) {
+
+
+      case 'chat': return <ChatInterface />;
+
+
+      case 'editor': return <CodeEditor />;
+
+
+      case 'database': return <DatabaseDesigner />;
+
+
+      case 'security': return (
+
+
+        <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
+
+
+          <div className="flex items-center justify-between mb-8">
+
+
+            <div>
+
+
+              <h2 className="text-3xl font-bold text-gray-900">Security Command Center</h2>
+
+
+              <p className="text-gray-600 mt-2">Enterprise-grade security monitoring and compliance</p>
+
+
+            </div>
+
+
+            <div className="flex items-center gap-4">
+
+
+              <div className="text-center">
+
+
+                <div className="text-3xl font-bold text-green-600">{projectStats.securityScore}%</div>
+
+
+                <div className="text-sm text-gray-500">Security Score</div>
+
+
+              </div>
+
+
+              <button className="px-6 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-medium shadow-lg">
+
+
+                Run Full Security Scan
+
+
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          <div className="grid grid-cols-4 gap-6 mb-8">
+
+
+            {securityChecks.map(check => (
+
+
+              <div key={check.name} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+
+
+                <div className="flex items-center justify-between mb-4">
+
+
+                  <h3 className="font-semibold text-gray-900">{check.name}</h3>
+
+
+                  {check.status === 'passed' ? (
+
+
+                    <CheckCircle className="w-6 h-6 text-green-500" />
+
+
+                  ) : (
+
+
+                    <AlertTriangle className="w-6 h-6 text-yellow-500" />
+
+
+                  )}
+
+
+                </div>
+
+
+                <div className="text-3xl font-bold mb-2 text-gray-900">{check.score}%</div>
+
+
+                <div className={text-sm mb-2 ${
+
+
+                  check.status === 'passed' ? 'text-green-600' : 'text-yellow-600'
+
+
+                }}>
+
+
+                  {check.status === 'passed' ? 'All checks passed' : 'Review required'}
+
+
+                </div>
+
+
+                <div className="text-xs text-gray-500">Last check: {check.lastCheck}</div>
+
+
+              </div>
+
+
+            ))}
+
+
+          </div>
+
+
+
+
+
+          <div className="grid grid-cols-2 gap-8">
+
+
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+
+
+              <h3 className="font-semibold text-xl text-gray-900 mb-6 flex items-center gap-3">
+
+
+                <Shield className="w-6 h-6 text-blue-600" />
+
+
+                Active Security Safeguards
+
+
+              </h3>
+
+
+              <div className="space-y-4">
+
+
+                {[
+
+
+                  { name: 'Code Execution Sandboxing', status: 'active', description: 'Docker isolation with resource limits' },
+
+
+                  { name: 'AI Agent Constraints', status: 'active', description: 'Behavioral limits and validation' },
+
+
+                  { name: 'Input Sanitization', status: 'active', description: 'XSS and injection protection' },
+
+
+                  { name: 'Access Control Matrix', status: 'active', description: 'Role-based permissions' },
+
+
+                  { name: 'Data Encryption', status: 'active', description: 'AES-256 at rest and in transit' },
+
+
+                  { name: 'Compliance Monitoring', status: 'active', description: 'GDPR, HIPAA, SOC2 compliance' }
+
+
+                ].map(safeguard => (
+
+
+                  <div key={safeguard.name} className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+
+
+                    <div className="flex-1">
+
+
+                      <div className="font-medium text-green-900">{safeguard.name}</div>
+
+
+                      <div className="text-sm text-green-700">{safeguard.description}</div>
+
+
+                    </div>
+
+
+                    <div className="flex items-center gap-2">
+
+
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+
+
+                      <span className="text-sm font-medium text-green-700">Active</span>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                ))}
+
+
+              </div>
+
+
+            </div>
+
+
+
+
+
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+
+
+              <h3 className="font-semibold text-xl text-gray-900 mb-6 flex items-center gap-3">
+
+
+                <Activity className="w-6 h-6 text-purple-600" />
+
+
+                Real-time Threat Monitoring
+
+
+              </h3>
+
+
+              <div className="space-y-6">
+
+
+                {projectMetrics.map(metric => (
+
+
+                  <div key={metric.name}>
+
+
+                    <div className="flex justify-between items-center mb-2">
+
+
+                      <span className="text-sm font-medium text-gray-700">{metric.name}</span>
+
+
+                      <div className="flex items-center gap-2">
+
+
+                        <span className="text-sm font-bold text-gray-900">{metric.value}</span>
+
+
+                        <div className={w-3 h-3 rounded-full ${
+
+
+                          metric.trend === 'up' ? 'bg-green-500' :
+
+
+                          metric.trend === 'down' ? 'bg-red-500' :
+
+
+                          'bg-gray-400'
+
+
+                        }}></div>
+
+
+                      </div>
+
+
+                    </div>
+
+
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+
+
+                      <div className={h-2 rounded-full transition-all duration-500 ${
+
+
+                        metric.good ? 'bg-green-500' : 'bg-red-500'
+
+
+                      }} style={{width: metric.name === 'Error Rate' ? '2%' : '75%'}}></div>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                ))}
+
+
+                
+
+
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+
+
+                  <div className="flex items-center gap-2 mb-2">
+
+
+                    <Bell className="w-4 h-4 text-blue-600" />
+
+
+                    <span className="font-medium text-blue-900">Security Alert</span>
+
+
+                  </div>
+
+
+                  <div className="text-sm text-blue-800">
+
+
+                    Unusual API access pattern detected from IP 192.168.1.100 - automatically blocked
+
+
+                  </div>
+
+
+                  <div className="text-xs text-blue-600 mt-1">2 minutes ago</div>
+
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      );
+
+
+      case 'deploy': return (
+
+
+        <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
+
+
+          <div className="flex items-center justify-between mb-8">
+
+
+            <div>
+
+
+              <h2 className="text-3xl font-bold text-gray-900">Global Deployment Center</h2>
+
+
+              <p className="text-gray-600 mt-2">Multi-platform deployment with intelligent optimization</p>
+
+
+            </div>
+
+
+            <button className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-medium shadow-lg flex items-center gap-2">
+
+
+              <Rocket className="w-5 h-5" />
+
+
+              Deploy to All Platforms
+
+
+            </button>
+
+
+          </div>
+
+
+
+
+
+          <div className="grid grid-cols-2 gap-8 mb-8">
+
+
+            {platforms.map(platform => (
+
+
+              <div key={platform.id} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all">
+
+
+                <div className="flex items-center justify-between mb-4">
+
+
+                  <div className="flex items-center gap-4">
+
+
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+
+
+                      <platform.icon className="w-6 h-6 text-white" />
+
+
+                    </div>
+
+
+                    <div>
+
+
+                      <h3 className="font-bold text-gray-900">{platform.name}</h3>
+
+
+                      <div className="text-sm text-gray-600">{platform.tech}</div>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                  <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+
+
+                    {platform.status}
+
+
+                  </div>
+
+
+                </div>
+
+
+                
+
+
+                <div className="space-y-3">
+
+
+                  <div>
+
+
+                    <div className="text-sm font-medium text-gray-700 mb-2">Deployment Targets</div>
+
+
+                    <div className="flex flex-wrap gap-1">
+
+
+                      {platform.deployment.map(target => (
+
+
+                        <span key={target} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+
+
+                          {target}
+
+
+                        </span>
+
+
+                      ))}
+
+
+                    </div>
+
+
+                  </div>
+
+
+                  
+
+
+                  <div>
+
+
+                    <div className="text-sm font-medium text-gray-700 mb-2">Platform Features</div>
+
+
+                    <div className="flex flex-wrap gap-1">
+
+
+                      {platform.features.map(feature => (
+
+
+                        <span key={feature} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+
+
+                          {feature}
+
+
+                        </span>
+
+
+                      ))}
+
+
+                    </div>
+
+
+                  </div>
+
+
+                </div>
+
+
+
+
+
+                <button className="w-full mt-4 p-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-medium transition-all">
+
+
+                  Configure Deployment
+
+
+                </button>
+
+
+              </div>
+
+
+            ))}
+
+
+          </div>
+
+
+
+
+
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+
+
+            <h3 className="font-semibold text-xl text-gray-900 mb-6">Active Deployments</h3>
+
+
+            <div className="space-y-4">
+
+
+              {deploymentTargets.map(target => (
+
+
+                <div key={target.name} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:shadow-sm transition-shadow">
+
+
+                  <div className="flex items-center gap-4">
+
+
+                    <div className={w-4 h-4 rounded-full ${
+
+
+                      target.status === 'deployed' ? 'bg-green-500' : 
+
+
+                      target.status === 'review' ? 'bg-yellow-500' :
+
+
+                      target.status === 'configuring' ? 'bg-blue-500' : 'bg-gray-300'
+
+
+                    }}></div>
+
+
+                    <div>
+
+
+                      <div className="font-semibold text-gray-900">{target.name}</div>
+
+
+                      <div className="text-sm text-gray-600">{target.url}</div>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                  
+
+
+                  <div className="flex items-center gap-6 text-sm">
+
+
+                    <div className="text-center">
+
+
+                      <div className="font-bold text-gray-900">{target.users}</div>
+
+
+                      <div className="text-gray-500">Users</div>
+
+
+                    </div>
+
+
+                    <div className="text-center">
+
+
+                      <div className="font-bold text-gray-900">{target.uptime}</div>
+
+
+                      <div className="text-gray-500">Uptime</div>
+
+
+                    </div>
+
+
+                    <div className="text-center">
+
+
+                      <div className="font-bold text-green-600">{target.cost}</div>
+
+
+                      <div className="text-gray-500">Cost</div>
+
+
+                    </div>
+
+
+                    <div className="text-center">
+
+
+                      <div className={px-3 py-1 rounded-full text-xs font-medium ${
+
+
+                        target.status === 'deployed' ? 'bg-green-100 text-green-700' :
+
+
+                        target.status === 'review' ? 'bg-yellow-100 text-yellow-700' :
+
+
+                        target.status === 'configuring' ? 'bg-blue-100 text-blue-700' :
+
+
+                        'bg-gray-100 text-gray-700'
+
+
+                      }}>
+
+
+                        {target.status}
+
+
+                      </div>
+
+
+                    </div>
+
+
+                  </div>
+
+
+                </div>
+
+
+              ))}
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      );
+
+
+      case 'analytics': return (
+
+
+        <div className="p-6">
+
+
+          <h2 className="text-2xl font-bold mb-6">Intelligence Hub</h2>
+
+
+          <div className="grid grid-cols-4 gap-6 mb-8">
+
+
+            {Object.entries(projectStats).map(([key, value]) => (
+
+
+              <div key={key} className="bg-white rounded-lg border p-6">
+
+
+                <div className="flex items-center justify-between">
+
+
+                  <div>
+
+
+                    <div className="text-2xl font-bold text-blue-600">{value}</div>
+
+
+                    <div className="text-sm text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1')}</div>
+
+
+                  </div>
+
+
+                  <TrendingUp className="w-8 h-8 text-green-500" />
+
+
+                </div>
+
+
+              </div>
+
+
+            ))}
+
+
+          </div>
+
+
+        </div>
+
+
+      );
+
+
+      default: return (
+
+
+        <div className="p-6">
+
+
+          <h2 className="text-2xl font-bold mb-4">
+
+
+            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+
+
+          </h2>
+
+
+          <div className="bg-white rounded-lg border p-6">
+
+
+            <div className="text-center py-12">
+
+
+              <div className="text-gray-400 mb-4">
+
+
+                <Settings className="w-12 h-12 mx-auto" />
+
+
+              </div>
+
+
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+
+
+                Coming Soon
+
+
+              </h3>
+
+
+              <p className="text-gray-600">
+
+
+                This feature is being developed by our AI agents.
+
+
+              </p>
+
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+
+      );
+
+
+    }
+
+
+  };
+
+
+
+
+
+  return (
+
+
+    <div className="h-screen bg-gray-100 flex overflow-hidden">
+
+
+      <NavigationSidebar />
+
+
+      <div className="flex-1 overflow-hidden">
+
+
+        {renderTabContent()}
+
+
+      </div>
+
+
+    </div>
+
+
+  );
+
+
+};
+
+
+
+
+
+export default UniversalAppGenerator;
