@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { ExternalLink, Play, Globe, Smartphone, Monitor } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -62,6 +63,7 @@ const getProgressForStatus = (status: string) => {
 };
 
 export function RecentProjects() {
+  const [, setLocation] = useLocation();
   const { data: projects = [] } = useQuery({
     queryKey: ['/api/projects'],
   });
@@ -95,7 +97,8 @@ export function RecentProjects() {
               return (
                 <div 
                   key={project.id}
-                  className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-indigo-300 transition-colors"
+                  className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-indigo-300 transition-colors cursor-pointer"
+                  onClick={() => setLocation(`/project/${project.id}`)}
                 >
                   <div className="flex items-center space-x-4">
                     <div className={`w-10 h-10 bg-gradient-to-r ${platformColor} rounded-lg flex items-center justify-center`}>
@@ -127,14 +130,40 @@ export function RecentProjects() {
                        project.status === 'error' ? 'Error' : 'Unknown'}
                     </Badge>
                     {project.status === 'completed' ? (
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log('Opening external preview...');
+                          // Would open deployed URL in real implementation
+                        }}
+                      >
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                     ) : project.status === 'generating' ? (
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(`/project/${project.id}`);
+                        }}
+                      >
                         <Play className="w-4 h-4" />
                       </Button>
-                    ) : null}
+                    ) : (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(`/project/${project.id}`);
+                        }}
+                      >
+                        <Play className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               );

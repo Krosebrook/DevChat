@@ -276,6 +276,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 // Simulate asynchronous project generation
 async function generateProjectAsync(projectId: string, tasks: any[], broadcast: (message: WebSocketMessage) => void) {
   try {
+    const project = await storage.getProject(projectId);
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
     for (let i = 0; i < tasks.length; i++) {
       const task = tasks[i];
       
@@ -283,6 +288,7 @@ async function generateProjectAsync(projectId: string, tasks: any[], broadcast: 
       await storage.updateGenerationTask(task.id, {
         status: 'running',
         message: `${task.agentName} is processing...`,
+        progress: 0,
       });
 
       broadcast({
@@ -290,29 +296,120 @@ async function generateProjectAsync(projectId: string, tasks: any[], broadcast: 
         data: { taskId: task.id, progress: 0, message: `${task.agentName} started` }
       });
 
-      // Simulate progress updates
-      for (let progress = 0; progress <= 100; progress += 20) {
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate work
+      // Different progress patterns for different agents
+      let progressSteps: Array<{progress: number, message: string, delay: number}> = [];
+      
+      switch (task.agentName) {
+        case 'Master Orchestrator':
+          progressSteps = [
+            { progress: 25, message: 'Analyzing project requirements...', delay: 600 },
+            { progress: 50, message: 'Setting up project structure...', delay: 400 },
+            { progress: 75, message: 'Initializing framework configuration...', delay: 500 },
+            { progress: 100, message: 'Project orchestration complete', delay: 300 }
+          ];
+          break;
+        case 'Code Generation Agent':
+          progressSteps = [
+            { progress: 20, message: 'Generating core application files...', delay: 800 },
+            { progress: 40, message: 'Creating component structure...', delay: 700 },
+            { progress: 60, message: 'Implementing feature modules...', delay: 900 },
+            { progress: 80, message: 'Configuring build system...', delay: 600 },
+            { progress: 100, message: 'Code generation complete', delay: 400 }
+          ];
+          
+          // Actually generate code for this agent
+          if (task.agentName === 'Code Generation Agent') {
+            try {
+              // Dynamic import to avoid circular dependencies
+              const { projectGenerator } = await import('./generators/index');
+              const generationResult = await projectGenerator.generateProject(project);
+              
+              // Add log about successful generation
+              const logs = await storage.getGenerationTask(task.id);
+              if (logs) {
+                const newLogs = [...(logs.logs || []), 
+                  `[${new Date().toLocaleTimeString()}] Generated ${generationResult.files.length} files successfully`
+                ];
+                await storage.updateGenerationTask(task.id, { 
+                  logs: newLogs,
+                  metadata: {
+                    filesGenerated: generationResult.files.length,
+                    framework: project.framework,
+                    features: project.features
+                  }
+                });
+                
+                broadcast({
+                  type: 'log_update',
+                  data: { taskId: task.id, log: `Generated ${generationResult.files.length} files for ${project.framework}` }
+                });
+              }
+            } catch (error) {
+              console.error('Code generation failed:', error);
+              await storage.updateGenerationTask(task.id, { 
+                status: 'error', 
+                message: `Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+              });
+              broadcast({
+                type: 'task_error',
+                data: { taskId: task.id, error: error instanceof Error ? error.message : 'Unknown error' }
+              });
+              continue;
+            }
+          }
+          break;
+        case 'Security Guardian':
+          progressSteps = [
+            { progress: 30, message: 'Scanning for security vulnerabilities...', delay: 700 },
+            { progress: 60, message: 'Applying security best practices...', delay: 800 },
+            { progress: 100, message: 'Security audit complete', delay: 500 }
+          ];
+          break;
+        case 'Quality Engineer':
+          progressSteps = [
+            { progress: 25, message: 'Setting up testing framework...', delay: 600 },
+            { progress: 50, message: 'Generating test cases...', delay: 700 },
+            { progress: 75, message: 'Running quality checks...', delay: 800 },
+            { progress: 100, message: 'Quality assurance complete', delay: 400 }
+          ];
+          break;
+        case 'Deployment Specialist':
+          progressSteps = [
+            { progress: 40, message: 'Configuring deployment pipeline...', delay: 800 },
+            { progress: 80, message: 'Setting up hosting configuration...', delay: 700 },
+            { progress: 100, message: 'Deployment configuration complete', delay: 500 }
+          ];
+          break;
+        default:
+          progressSteps = [
+            { progress: 50, message: `Processing ${task.agentName}...`, delay: 600 },
+            { progress: 100, message: `${task.agentName} completed`, delay: 400 }
+          ];
+      }
+
+      // Execute progress steps
+      for (const step of progressSteps) {
+        await new Promise(resolve => setTimeout(resolve, step.delay));
         
         await storage.updateGenerationTask(task.id, {
-          progress,
-          message: `${task.agentName} progress: ${progress}%`,
+          progress: step.progress,
+          message: step.message,
         });
 
         broadcast({
           type: 'progress_update',
-          data: { taskId: task.id, progress, message: `${task.agentName} progress: ${progress}%` }
+          data: { taskId: task.id, progress: step.progress, message: step.message }
         });
 
-        // Add some logs
+        // Add logs for significant progress
         const logs = await storage.getGenerationTask(task.id);
-        if (logs) {
-          const newLogs = [...(logs.logs || []), `[${new Date().toLocaleTimeString()}] ${task.agentName}: Progress ${progress}%`];
+        if (logs && step.progress % 50 === 0) {
+          const newLogs = [...(logs.logs || []), `[${new Date().toLocaleTimeString()}] ${step.message}`];
           await storage.updateGenerationTask(task.id, { logs: newLogs });
           
           broadcast({
             type: 'log_update',
-            data: { taskId: task.id, log: `[${new Date().toLocaleTimeString()}] ${task.agentName}: Progress ${progress}%` }
+            data: { taskId: task.id, log: `[${new Date().toLocaleTimeString()}] ${step.message}` }
           });
         }
       }
@@ -337,5 +434,20 @@ async function generateProjectAsync(projectId: string, tasks: any[], broadcast: 
     console.error('Generation error:', error);
     // Mark project as error
     await storage.updateProject(projectId, { status: 'error' });
+    
+    // Mark any remaining tasks as failed
+    for (const task of tasks) {
+      const currentTask = await storage.getGenerationTask(task.id);
+      if (currentTask && currentTask.status !== 'completed') {
+        await storage.updateGenerationTask(task.id, { 
+          status: 'error',
+          message: `Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        });
+        broadcast({
+          type: 'task_error',
+          data: { taskId: task.id, error: error instanceof Error ? error.message : 'Unknown error' }
+        });
+      }
+    }
   }
 }
