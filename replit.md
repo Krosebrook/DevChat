@@ -1,6 +1,6 @@
 # Overview
 
-FlashFusion is a universal app generator platform that enables users to create applications across multiple platforms (web, mobile, desktop) through an interactive configuration wizard. The system features a React-based frontend dashboard with real-time progress tracking, a Node.js/Express backend API, and PostgreSQL database integration using Drizzle ORM. The platform guides users through a multi-step configuration process to define project scope, select platforms and frameworks, configure features, and generate applications with cost estimation and real-time WebSocket updates.
+FlashFusion is a comprehensive universal app generator platform that enables users to create applications across multiple platforms (web, mobile, desktop) through an interactive 5-step configuration wizard. The system features a React-based frontend dashboard with real-time progress tracking, WebSocket communication, AI agent coordination, and dynamic cost estimation. Built with TypeScript, the platform uses in-memory storage for rapid prototyping and includes a complete UI component system with real-time generation monitoring.
 
 # User Preferences
 
@@ -35,15 +35,15 @@ The backend implements a clean separation between routing, business logic, and d
 
 ## Data Storage
 
-The application uses PostgreSQL as the primary database with Drizzle ORM for type-safe database operations:
+The application currently uses in-memory storage for rapid development and prototyping:
 
-- **Database**: PostgreSQL for relational data storage with ACID compliance
-- **ORM**: Drizzle ORM providing type-safe queries and schema management
-- **Schema Design**: Normalized relational schema with tables for users, projects, generation tasks, and configuration steps
-- **Migrations**: Drizzle Kit for database schema migrations and version control
-- **Connection**: Neon serverless PostgreSQL for cloud-native database hosting
+- **Storage**: In-memory storage system (`MemStorage` class) implementing full CRUD operations
+- **Schema**: Type-safe schema definitions using Drizzle ORM and Zod validation
+- **Data Models**: Users, projects, generation tasks, and configuration steps
+- **Persistence**: Configuration wizard state persisted in browser localStorage via Zustand
+- **Real-time Updates**: WebSocket synchronization for live data updates
 
-The database schema supports multi-user projects with configuration tracking, generation task management, and audit trails. JSON columns store flexible configuration data while maintaining relational integrity for core entities.
+The storage system supports project lifecycle management, configuration tracking, generation task monitoring, and maintains data integrity through TypeScript interfaces. Ready for future PostgreSQL migration when persistent storage is needed.
 
 ## External Dependencies
 
