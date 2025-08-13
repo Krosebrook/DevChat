@@ -4,6 +4,8 @@ import { Navigation } from '@/components/navigation';
 import { Sidebar } from '@/components/sidebar';
 import { ConfigWizard } from '@/components/wizard/config-wizard';
 import { RecentProjects } from '@/components/recent-projects';
+import { FeatureRoadmap } from '@/components/feature-roadmap';
+import { FeatureProgress } from '@/components/feature-progress';
 import { ProgressModal } from '@/components/progress-modal';
 import { useProjectStore } from '@/stores/projectStore';
 import { useConfigStore } from '@/stores/configStore';
@@ -20,7 +22,7 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    if (projects) {
+    if (projects && Array.isArray(projects)) {
       setProjects(projects);
     }
   }, [projects, setProjects]);
@@ -49,9 +51,9 @@ export default function Dashboard() {
     });
 
     const unsubscribeLog = websocketManager.on('log_update', (data) => {
-      updateGenerationTask(data.taskId, (prev) => ({
-        logs: [...(prev.logs || []), data.log],
-      }));
+      updateGenerationTask(data.taskId, {
+        logs: data.log,
+      });
     });
 
     return () => {
@@ -89,6 +91,16 @@ export default function Dashboard() {
             {/* Recent Projects */}
             <div className="mt-8">
               <RecentProjects />
+            </div>
+
+            {/* Feature Progress */}
+            <div className="mt-8">
+              <FeatureProgress />
+            </div>
+
+            {/* Feature Roadmap */}
+            <div className="mt-8">
+              <FeatureRoadmap />
             </div>
           </div>
         </div>

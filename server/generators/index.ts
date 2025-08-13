@@ -1,4 +1,5 @@
 import { type Project, type GenerationTask } from '@shared/schema';
+import { ErrorRecoveryManager } from '../error-recovery';
 import { ReactGenerator } from './frameworks/react';
 import { NextJSGenerator } from './frameworks/nextjs';
 import { SvelteGenerator } from './frameworks/svelte';
@@ -22,6 +23,7 @@ export interface GenerationResult {
 }
 
 export class ProjectGenerator {
+  private errorRecovery = new ErrorRecoveryManager();
   private generators = new Map([
     ['react', new ReactGenerator()],
     ['nextjs', new NextJSGenerator()],
@@ -32,17 +34,38 @@ export class ProjectGenerator {
     ['tauri', new TauriGenerator()],
   ]);
 
-  async generateProject(project: Project): Promise<GenerationResult> {
+  async generateProject(project: Project, onProgress?: (progress: number, message: string) => void): Promise<GenerationResult> {
     const framework = project.framework;
     const generator = this.generators.get(framework);
+    const taskId = `project-${project.id}`;
     
     if (!generator) {
       throw new Error(`Generator not found for framework: ${framework}`);
     }
 
     console.log(`Starting generation for ${project.name} using ${framework}`);
-    
-    const result = await generator.generate({
+    onProgress?.(10, `Initializing ${framework} generator`);
+
+    // Save initial state for error recovery
+    await this.errorRecovery.saveGenerationState(taskId, {
+      projectId: project.id,
+      step: 'initialization',
+      data: project,
+      timestamp: Date.now(),
+      filesGenerated: [],
+      logs: [`Starting generation for ${project.name}`]
+    });
+
+    // Wrap generation with error recovery and timeout handling
+    const result = await this.errorRecovery.handleTimeout(
+      taskId,
+      300000, // 5 minutes timeout
+      () => this.errorRecovery.retryGeneration(
+        taskId,
+        async () => {
+          onProgress?.(30, 'Generating project structure');
+          
+          const generationResult = await generator.generate({
       name: project.name,
       description: project.description || '',
       platform: project.platform,
