@@ -35,15 +35,17 @@ The backend implements a clean separation between routing, business logic, and d
 
 ## Data Storage
 
-The application currently uses in-memory storage for rapid development and prototyping:
+The application now uses a PostgreSQL database with Neon serverless hosting for persistent data storage:
 
-- **Storage**: In-memory storage system (`MemStorage` class) implementing full CRUD operations
-- **Schema**: Type-safe schema definitions using Drizzle ORM and Zod validation
-- **Data Models**: Users, projects, generation tasks, and configuration steps
-- **Persistence**: Configuration wizard state persisted in browser localStorage via Zustand
+- **Database**: PostgreSQL with Neon serverless hosting for managed database infrastructure
+- **Storage**: `DatabaseStorage` class implementing full CRUD operations with Drizzle ORM
+- **Schema**: Type-safe schema definitions using Drizzle ORM with explicit relations between tables
+- **Data Models**: Users, projects, generation tasks, and configuration steps with proper foreign key relationships
+- **Persistence**: All application data persisted in PostgreSQL with configuration wizard state in browser localStorage via Zustand
 - **Real-time Updates**: WebSocket synchronization for live data updates
+- **Migration Support**: Database schema pushed to production using `npm run db:push`
 
-The storage system supports project lifecycle management, configuration tracking, generation task monitoring, and maintains data integrity through TypeScript interfaces. Ready for future PostgreSQL migration when persistent storage is needed.
+The storage system supports project lifecycle management, configuration tracking, generation task monitoring, and maintains data integrity through PostgreSQL constraints and TypeScript interfaces. **Date Changed**: January 13, 2025
 
 ## External Dependencies
 

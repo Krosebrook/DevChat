@@ -217,14 +217,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let monthlyCost = 10; // Base monthly cost in dollars
 
       // Platform multipliers
-      const platformMultipliers = {
+      const platformMultipliers: Record<string, number> = {
         web: 1,
         mobile: 1.5,
         desktop: 1.3,
       };
 
       // Framework multipliers
-      const frameworkMultipliers = {
+      const frameworkMultipliers: Record<string, number> = {
         react: 1,
         nextjs: 1.2,
         svelte: 0.9,
@@ -235,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       // Feature costs
-      const featureCosts = {
+      const featureCosts: Record<string, number> = {
         authentication: 25,
         database: 30,
         payments: 50,
@@ -244,11 +244,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         api: 35,
       };
 
-      baseCost *= (platformMultipliers[platform] || 1);
-      baseCost *= (frameworkMultipliers[framework] || 1);
+      baseCost *= (platformMultipliers[platform as string] || 1);
+      baseCost *= (frameworkMultipliers[framework as string] || 1);
 
       if (Array.isArray(features)) {
-        features.forEach(feature => {
+        features.forEach((feature: string) => {
           baseCost += (featureCosts[feature] || 0);
           if (feature === 'database' || feature === 'realtime') {
             monthlyCost += 15;

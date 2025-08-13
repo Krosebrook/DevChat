@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import { pgTable, text, varchar, boolean, jsonb, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -47,6 +47,34 @@ export const configurationSteps = pgTable("configuration_steps", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  projects: many(projects),
+}));
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  user: one(users, { 
+    fields: [projects.userId], 
+    references: [users.id] 
+  }),
+  generationTasks: many(generationTasks),
+  configurationSteps: many(configurationSteps),
+}));
+
+export const generationTasksRelations = relations(generationTasks, ({ one }) => ({
+  project: one(projects, { 
+    fields: [generationTasks.projectId], 
+    references: [projects.id] 
+  }),
+}));
+
+export const configurationStepsRelations = relations(configurationSteps, ({ one }) => ({
+  project: one(projects, { 
+    fields: [configurationSteps.projectId], 
+    references: [projects.id] 
+  }),
+}));
+
 // Zod schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -58,6 +86,9 @@ export const insertProjectSchema = createInsertSchema(projects).omit({
   userId: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  features: z.array(z.string()).optional(),
+  configuration: z.record(z.any()).optional(),
 });
 
 export const updateProjectSchema = insertProjectSchema.partial();
@@ -66,12 +97,16 @@ export const insertGenerationTaskSchema = createInsertSchema(generationTasks).om
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  logs: z.array(z.string()).optional(),
 });
 
 export const insertConfigurationStepSchema = createInsertSchema(configurationSteps).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  data: z.record(z.any()).optional(),
 });
 
 // Configuration schemas for each step
