@@ -1,0 +1,165 @@
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Zap, ChevronRight } from 'lucide-react';
+import { PageType } from '../../types';
+import { featureCards, tools } from '../../data/constants';
+
+interface HomePageProps {
+  isAuthenticated: boolean;
+  setCurrentPage: (page: PageType) => void;
+  setShowWizard: (show: boolean) => void;
+}
+
+export function HomePage({ isAuthenticated, setCurrentPage, setShowWizard }: HomePageProps) {
+  return (
+    <motion.div 
+      className="space-y-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Hero Section */}
+      <div className="text-center py-16">
+        <motion.h1 
+          className="mb-6 text-4xl lg:text-6xl font-bold"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          Universal App Generator
+        </motion.h1>
+        <motion.p 
+          className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          Build complete applications with AI. Generate web apps, mobile apps, APIs, and more with just a few clicks. 
+          {isAuthenticated ? ' Welcome back!' : ' Sign up to get started.'}
+        </motion.p>
+        
+        <motion.div 
+          className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <Button 
+            size="lg" 
+            className="ff-btn-primary flex-1"
+            onClick={() => {
+              if (isAuthenticated) {
+                setShowWizard(true);
+              } else {
+                setCurrentPage('tools');
+              }
+            }}
+          >
+            <Zap className="h-5 w-5 mr-2" />
+            {isAuthenticated ? 'Create Project' : 'Try AI Tools'}
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="flex-1"
+            onClick={() => setCurrentPage(isAuthenticated ? 'projects' : 'home')}
+          >
+            {isAuthenticated ? 'View Projects' : 'Learn More'}
+          </Button>
+        </motion.div>
+      </div>
+
+      {/* Features Grid */}
+      <div className="max-w-6xl mx-auto">
+        <motion.h2 
+          className="mb-8 text-center text-3xl font-bold"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          What You Can Build
+        </motion.h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featureCards.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ y: -4 }}
+              >
+                <Card className="ff-card-interactive h-full">
+                  <CardContent className="p-6">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4`}>
+                      <IconComponent className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{feature.description}</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {feature.examples}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Popular Tools Preview */}
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold">AI Tools</h2>
+          <Button 
+            variant="outline" 
+            onClick={() => setCurrentPage('tools')}
+            className="ff-hover-glow"
+          >
+            View All Tools
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {tools.slice(0, 4).map((tool, index) => {
+            const IconComponent = tool.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                whileHover={{ y: -8 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card 
+                  className="p-6 cursor-pointer ff-card-interactive text-center group"
+                  onClick={() => {
+                    if (tool.page) {
+                      setCurrentPage(tool.page as PageType);
+                    } else {
+                      setCurrentPage('tools');
+                    }
+                  }}
+                >
+                  <div className={`aspect-square bg-gradient-to-br ${tool.color} rounded-xl mb-4 flex items-center justify-center mx-auto w-16 h-16 group-hover:scale-110 transition-transform duration-300`}>
+                    <IconComponent className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="font-semibold mb-2">{tool.name}</h3>
+                  <p className="text-sm text-muted-foreground">{tool.description}</p>
+                  <Badge variant="secondary" className="mt-2 text-xs">
+                    {tool.category}
+                  </Badge>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </motion.div>
+  );
+}

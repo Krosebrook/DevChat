@@ -1,0 +1,81 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Alert, AlertDescription } from './alert';
+import { Button } from './button';
+import { X, Rocket, ExternalLink } from 'lucide-react';
+import { getDemoModeStatus } from '../../lib/supabase';
+
+export function DemoBanner() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+
+  useEffect(() => {
+    // Check if we're in demo mode and if user hasn't dismissed the banner
+    const dismissed = localStorage.getItem('ff-demo-banner-dismissed');
+    const inDemoMode = getDemoModeStatus();
+    
+    if (inDemoMode && !dismissed) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    localStorage.setItem('ff-demo-banner-dismissed', 'true');
+    setTimeout(() => setIsVisible(false), 300);
+  };
+
+  const handleSetup = () => {
+    window.open('https://github.com/your-repo/flashfusion#setup', '_blank');
+  };
+
+  if (!isVisible || isDismissed) {
+    return null;
+  }
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="fixed top-0 left-0 right-0 z-50 p-4"
+      >
+        <div className="container mx-auto max-w-4xl">
+          <Alert className="bg-gradient-to-r from-orange-500/10 to-cyan-500/10 border-orange-500/20 backdrop-blur-sm">
+            <Rocket className="h-4 w-4 text-orange-500" />
+            <AlertDescription className="flex items-center justify-between w-full">
+              <div className="flex-1 pr-4">
+                <span className="font-semibold text-orange-500">FlashFusion Demo Mode</span>
+                {' '} - You're exploring with simulated data. 
+                <span className="ml-1">Set up Supabase for full functionality including real authentication, projects, and data persistence.</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleSetup}
+                  className="border-orange-500/30 text-orange-500 hover:bg-orange-500/10"
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Setup Guide
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleDismiss}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}

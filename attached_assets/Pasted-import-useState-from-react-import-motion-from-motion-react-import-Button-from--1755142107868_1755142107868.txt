@@ -1,0 +1,466 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Progress } from '../ui/progress';
+import { 
+  Search, 
+  Plus, 
+  CheckCircle2, 
+  AlertCircle, 
+  Settings, 
+  ExternalLink,
+  Rocket,
+  Globe,
+  Cloud,
+  Server,
+  Activity,
+  Clock,
+  GitBranch,
+  Play,
+  Pause,
+  RotateCcw,
+  Trash2,
+  Copy,
+  Eye,
+  Download,
+  Upload
+} from 'lucide-react';
+
+interface Deployment {
+  id: string;
+  name: string;
+  project: string;
+  url: string;
+  platform: string;
+  status: 'deployed' | 'building' | 'failed' | 'paused';
+  lastDeployed?: Date;
+  buildTime?: string;
+  visits?: number;
+  framework: string;
+  branch: string;
+  autoDeployEnabled: boolean;
+}
+
+const deployments: Deployment[] = [
+  {
+    id: '1',
+    name: 'E-commerce Dashboard',
+    project: 'ecommerce-dashboard',
+    url: 'https://ecommerce-dashboard-abc123.vercel.app',
+    platform: 'Vercel',
+    status: 'deployed',
+    lastDeployed: new Date('2024-01-20T10:30:00'),
+    buildTime: '2m 34s',
+    visits: 1247,
+    framework: 'React',
+    branch: 'main',
+    autoDeployEnabled: true
+  },
+  {
+    id: '2',
+    name: 'Travel Blog App',
+    project: 'travel-blog',
+    url: 'https://travel-blog-xyz789.netlify.app',
+    platform: 'Netlify',
+    status: 'deployed',
+    lastDeployed: new Date('2024-01-19T15:45:00'),
+    buildTime: '1m 52s',
+    visits: 892,
+    framework: 'Next.js',
+    branch: 'main',
+    autoDeployEnabled: true
+  },
+  {
+    id: '3',
+    name: 'AI Chatbot Platform',
+    project: 'ai-chatbot',
+    url: 'https://ai-chatbot-def456.railway.app',
+    platform: 'Railway',
+    status: 'building',
+    framework: 'Python',
+    branch: 'develop',
+    autoDeployEnabled: false
+  },
+  {
+    id: '4',
+    name: 'Recipe Manager',
+    project: 'recipe-manager',
+    url: '',
+    platform: 'AWS',
+    status: 'failed',
+    lastDeployed: new Date('2024-01-18T09:15:00'),
+    framework: 'Vue.js',
+    branch: 'main',
+    autoDeployEnabled: true
+  },
+  {
+    id: '5',
+    name: 'Social Media Scheduler',
+    project: 'social-scheduler',
+    url: 'https://social-scheduler-ghi789.render.com',
+    platform: 'Render',
+    status: 'paused',
+    lastDeployed: new Date('2024-01-17T14:20:00'),
+    buildTime: '3m 12s',
+    visits: 456,
+    framework: 'Next.js',
+    branch: 'main',
+    autoDeployEnabled: false
+  }
+];
+
+const platforms = [
+  { id: 'vercel', name: 'Vercel', icon: '▲', color: 'text-gray-900 dark:text-white', bgColor: 'bg-gray-100 dark:bg-gray-800' },
+  { id: 'netlify', name: 'Netlify', icon: '🌐', color: 'text-teal-600', bgColor: 'bg-teal-100 dark:bg-teal-900' },
+  { id: 'railway', name: 'Railway', icon: '🚂', color: 'text-purple-600', bgColor: 'bg-purple-100 dark:bg-purple-900' },
+  { id: 'render', name: 'Render', icon: '🎨', color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900' },
+  { id: 'aws', name: 'AWS', icon: '☁️', color: 'text-orange-600', bgColor: 'bg-orange-100 dark:bg-orange-900' },
+  { id: 'gcp', name: 'Google Cloud', icon: '🌤️', color: 'text-blue-600', bgColor: 'bg-blue-100 dark:bg-blue-900' },
+  { id: 'heroku', name: 'Heroku', icon: '🟣', color: 'text-purple-600', bgColor: 'bg-purple-100 dark:bg-purple-900' },
+  { id: 'digitalocean', name: 'DigitalOcean', icon: '🌊', color: 'text-blue-500', bgColor: 'bg-blue-100 dark:bg-blue-900' }
+];
+
+export function DeploymentsPage({ userRole }: { userRole?: string }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPlatform, setSelectedPlatform] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
+
+  const filteredDeployments = deployments.filter(deployment => {
+    const matchesSearch = deployment.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         deployment.project.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPlatform = selectedPlatform === 'all' || deployment.platform.toLowerCase() === selectedPlatform;
+    const matchesStatus = selectedStatus === 'all' || deployment.status === selectedStatus;
+    return matchesSearch && matchesPlatform && matchesStatus;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'deployed': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'building': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'failed': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'paused': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'deployed': return <CheckCircle2 className="h-3 w-3" />;
+      case 'building': return <Clock className="h-3 w-3 animate-spin" />;
+      case 'failed': return <AlertCircle className="h-3 w-3" />;
+      case 'paused': return <Pause className="h-3 w-3" />;
+      default: return null;
+    }
+  };
+
+  const handleDeploy = (deploymentId: string) => {
+    console.log('Deploying:', deploymentId);
+    // Handle deployment logic
+  };
+
+  const handlePause = (deploymentId: string) => {
+    console.log('Pausing:', deploymentId);
+    // Handle pause logic
+  };
+
+  const handleDelete = (deploymentId: string) => {
+    console.log('Deleting:', deploymentId);
+    // Handle delete logic
+  };
+
+  const renderDeploymentCard = (deployment: Deployment, index: number) => {
+    const platform = platforms.find(p => p.name === deployment.platform);
+
+    return (
+      <motion.div
+        key={deployment.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+      >
+        <Card className="ff-card-interactive">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-lg ${platform?.bgColor} flex items-center justify-center`}>
+                  <span className="text-lg">{platform?.icon}</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold">{deployment.name}</h3>
+                  <p className="text-sm text-muted-foreground">{deployment.project}</p>
+                </div>
+              </div>
+              
+              <Badge variant="outline" className={`${getStatusColor(deployment.status)}`}>
+                {getStatusIcon(deployment.status)}
+                <span className="ml-1 capitalize">{deployment.status}</span>
+              </Badge>
+            </div>
+
+            {deployment.status === 'building' && (
+              <div className="mb-4">
+                <div className="flex justify-between text-sm mb-1">
+                  <span>Building...</span>
+                  <span>2m 15s</span>
+                </div>
+                <Progress value={65} className="h-2" />
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+              <div>
+                <span className="text-muted-foreground">Platform:</span>
+                <p className={`font-medium ${platform?.color}`}>{deployment.platform}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Framework:</span>
+                <p className="font-medium">{deployment.framework}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Branch:</span>
+                <p className="font-medium">{deployment.branch}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Auto Deploy:</span>
+                <p className={`font-medium ${deployment.autoDeployEnabled ? 'text-green-500' : 'text-gray-400'}`}>
+                  {deployment.autoDeployEnabled ? 'Enabled' : 'Disabled'}
+                </p>
+              </div>
+            </div>
+
+            {deployment.status === 'deployed' && (
+              <div className="flex items-center justify-between mb-4 p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-green-500" />
+                  <span className="text-sm font-medium">Live URL</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground truncate max-w-48">
+                    {deployment.url}
+                  </span>
+                  <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText(deployment.url)}>
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => window.open(deployment.url, '_blank')}>
+                    <ExternalLink className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {deployment.lastDeployed && (
+              <div className="flex justify-between text-sm text-muted-foreground mb-4">
+                <span>Last deployed: {deployment.lastDeployed.toLocaleDateString()}</span>
+                {deployment.buildTime && <span>Build time: {deployment.buildTime}</span>}
+              </div>
+            )}
+
+            {deployment.visits && (
+              <div className="flex items-center gap-4 mb-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <Eye className="h-4 w-4 text-blue-500" />
+                  <span>{deployment.visits.toLocaleString()} visits</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Activity className="h-4 w-4 text-green-500" />
+                  <span>99.9% uptime</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              {deployment.status === 'failed' || deployment.status === 'paused' ? (
+                <Button 
+                  size="sm" 
+                  className="ff-btn-primary flex-1"
+                  onClick={() => handleDeploy(deployment.id)}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  {deployment.status === 'failed' ? 'Redeploy' : 'Resume'}
+                </Button>
+              ) : deployment.status === 'deployed' ? (
+                <>
+                  <Button size="sm" variant="outline" onClick={() => handleDeploy(deployment.id)}>
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Redeploy
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => handlePause(deployment.id)}>
+                    <Pause className="h-4 w-4 mr-2" />
+                    Pause
+                  </Button>
+                </>
+              ) : (
+                <Button size="sm" variant="outline" disabled>
+                  <Clock className="h-4 w-4 mr-2 animate-spin" />
+                  Building...
+                </Button>
+              )}
+              
+              <Button size="sm" variant="outline">
+                <Settings className="h-4 w-4" />
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="text-destructive hover:bg-destructive/10"
+                onClick={() => handleDelete(deployment.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  const deployedCount = deployments.filter(d => d.status === 'deployed').length;
+  const buildingCount = deployments.filter(d => d.status === 'building').length;
+  const failedCount = deployments.filter(d => d.status === 'failed').length;
+
+  return (
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1>Deployments</h1>
+          <p className="text-muted-foreground">Manage your application deployments across platforms</p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="text-center">
+            <div className="text-xl font-bold text-green-500">{deployedCount}</div>
+            <div className="text-xs text-muted-foreground">Deployed</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-blue-500">{buildingCount}</div>
+            <div className="text-xs text-muted-foreground">Building</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-red-500">{failedCount}</div>
+            <div className="text-xs text-muted-foreground">Failed</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="flex gap-4">
+        <Button className="ff-btn-primary">
+          <Plus className="h-4 w-4 mr-2" />
+          New Deployment
+        </Button>
+        <Button variant="outline">
+          <Upload className="h-4 w-4 mr-2" />
+          Import from Git
+        </Button>
+        <Button variant="outline">
+          <Download className="h-4 w-4 mr-2" />
+          Export Configs
+        </Button>
+      </div>
+
+      {/* Search and Filter */}
+      <Card className="p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search deployments..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          
+          <div className="flex gap-2">
+            <select
+              className="px-3 py-2 bg-background border border-border rounded-md text-sm"
+              value={selectedPlatform}
+              onChange={(e) => setSelectedPlatform(e.target.value)}
+            >
+              <option value="all">All Platforms</option>
+              {platforms.map(platform => (
+                <option key={platform.id} value={platform.name.toLowerCase()}>
+                  {platform.name}
+                </option>
+              ))}
+            </select>
+            
+            <select
+              className="px-3 py-2 bg-background border border-border rounded-md text-sm"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="deployed">Deployed</option>
+              <option value="building">Building</option>
+              <option value="failed">Failed</option>
+              <option value="paused">Paused</option>
+            </select>
+          </div>
+        </div>
+      </Card>
+
+      {/* Deployments List */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {filteredDeployments.map((deployment, index) => renderDeploymentCard(deployment, index))}
+      </div>
+
+      {filteredDeployments.length === 0 && (
+        <div className="text-center py-12">
+          <Rocket className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+          <h3 className="font-semibold mb-2">No deployments found</h3>
+          <p className="text-muted-foreground mb-4">
+            {searchQuery || selectedPlatform !== 'all' || selectedStatus !== 'all' 
+              ? 'Try adjusting your search or filter criteria.'
+              : 'Deploy your first project to get started.'
+            }
+          </p>
+          <Button className="ff-btn-primary">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Deployment
+          </Button>
+        </div>
+      )}
+
+      {/* Platform Overview */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Deployment Platforms</CardTitle>
+          <CardDescription>Available platforms for deploying your applications</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            {platforms.map((platform, index) => (
+              <motion.div
+                key={platform.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                className="text-center p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => setSelectedPlatform(platform.name.toLowerCase())}
+              >
+                <div className={`w-12 h-12 ${platform.bgColor} rounded-lg flex items-center justify-center mx-auto mb-2`}>
+                  <span className="text-xl">{platform.icon}</span>
+                </div>
+                <p className="text-sm font-medium">{platform.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {deployments.filter(d => d.platform === platform.name).length} deployments
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}

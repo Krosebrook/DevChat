@@ -1,0 +1,189 @@
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Progress } from '../ui/progress';
+import { 
+  Zap, 
+  Plus,
+  Clock,
+  Bookmark,
+  Crown,
+  Flame,
+  LogOut
+} from 'lucide-react';
+import { PageType, UserStats } from '../../types';
+import { navigationItems } from '../../data/constants';
+
+interface SidebarProps {
+  currentPage: PageType;
+  setCurrentPage: (page: PageType) => void;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  isAuthenticated: boolean;
+  userStats: UserStats;
+  setShowWizard: (show: boolean) => void;
+}
+
+export function Sidebar({ 
+  currentPage, 
+  setCurrentPage, 
+  sidebarOpen, 
+  setSidebarOpen, 
+  isAuthenticated, 
+  userStats,
+  setShowWizard 
+}: SidebarProps) {
+  // Filter navigation items based on authentication
+  const visibleNavItems = navigationItems.filter(item => !item.requireAuth || isAuthenticated);
+
+  return (
+    <motion.div 
+      initial={{ x: -300 }}
+      animate={{ x: 0 }}
+      className={`${sidebarOpen ? 'w-64' : 'w-64'} bg-sidebar border-r border-sidebar-border h-screen flex flex-col fixed lg:relative z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} transition-transform duration-300`}
+    >
+      {/* Logo Section */}
+      <div className="p-6 border-b border-sidebar-border">
+        <motion.div 
+          className="flex items-center gap-3"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
+          <div className="relative">
+            <motion.div
+              className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-cyan-500 flex items-center justify-center"
+              animate={{ 
+                boxShadow: [
+                  '0 0 0 0 rgba(255, 123, 0, 0.7)',
+                  '0 0 0 10px rgba(255, 123, 0, 0)',
+                  '0 0 0 0 rgba(255, 123, 0, 0.7)'
+                ]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Zap className="h-5 w-5 text-white" />
+            </motion.div>
+          </div>
+          <div>
+            <span className="text-xl font-bold ff-text-gradient">
+              FLASHFUSION
+            </span>
+            <p className="text-xs text-muted-foreground">AI Platform</p>
+          </div>
+        </motion.div>
+      </div>
+      
+      {/* User Level & XP - Only show if authenticated */}
+      {isAuthenticated && (
+        <div className="px-6 py-4 border-b border-sidebar-border">
+          <motion.div 
+            className="ff-glass p-4 rounded-lg border"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-yellow-500">
+                <Crown className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">Level {userStats.level}</span>
+                  <div className="flex items-center gap-1">
+                    <Flame className="h-3 w-3 text-orange-400" />
+                    <span className="text-xs text-muted-foreground">{userStats.streak}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Progress 
+              value={(userStats.xp / userStats.xpToNext) * 100} 
+              className="h-2 ff-progress-bar"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>{userStats.xp} XP</span>
+              <span>{userStats.xpToNext - userStats.xp} to next</span>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-4 space-y-1">
+        {visibleNavItems.map((item, index) => {
+          const IconComponent = item.icon;
+          const isActive = currentPage === item.id;
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start gap-3 ff-nav-item ${isActive ? 'active bg-sidebar-accent text-sidebar-primary' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-primary'} transition-all duration-200`}
+                onClick={() => {
+                  setCurrentPage(item.id as PageType);
+                  setSidebarOpen(false);
+                }}
+              >
+                <IconComponent className="h-4 w-4" />
+                {item.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeIndicator"
+                    className="ml-auto w-2 h-2 rounded-full bg-primary"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </Button>
+            </motion.div>
+          );
+        })}
+      </nav>
+      
+      {/* Quick Actions */}
+      <div className="px-4 py-4 border-t border-sidebar-border">
+        <div className="space-y-2">
+          <Button 
+            size="sm" 
+            className="w-full ff-btn-primary"
+            onClick={() => {
+              if (isAuthenticated) {
+                setShowWizard(true);
+              } else {
+                setCurrentPage('tools');
+              }
+              setSidebarOpen(false);
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {isAuthenticated ? 'New Project' : 'Try Tools'}
+          </Button>
+          {isAuthenticated && (
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex-1">
+                <Bookmark className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="flex-1">
+                <Clock className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Footer */}
+      <div className="p-4 border-t border-sidebar-border">
+        {isAuthenticated ? (
+          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground">
+            <LogOut className="h-4 w-4" />
+            Log out
+          </Button>
+        ) : (
+          <p className="text-xs text-muted-foreground text-center">
+            Sign in to unlock full features
+          </p>
+        )}
+      </div>
+    </motion.div>
+  );
+}

@@ -1,0 +1,1816 @@
+import { 
+  Code, 
+  ImageIcon, 
+  Palette, 
+  Globe, 
+  Smartphone, 
+  Monitor, 
+  Layers, 
+  Wand2,
+  Sparkles,
+  Database,
+  Cloud,
+  Zap,
+  Wrench,
+  BarChart3,
+  CreditCard,
+  Mail,
+  MessageSquare,
+  Lock,
+  FileText,
+  Search,
+  Users,
+  Calendar,
+  Bell,
+  Upload,
+  Download,
+  Cpu,
+  Brain,
+  Eye,
+  Camera,
+  Video,
+  Music,
+  GamepadIcon,
+  ShoppingCart,
+  TrendingUp,
+  Settings,
+  Shield,
+  Key,
+  Webhook,
+  GitBranch,
+  Container,
+  Server,
+  Gauge,
+  Bug,
+  TestTube,
+  FileCode,
+  Blocks,
+  Puzzle,
+  Network,
+  HardDrive,
+  CloudLightning,
+  Rocket,
+  Target,
+  Megaphone,
+  Share2,
+  Link,
+  QrCode,
+  Scan,
+  MapPin,
+  Calculator,
+  PieChart,
+  LineChart,
+  BarChart,
+  Activity,
+  Timer,
+  Clock,
+  Filter,
+  Grid,
+  Layout,
+  Paintbrush2,
+  Type,
+  Image,
+  Scissors,
+  Stamp,
+  Bookmark,
+  Package,
+  ShieldCheck,
+  Cog,
+  Terminal,
+  FileJson,
+  Workflow,
+  Construction,
+  Boxes,
+  CloudSnow,
+  Fingerprint,
+  RefreshCw,
+  Sliders,
+  BarChart2,
+  PlusCircle,
+  Briefcase,
+  Award,
+  Headphones,
+  Mic,
+  Radio,
+  Volume2,
+  Play,
+  Pause,
+  SkipForward,
+  Rewind,
+  FastForward,
+  Square,
+  Circle,
+  Triangle,
+  Hexagon,
+  Star,
+  Heart,
+  Bookmark as BookmarkIcon,
+  Flag,
+  Tag,
+  Hash,
+  AtSign,
+  Phone,
+  MessageCircle,
+  Send,
+  Archive,
+  Folder,
+  FileImage,
+  FileVideo,
+  FileAudio,
+  FilePlus,
+  FileCheck,
+  FileX,
+  Trash,
+  Edit,
+  Copy,
+  Move,
+  RotateCcw,
+  RotateCw,
+  FlipHorizontal,
+  FlipVertical,
+  Crop,
+  Maximize,
+  Minimize,
+  ZoomIn,
+  ZoomOut,
+  Focus,
+  Aperture,
+  Sun,
+  Moon,
+  CloudRain,
+  Zap as Lightning,
+  Flame,
+  Droplet,
+  Leaf,
+  Flower,
+  TreePine,
+  Mountain,
+  Waves,
+  Car,
+  Plane,
+  Ship,
+  Train,
+  Bike,
+  Home,
+  Building,
+  Factory,
+  Store,
+  School,
+  Hospital,
+  Church,
+  Castle,
+  Tent,
+  Umbrella,
+  Gift,
+  ShoppingBag,
+  Wallet,
+  DollarSign,
+  Euro,
+  PoundSterling,
+  Yen,
+  Bitcoin,
+  Percent,
+  Plus,
+  Minus,
+  Equal,
+  Divide,
+  X,
+  Check,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  QuestionMark,
+  ExclamationMark,
+  Loader,
+  RefreshCcw,
+  Power,
+  Wifi,
+  Battery,
+  Signal,
+  Volume,
+  VolumeX,
+  Bluetooth,
+  Usb,
+  HardDisk,
+  Memory,
+  Cpu as ProcessorIcon,
+  Monitor as DisplayIcon,
+  Keyboard,
+  Mouse,
+  Printer,
+  Scanner,
+  Gamepad,
+  Headset,
+  Microphone,
+  Speaker,
+  Router,
+  Satellite,
+  Cable,
+  Plug,
+  PowerOff,
+  Lightbulb,
+  Flashlight,
+  Candle,
+  Fire,
+  Snowflake,
+  Thermometer,
+  Wind,
+  Compass,
+  Map,
+  Navigation,
+  Crosshair,
+  Locate,
+  MapPinned,
+  Route,
+  Signpost,
+  Milestone,
+  Flag as FlagIcon,
+  Bookmark as SaveIcon,
+  Crown // Added Crown import to fix the error
+} from 'lucide-react';
+
+export interface ToolOption {
+  id: string;
+  name: string;
+  description: string;
+  icon?: any;
+  premium?: boolean;
+}
+
+export interface ToolCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon: any;
+  color: string;
+  tools: ExtendedTool[];
+}
+
+export interface ExtendedTool {
+  id: string;
+  name: string;
+  description: string;
+  icon: any;
+  color: string;
+  category: string;
+  page?: string;
+  premium?: boolean;
+  popular?: boolean;
+  new?: boolean;
+  buildOptions?: ToolOption[];
+  integrations?: ToolOption[];
+  deploymentTargets?: ToolOption[];
+  features?: string[];
+  pricing?: {
+    free: boolean;
+    credits: number;
+    proOnly?: boolean;
+  };
+}
+
+export const toolCategories: ToolCategory[] = [
+  {
+    id: 'generators',
+    name: 'AI Generators',
+    description: 'Create applications, code, and content with AI',
+    icon: Sparkles,
+    color: 'from-purple-500 to-pink-500',
+    tools: [
+      {
+        id: 'project-wizard',
+        name: 'Project Wizard',
+        description: 'Step-by-step AI-guided project creation',
+        icon: Wand2,
+        color: 'from-purple-500 to-purple-600',
+        category: 'generators',
+        page: 'wizard',
+        popular: true,
+        buildOptions: [
+          { id: 'template', name: 'Use Template', description: 'Start from pre-built templates' },
+          { id: 'scratch', name: 'From Scratch', description: 'Build completely custom' },
+          { id: 'import', name: 'Import Design', description: 'Import from Figma/Sketch' }
+        ],
+        features: ['AI-guided setup', 'Multi-platform support', 'Instant preview'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'code-generator',
+        name: 'Code Generator',
+        description: 'Generate code in any programming language',
+        icon: Code,
+        color: 'from-orange-500 to-orange-600',
+        category: 'generators',
+        page: 'generator',
+        popular: true,
+        buildOptions: [
+          { id: 'component', name: 'Component', description: 'Generate React/Vue components' },
+          { id: 'function', name: 'Function', description: 'Create utility functions' },
+          { id: 'api', name: 'API Endpoint', description: 'Build REST/GraphQL APIs' },
+          { id: 'test', name: 'Test Suite', description: 'Generate unit tests' }
+        ],
+        integrations: [
+          { id: 'github', name: 'GitHub', description: 'Push to repository' },
+          { id: 'vscode', name: 'VS Code', description: 'Open in editor' },
+          { id: 'codepen', name: 'CodePen', description: 'Share on CodePen' }
+        ],
+        features: ['Multi-language support', 'Best practices', 'Documentation'],
+        pricing: { free: true, credits: 5 }
+      },
+      {
+        id: 'full-stack-builder',
+        name: 'Full-Stack Builder',
+        description: 'Complete application with frontend and backend',
+        icon: Layers,
+        color: 'from-violet-500 to-violet-600',
+        category: 'generators',
+        premium: true,
+        buildOptions: [
+          { id: 'spa', name: 'SPA', description: 'Single Page Application' },
+          { id: 'ssr', name: 'SSR', description: 'Server-Side Rendered' },
+          { id: 'jamstack', name: 'JAMstack', description: 'Static site with APIs' },
+          { id: 'microservices', name: 'Microservices', description: 'Distributed architecture' }
+        ],
+        deploymentTargets: [
+          { id: 'vercel', name: 'Vercel', description: 'Deploy to Vercel' },
+          { id: 'netlify', name: 'Netlify', description: 'Deploy to Netlify' },
+          { id: 'aws', name: 'AWS', description: 'Deploy to AWS' },
+          { id: 'gcp', name: 'Google Cloud', description: 'Deploy to GCP' }
+        ],
+        features: ['Auto-scaling', 'Database setup', 'API generation', 'Authentication'],
+        pricing: { free: false, credits: 50, proOnly: true }
+      },
+      {
+        id: 'api-builder',
+        name: 'API Builder',
+        description: 'Build REST APIs with authentication and databases',
+        icon: Globe,
+        color: 'from-green-500 to-green-600',
+        category: 'generators',
+        buildOptions: [
+          { id: 'rest', name: 'REST API', description: 'RESTful web services' },
+          { id: 'graphql', name: 'GraphQL', description: 'GraphQL API with schema' },
+          { id: 'websocket', name: 'WebSocket', description: 'Real-time connections' },
+          { id: 'grpc', name: 'gRPC', description: 'High-performance RPC' }
+        ],
+        integrations: [
+          { id: 'postgres', name: 'PostgreSQL', description: 'SQL database' },
+          { id: 'mongodb', name: 'MongoDB', description: 'NoSQL database' },
+          { id: 'redis', name: 'Redis', description: 'In-memory cache' },
+          { id: 'auth0', name: 'Auth0', description: 'Authentication service' }
+        ],
+        features: ['Auto documentation', 'Rate limiting', 'Validation', 'Testing'],
+        pricing: { free: true, credits: 15 }
+      },
+      {
+        id: 'mobile-generator',
+        name: 'Mobile App Generator',
+        description: 'Cross-platform iOS & Android applications',
+        icon: Smartphone,
+        color: 'from-blue-500 to-blue-600',
+        category: 'generators',
+        buildOptions: [
+          { id: 'react-native', name: 'React Native', description: 'Cross-platform with React' },
+          { id: 'flutter', name: 'Flutter', description: 'Google\'s UI toolkit' },
+          { id: 'ionic', name: 'Ionic', description: 'Hybrid mobile apps' },
+          { id: 'native', name: 'Native', description: 'Platform-specific apps' }
+        ],
+        deploymentTargets: [
+          { id: 'appstore', name: 'App Store', description: 'iOS App Store' },
+          { id: 'playstore', name: 'Play Store', description: 'Google Play Store' },
+          { id: 'testflight', name: 'TestFlight', description: 'iOS Beta Testing' },
+          { id: 'firebase', name: 'Firebase', description: 'Firebase App Distribution' }
+        ],
+        features: ['Push notifications', 'Offline support', 'App store optimization'],
+        pricing: { free: true, credits: 25 }
+      },
+      {
+        id: 'desktop-generator',
+        name: 'Desktop App Generator',
+        description: 'Native desktop applications for all platforms',
+        icon: Monitor,
+        color: 'from-indigo-500 to-indigo-600',
+        category: 'generators',
+        buildOptions: [
+          { id: 'electron', name: 'Electron', description: 'Cross-platform desktop apps' },
+          { id: 'tauri', name: 'Tauri', description: 'Rust-based lightweight apps' },
+          { id: 'flutter-desktop', name: 'Flutter Desktop', description: 'Flutter for desktop' },
+          { id: 'native-desktop', name: 'Native', description: 'Platform-specific desktop apps' }
+        ],
+        deploymentTargets: [
+          { id: 'windows', name: 'Windows', description: 'Windows Store' },
+          { id: 'macos', name: 'macOS', description: 'Mac App Store' },
+          { id: 'linux', name: 'Linux', description: 'Snap Store/AppImage' },
+          { id: 'steam', name: 'Steam', description: 'Steam platform' }
+        ],
+        features: ['Auto-updater', 'System integration', 'Cross-platform'],
+        pricing: { free: true, credits: 30 }
+      },
+      // NEW TOOLS
+      {
+        id: 'angular-generator',
+        name: 'Angular Generator',
+        description: 'Enterprise-grade Angular applications with TypeScript',
+        icon: FileCode,
+        color: 'from-red-500 to-red-600',
+        category: 'generators',
+        new: true,
+        buildOptions: [
+          { id: 'component', name: 'Components', description: 'Angular components with modules' },
+          { id: 'service', name: 'Services', description: 'Injectable services' },
+          { id: 'guard', name: 'Route Guards', description: 'Authentication guards' },
+          { id: 'interceptor', name: 'HTTP Interceptors', description: 'Request/response interceptors' }
+        ],
+        features: ['TypeScript support', 'RxJS integration', 'Material Design', 'PWA ready'],
+        pricing: { free: true, credits: 20 }
+      },
+      {
+        id: 'svelte-generator',
+        name: 'Svelte Generator',
+        description: 'Compile-time optimized Svelte applications',
+        icon: Lightning,
+        color: 'from-orange-600 to-red-500',
+        category: 'generators',
+        new: true,
+        buildOptions: [
+          { id: 'sveltekit', name: 'SvelteKit', description: 'Full-stack Svelte framework' },
+          { id: 'vite', name: 'Vite + Svelte', description: 'Fast development build' },
+          { id: 'rollup', name: 'Rollup + Svelte', description: 'Custom Rollup config' },
+          { id: 'electron-svelte', name: 'Electron + Svelte', description: 'Desktop apps with Svelte' }
+        ],
+        features: ['Zero runtime overhead', 'Built-in state management', 'CSS-in-JS', 'Small bundle size'],
+        pricing: { free: true, credits: 18 }
+      },
+      {
+        id: 'django-generator',
+        name: 'Django Generator',
+        description: 'Python web framework for perfectionists with deadlines',
+        icon: FileJson,
+        color: 'from-green-600 to-blue-600',
+        category: 'generators',
+        premium: true,
+        buildOptions: [
+          { id: 'api', name: 'Django REST API', description: 'RESTful APIs with DRF' },
+          { id: 'fullstack', name: 'Full-Stack Django', description: 'Templates + static files' },
+          { id: 'graphql', name: 'GraphQL API', description: 'GraphQL with Graphene' },
+          { id: 'celery', name: 'Async Tasks', description: 'Background tasks with Celery' }
+        ],
+        features: ['ORM included', 'Admin interface', 'Security by default', 'Scalable architecture'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      },
+      {
+        id: 'laravel-generator',
+        name: 'Laravel Generator',
+        description: 'Elegant PHP framework for web artisans',
+        icon: Crown,
+        color: 'from-red-600 to-orange-500',
+        category: 'generators',
+        premium: true,
+        buildOptions: [
+          { id: 'api', name: 'Laravel API', description: 'RESTful APIs with Sanctum' },
+          { id: 'blade', name: 'Blade Templates', description: 'Server-side rendered views' },
+          { id: 'livewire', name: 'Laravel Livewire', description: 'Dynamic interfaces without JS' },
+          { id: 'nova', name: 'Laravel Nova', description: 'Admin panel for Laravel' }
+        ],
+        features: ['Eloquent ORM', 'Artisan CLI', 'Queue system', 'Built-in authentication'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      },
+      {
+        id: 'spring-generator',
+        name: 'Spring Boot Generator',
+        description: 'Java framework for enterprise applications',
+        icon: Leaf,
+        color: 'from-green-700 to-green-500',
+        category: 'generators',
+        premium: true,
+        buildOptions: [
+          { id: 'web', name: 'Spring Web', description: 'RESTful web services' },
+          { id: 'data', name: 'Spring Data', description: 'Database abstraction layer' },
+          { id: 'security', name: 'Spring Security', description: 'Authentication & authorization' },
+          { id: 'cloud', name: 'Spring Cloud', description: 'Microservices toolkit' }
+        ],
+        features: ['Dependency injection', 'Auto-configuration', 'Production-ready', 'Cloud native'],
+        pricing: { free: false, credits: 45, proOnly: true }
+      },
+      {
+        id: 'rust-generator',
+        name: 'Rust Generator',
+        description: 'Fast and memory-safe systems programming',
+        icon: Shield,
+        color: 'from-orange-800 to-red-700',
+        category: 'generators',
+        new: true,
+        buildOptions: [
+          { id: 'warp', name: 'Warp Web Server', description: 'Fast web framework' },
+          { id: 'axum', name: 'Axum Framework', description: 'Async web framework' },
+          { id: 'cli', name: 'CLI Application', description: 'Command-line tools' },
+          { id: 'wasm', name: 'WebAssembly', description: 'Browser-compatible modules' }
+        ],
+        features: ['Memory safety', 'Zero-cost abstractions', 'Fearless concurrency', 'Cross-platform'],
+        pricing: { free: true, credits: 25 }
+      },
+      {
+        id: 'go-generator',
+        name: 'Go Generator',
+        description: 'Simple, reliable, and efficient software',
+        icon: Zap,
+        color: 'from-cyan-600 to-blue-600',
+        category: 'generators',
+        buildOptions: [
+          { id: 'gin', name: 'Gin Framework', description: 'HTTP web framework' },
+          { id: 'echo', name: 'Echo Framework', description: 'High performance framework' },
+          { id: 'grpc', name: 'gRPC Service', description: 'High-performance RPC' },
+          { id: 'cli', name: 'CLI Tool', description: 'Command-line applications' }
+        ],
+        features: ['Fast compilation', 'Built-in concurrency', 'Standard library', 'Static binaries'],
+        pricing: { free: true, credits: 20 }
+      },
+      {
+        id: 'blockchain-generator',
+        name: 'Blockchain Generator',
+        description: 'Decentralized applications and smart contracts',
+        icon: Link,
+        color: 'from-purple-700 to-blue-700',
+        category: 'generators',
+        premium: true,
+        buildOptions: [
+          { id: 'ethereum', name: 'Ethereum DApp', description: 'Ethereum smart contracts' },
+          { id: 'solana', name: 'Solana Program', description: 'Solana blockchain programs' },
+          { id: 'polygon', name: 'Polygon DApp', description: 'Layer 2 scaling solution' },
+          { id: 'nft', name: 'NFT Collection', description: 'Non-fungible token projects' }
+        ],
+        features: ['Smart contracts', 'Web3 integration', 'Wallet connection', 'Token standards'],
+        pricing: { free: false, credits: 60, proOnly: true }
+      }
+    ]
+  },
+  {
+    id: 'design',
+    name: 'Design & Media',
+    description: 'Create stunning visuals and multimedia content',
+    icon: Palette,
+    color: 'from-pink-500 to-rose-500',
+    tools: [
+      {
+        id: 'image-generator',
+        name: 'AI Image Generator',
+        description: 'Create stunning images with AI',
+        icon: ImageIcon,
+        color: 'from-cyan-500 to-cyan-600',
+        category: 'design',
+        popular: true,
+        buildOptions: [
+          { id: 'photorealistic', name: 'Photorealistic', description: 'Realistic photos and portraits' },
+          { id: 'artistic', name: 'Artistic', description: 'Paintings and artistic styles' },
+          { id: 'illustration', name: 'Illustration', description: 'Vector-style illustrations' },
+          { id: 'logo', name: 'Logo Design', description: 'Brand logos and icons' }
+        ],
+        features: ['Multiple art styles', 'High resolution', 'Commercial license'],
+        pricing: { free: true, credits: 3 }
+      },
+      {
+        id: 'ui-designer',
+        name: 'UI/UX Designer',
+        description: 'Design interfaces with AI assistance',
+        icon: Layout,
+        color: 'from-emerald-500 to-emerald-600',
+        category: 'design',
+        new: true,
+        buildOptions: [
+          { id: 'wireframe', name: 'Wireframes', description: 'Low-fidelity layouts' },
+          { id: 'mockup', name: 'Mockups', description: 'High-fidelity designs' },
+          { id: 'prototype', name: 'Prototypes', description: 'Interactive prototypes' },
+          { id: 'design-system', name: 'Design System', description: 'Component libraries' }
+        ],
+        integrations: [
+          { id: 'figma', name: 'Figma', description: 'Export to Figma' },
+          { id: 'sketch', name: 'Sketch', description: 'Export to Sketch' },
+          { id: 'adobe-xd', name: 'Adobe XD', description: 'Export to Adobe XD' }
+        ],
+        features: ['Design tokens', 'Component library', 'Responsive design'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'color-palette',
+        name: 'Color Palette Generator',
+        description: 'Create beautiful color schemes',
+        icon: Palette,
+        color: 'from-yellow-500 to-yellow-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'monochromatic', name: 'Monochromatic', description: 'Single hue variations' },
+          { id: 'complementary', name: 'Complementary', description: 'Opposite colors' },
+          { id: 'triadic', name: 'Triadic', description: 'Three evenly spaced colors' },
+          { id: 'material', name: 'Material Design', description: 'Google Material colors' }
+        ],
+        features: ['Export formats', 'Accessibility check', 'Color harmony'],
+        pricing: { free: true, credits: 1 }
+      },
+      {
+        id: 'logo-maker',
+        name: 'AI Logo Maker',
+        description: 'Generate professional logos instantly',
+        icon: Stamp,
+        color: 'from-purple-500 to-purple-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'text-based', name: 'Text Logo', description: 'Typography-focused logos' },
+          { id: 'icon-based', name: 'Icon Logo', description: 'Symbol and icon logos' },
+          { id: 'combination', name: 'Combination', description: 'Text and icon together' },
+          { id: 'wordmark', name: 'Wordmark', description: 'Stylized text only' }
+        ],
+        features: ['Vector format', 'Multiple variations', 'Brand guidelines'],
+        pricing: { free: true, credits: 5 }
+      },
+      {
+        id: 'video-generator',
+        name: 'AI Video Creator',
+        description: 'Generate videos from text descriptions',
+        icon: Video,
+        color: 'from-red-500 to-red-600',
+        category: 'design',
+        premium: true,
+        buildOptions: [
+          { id: 'animation', name: 'Animation', description: 'Animated sequences' },
+          { id: 'slideshow', name: 'Slideshow', description: 'Image slideshows' },
+          { id: 'explainer', name: 'Explainer', description: 'Educational videos' },
+          { id: 'promo', name: 'Promo Video', description: 'Marketing videos' }
+        ],
+        features: ['HD quality', 'Background music', 'Voice narration'],
+        pricing: { free: false, credits: 25, proOnly: true }
+      },
+      {
+        id: 'icon-generator',
+        name: 'Icon Generator',
+        description: 'Create custom icons and graphics',
+        icon: BookmarkIcon,
+        color: 'from-teal-500 to-teal-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'line', name: 'Line Icons', description: 'Minimalist line art' },
+          { id: 'filled', name: 'Filled Icons', description: 'Solid filled shapes' },
+          { id: 'duotone', name: 'Duotone', description: 'Two-color icons' },
+          { id: '3d', name: '3D Icons', description: 'Three-dimensional icons' }
+        ],
+        features: ['SVG format', 'Multiple sizes', 'Icon sets'],
+        pricing: { free: true, credits: 2 }
+      },
+      // NEW DESIGN TOOLS
+      {
+        id: '3d-model-generator',
+        name: '3D Model Generator',
+        description: 'Create 3D models and assets from text descriptions',
+        icon: Boxes,
+        color: 'from-purple-600 to-pink-600',
+        category: 'design',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'character', name: '3D Characters', description: 'Human and creature models' },
+          { id: 'object', name: 'Objects', description: 'Furniture, tools, vehicles' },
+          { id: 'environment', name: 'Environments', description: 'Landscapes and buildings' },
+          { id: 'texture', name: 'Textures', description: 'Material and surface textures' }
+        ],
+        features: ['Multiple formats', 'Rigged models', 'PBR materials', 'Game-ready assets'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      },
+      {
+        id: 'motion-graphics',
+        name: 'Motion Graphics',
+        description: 'Animated graphics and visual effects',
+        icon: Play,
+        color: 'from-blue-600 to-purple-600',
+        category: 'design',
+        premium: true,
+        buildOptions: [
+          { id: 'logo-animation', name: 'Logo Animation', description: 'Animated logo reveals' },
+          { id: 'infographic', name: 'Animated Infographics', description: 'Data visualization' },
+          { id: 'social-media', name: 'Social Media', description: 'Instagram, TikTok animations' },
+          { id: 'transitions', name: 'Transitions', description: 'Scene transitions and effects' }
+        ],
+        features: ['Multiple formats', 'Custom timing', 'Sound integration', 'Loop optimization'],
+        pricing: { free: false, credits: 30, proOnly: true }
+      },
+      {
+        id: 'brand-kit-generator',
+        name: 'Brand Kit Generator',
+        description: 'Complete brand identity packages',
+        icon: Award,
+        color: 'from-yellow-500 to-orange-500',
+        category: 'design',
+        premium: true,
+        buildOptions: [
+          { id: 'startup', name: 'Startup Brand', description: 'Tech startup identity' },
+          { id: 'corporate', name: 'Corporate', description: 'Professional business brand' },
+          { id: 'creative', name: 'Creative Agency', description: 'Artistic and bold designs' },
+          { id: 'minimal', name: 'Minimal', description: 'Clean and modern aesthetic' }
+        ],
+        features: ['Logo variations', 'Color palettes', 'Typography', 'Brand guidelines'],
+        pricing: { free: false, credits: 50, proOnly: true }
+      },
+      {
+        id: 'mockup-generator',
+        name: 'Mockup Generator',
+        description: 'Professional product mockups and presentations',
+        icon: Monitor,
+        color: 'from-slate-500 to-gray-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'device', name: 'Device Mockups', description: 'Phone, tablet, laptop screens' },
+          { id: 'print', name: 'Print Materials', description: 'Business cards, brochures' },
+          { id: 'apparel', name: 'Apparel', description: 'T-shirts, hoodies, accessories' },
+          { id: 'packaging', name: 'Packaging', description: 'Boxes, bottles, bags' }
+        ],
+        features: ['Smart objects', 'High resolution', 'Multiple angles', 'Realistic lighting'],
+        pricing: { free: true, credits: 8 }
+      },
+      {
+        id: 'font-generator',
+        name: 'Font Generator',
+        description: 'Create custom fonts and typography',
+        icon: Type,
+        color: 'from-indigo-600 to-blue-600',
+        category: 'design',
+        premium: true,
+        buildOptions: [
+          { id: 'serif', name: 'Serif Fonts', description: 'Traditional serif typefaces' },
+          { id: 'sans-serif', name: 'Sans-serif', description: 'Modern clean fonts' },
+          { id: 'script', name: 'Script Fonts', description: 'Handwritten style fonts' },
+          { id: 'display', name: 'Display Fonts', description: 'Decorative headline fonts' }
+        ],
+        features: ['Multiple weights', 'Web font formats', 'Variable fonts', 'Unicode support'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      },
+      {
+        id: 'pattern-generator',
+        name: 'Pattern Generator',
+        description: 'Seamless patterns and textures',
+        icon: Grid,
+        color: 'from-emerald-600 to-teal-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'geometric', name: 'Geometric', description: 'Mathematical patterns' },
+          { id: 'organic', name: 'Organic', description: 'Natural and flowing patterns' },
+          { id: 'abstract', name: 'Abstract', description: 'Artistic abstract designs' },
+          { id: 'vintage', name: 'Vintage', description: 'Retro and classic patterns' }
+        ],
+        features: ['Seamless tiling', 'Vector format', 'Customizable colors', 'Multiple scales'],
+        pricing: { free: true, credits: 6 }
+      },
+      {
+        id: 'infographic-maker',
+        name: 'Infographic Maker',
+        description: 'Data visualization and infographics',
+        icon: BarChart2,
+        color: 'from-orange-600 to-pink-600',
+        category: 'design',
+        buildOptions: [
+          { id: 'statistical', name: 'Statistical', description: 'Charts and data visualization' },
+          { id: 'process', name: 'Process Flow', description: 'Step-by-step processes' },
+          { id: 'comparison', name: 'Comparison', description: 'Compare products/services' },
+          { id: 'timeline', name: 'Timeline', description: 'Historical timelines' }
+        ],
+        features: ['Interactive elements', 'Animation support', 'Data import', 'Multiple formats'],
+        pricing: { free: true, credits: 12 }
+      },
+      {
+        id: 'avatar-generator',
+        name: 'Avatar Generator',
+        description: 'Custom avatars and profile pictures',
+        icon: Users,
+        color: 'from-pink-600 to-rose-600',
+        category: 'design',
+        popular: true,
+        buildOptions: [
+          { id: 'realistic', name: 'Realistic', description: 'Photorealistic avatars' },
+          { id: 'cartoon', name: 'Cartoon', description: 'Stylized cartoon avatars' },
+          { id: 'pixel', name: 'Pixel Art', description: '8-bit style avatars' },
+          { id: 'abstract', name: 'Abstract', description: 'Geometric abstract avatars' }
+        ],
+        features: ['Multiple styles', 'Customizable features', 'Bulk generation', 'API access'],
+        pricing: { free: true, credits: 4 }
+      }
+    ]
+  },
+  {
+    id: 'deployment',
+    name: 'Deployment & DevOps',
+    description: 'Deploy and manage applications automatically',
+    icon: Rocket,
+    color: 'from-blue-500 to-cyan-500',
+    tools: [
+      {
+        id: 'auto-deploy',
+        name: 'Auto Deployment',
+        description: 'Deploy to multiple platforms automatically',
+        icon: Rocket,
+        color: 'from-blue-500 to-blue-600',
+        category: 'deployment',
+        popular: true,
+        deploymentTargets: [
+          { id: 'vercel', name: 'Vercel', description: 'Serverless deployment' },
+          { id: 'netlify', name: 'Netlify', description: 'JAMstack hosting' },
+          { id: 'aws', name: 'AWS', description: 'Amazon Web Services' },
+          { id: 'gcp', name: 'Google Cloud', description: 'Google Cloud Platform' },
+          { id: 'azure', name: 'Azure', description: 'Microsoft Azure' },
+          { id: 'heroku', name: 'Heroku', description: 'Cloud application platform' },
+          { id: 'railway', name: 'Railway', description: 'Modern deployment platform' },
+          { id: 'render', name: 'Render', description: 'Cloud hosting platform' }
+        ],
+        features: ['CI/CD pipeline', 'Auto-scaling', 'SSL certificates', 'CDN'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'docker-builder',
+        name: 'Docker Builder',
+        description: 'Containerize applications automatically',
+        icon: Container,
+        color: 'from-cyan-500 to-cyan-600',
+        category: 'deployment',
+        buildOptions: [
+          { id: 'node', name: 'Node.js', description: 'Node.js applications' },
+          { id: 'python', name: 'Python', description: 'Python applications' },
+          { id: 'java', name: 'Java', description: 'Java applications' },
+          { id: 'go', name: 'Go', description: 'Go applications' }
+        ],
+        features: ['Multi-stage builds', 'Security scanning', 'Size optimization'],
+        pricing: { free: true, credits: 5 }
+      },
+      {
+        id: 'ci-cd-pipeline',
+        name: 'CI/CD Pipeline',
+        description: 'Automated testing and deployment workflows',
+        icon: GitBranch,
+        color: 'from-green-500 to-green-600',
+        category: 'deployment',
+        integrations: [
+          { id: 'github-actions', name: 'GitHub Actions', description: 'GitHub workflows' },
+          { id: 'gitlab-ci', name: 'GitLab CI', description: 'GitLab pipelines' },
+          { id: 'jenkins', name: 'Jenkins', description: 'Jenkins automation' },
+          { id: 'circleci', name: 'CircleCI', description: 'CircleCI platform' }
+        ],
+        features: ['Automated testing', 'Code quality checks', 'Deployment stages'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'monitoring',
+        name: 'App Monitoring',
+        description: 'Real-time application monitoring and analytics',
+        icon: Gauge,
+        color: 'from-orange-500 to-orange-600',
+        category: 'deployment',
+        integrations: [
+          { id: 'datadog', name: 'Datadog', description: 'Infrastructure monitoring' },
+          { id: 'newrelic', name: 'New Relic', description: 'Application performance' },
+          { id: 'sentry', name: 'Sentry', description: 'Error tracking' },
+          { id: 'logrocket', name: 'LogRocket', description: 'Session replay' }
+        ],
+        features: ['Performance metrics', 'Error tracking', 'User analytics'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'load-balancer',
+        name: 'Load Balancer',
+        description: 'Distribute traffic across multiple servers',
+        icon: Network,
+        color: 'from-purple-500 to-purple-600',
+        category: 'deployment',
+        buildOptions: [
+          { id: 'round-robin', name: 'Round Robin', description: 'Equal distribution' },
+          { id: 'weighted', name: 'Weighted', description: 'Custom weights' },
+          { id: 'ip-hash', name: 'IP Hash', description: 'IP-based routing' },
+          { id: 'least-connections', name: 'Least Connections', description: 'Load-based routing' }
+        ],
+        features: ['Health checks', 'SSL termination', 'Auto-scaling'],
+        pricing: { free: false, credits: 20, proOnly: true }
+      },
+      {
+        id: 'backup-system',
+        name: 'Backup System',
+        description: 'Automated backups and disaster recovery',
+        icon: HardDrive,
+        color: 'from-slate-500 to-slate-600',
+        category: 'deployment',
+        buildOptions: [
+          { id: 'daily', name: 'Daily Backups', description: 'Daily automated backups' },
+          { id: 'real-time', name: 'Real-time', description: 'Continuous backup' },
+          { id: 'incremental', name: 'Incremental', description: 'Changes only backup' },
+          { id: 'snapshot', name: 'Snapshots', description: 'Point-in-time snapshots' }
+        ],
+        features: ['Encryption', 'Compression', 'Recovery testing'],
+        pricing: { free: true, credits: 15 }
+      },
+      // NEW DEVOPS TOOLS
+      {
+        id: 'kubernetes-manager',
+        name: 'Kubernetes Manager',
+        description: 'Container orchestration and management',
+        icon: Package,
+        color: 'from-blue-600 to-indigo-600',
+        category: 'deployment',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'cluster', name: 'Cluster Setup', description: 'Complete K8s cluster configuration' },
+          { id: 'deployment', name: 'Deployments', description: 'Application deployment configs' },
+          { id: 'service-mesh', name: 'Service Mesh', description: 'Istio service mesh setup' },
+          { id: 'monitoring', name: 'Monitoring', description: 'Prometheus + Grafana stack' }
+        ],
+        features: ['Auto-scaling', 'Rolling updates', 'Service discovery', 'Secret management'],
+        pricing: { free: false, credits: 45, proOnly: true }
+      },
+      {
+        id: 'infrastructure-as-code',
+        name: 'Infrastructure as Code',
+        description: 'Automated infrastructure provisioning',
+        icon: Construction,
+        color: 'from-yellow-600 to-orange-600',
+        category: 'deployment',
+        premium: true,
+        buildOptions: [
+          { id: 'terraform', name: 'Terraform', description: 'HashiCorp Terraform configs' },
+          { id: 'cloudformation', name: 'CloudFormation', description: 'AWS CloudFormation templates' },
+          { id: 'pulumi', name: 'Pulumi', description: 'Modern infrastructure as code' },
+          { id: 'ansible', name: 'Ansible', description: 'Configuration management' }
+        ],
+        features: ['Multi-cloud support', 'Version control', 'State management', 'Cost optimization'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      },
+      {
+        id: 'security-scanner',
+        name: 'Security Scanner',
+        description: 'Automated security vulnerability scanning',
+        icon: ShieldCheck,
+        color: 'from-red-600 to-pink-600',
+        category: 'deployment',
+        buildOptions: [
+          { id: 'sast', name: 'Static Analysis', description: 'Source code security scanning' },
+          { id: 'dast', name: 'Dynamic Analysis', description: 'Runtime security testing' },
+          { id: 'dependency', name: 'Dependency Check', description: 'Third-party vulnerability scan' },
+          { id: 'container', name: 'Container Scan', description: 'Docker image security scan' }
+        ],
+        features: ['Compliance reporting', 'CI/CD integration', 'Risk assessment', 'Auto-remediation'],
+        pricing: { free: true, credits: 20 }
+      },
+      {
+        id: 'log-aggregator',
+        name: 'Log Aggregator',
+        description: 'Centralized logging and analysis',
+        icon: FileText,
+        color: 'from-gray-600 to-slate-600',
+        category: 'deployment',
+        integrations: [
+          { id: 'elk', name: 'ELK Stack', description: 'Elasticsearch, Logstash, Kibana' },
+          { id: 'fluentd', name: 'Fluentd', description: 'Unified logging layer' },
+          { id: 'grafana-loki', name: 'Grafana Loki', description: 'Log aggregation system' },
+          { id: 'splunk', name: 'Splunk', description: 'Enterprise log management' }
+        ],
+        features: ['Real-time analysis', 'Alerting', 'Search and filter', 'Visualization'],
+        pricing: { free: true, credits: 12 }
+      },
+      {
+        id: 'environment-manager',
+        name: 'Environment Manager',
+        description: 'Multi-environment deployment and configuration',
+        icon: Cog,
+        color: 'from-indigo-600 to-purple-600',
+        category: 'deployment',
+        buildOptions: [
+          { id: 'dev', name: 'Development', description: 'Development environment setup' },
+          { id: 'staging', name: 'Staging', description: 'Pre-production testing' },
+          { id: 'production', name: 'Production', description: 'Live production environment' },
+          { id: 'canary', name: 'Canary', description: 'Gradual rollout testing' }
+        ],
+        features: ['Environment isolation', 'Config management', 'Promotion pipelines', 'Rollback capability'],
+        pricing: { free: true, credits: 18 }
+      },
+      {
+        id: 'api-gateway',
+        name: 'API Gateway',
+        description: 'API management and routing',
+        icon: Globe,
+        color: 'from-teal-600 to-cyan-600',
+        category: 'deployment',
+        premium: true,
+        buildOptions: [
+          { id: 'kong', name: 'Kong Gateway', description: 'Open-source API gateway' },
+          { id: 'envoy', name: 'Envoy Proxy', description: 'Cloud-native proxy' },
+          { id: 'traefik', name: 'Traefik', description: 'Modern reverse proxy' },
+          { id: 'nginx', name: 'NGINX Plus', description: 'Enterprise web server' }
+        ],
+        features: ['Rate limiting', 'Authentication', 'Load balancing', 'Analytics'],
+        pricing: { free: false, credits: 30, proOnly: true }
+      },
+      {
+        id: 'chaos-engineering',
+        name: 'Chaos Engineering',
+        description: 'System resilience testing and validation',
+        icon: CloudLightning,
+        color: 'from-red-700 to-orange-700',
+        category: 'deployment',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'network', name: 'Network Chaos', description: 'Network failure simulation' },
+          { id: 'cpu', name: 'Resource Chaos', description: 'CPU and memory stress tests' },
+          { id: 'pod', name: 'Pod Chaos', description: 'Kubernetes pod failures' },
+          { id: 'disk', name: 'Disk Chaos', description: 'Storage failure simulation' }
+        ],
+        features: ['Failure injection', 'Metrics collection', 'Automated recovery', 'Compliance reporting'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      }
+    ]
+  },
+  {
+    id: 'integrations',
+    name: 'Integrations & APIs',
+    description: 'Connect with third-party services and APIs',
+    icon: Link,
+    color: 'from-green-500 to-emerald-500',
+    tools: [
+      {
+        id: 'payment-integration',
+        name: 'Payment Gateway',
+        description: 'Integrate Stripe, PayPal, and other payment providers',
+        icon: CreditCard,
+        color: 'from-green-500 to-green-600',
+        category: 'integrations',
+        popular: true,
+        integrations: [
+          { id: 'stripe', name: 'Stripe', description: 'Online payments platform' },
+          { id: 'paypal', name: 'PayPal', description: 'Digital payments' },
+          { id: 'square', name: 'Square', description: 'Payment processing' },
+          { id: 'razorpay', name: 'Razorpay', description: 'Indian payment gateway' }
+        ],
+        features: ['Subscription billing', 'One-time payments', 'Refunds', 'Webhooks'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'auth-integration',
+        name: 'Authentication Hub',
+        description: 'Social login and authentication services',
+        icon: Lock,
+        color: 'from-blue-500 to-blue-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'auth0', name: 'Auth0', description: 'Identity platform' },
+          { id: 'firebase-auth', name: 'Firebase Auth', description: 'Google authentication' },
+          { id: 'okta', name: 'Okta', description: 'Enterprise identity' },
+          { id: 'cognito', name: 'AWS Cognito', description: 'AWS user pools' }
+        ],
+        features: ['Social login', 'Multi-factor auth', 'User management'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'database-connector',
+        name: 'Database Connector',
+        description: 'Connect to various databases and storage solutions',
+        icon: Database,
+        color: 'from-indigo-500 to-indigo-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'postgresql', name: 'PostgreSQL', description: 'Relational database' },
+          { id: 'mongodb', name: 'MongoDB', description: 'NoSQL database' },
+          { id: 'mysql', name: 'MySQL', description: 'Popular SQL database' },
+          { id: 'supabase', name: 'Supabase', description: 'Open source Firebase' },
+          { id: 'planetscale', name: 'PlanetScale', description: 'Serverless MySQL' },
+          { id: 'redis', name: 'Redis', description: 'In-memory database' }
+        ],
+        features: ['Connection pooling', 'Query builder', 'Migrations'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'email-service',
+        name: 'Email Service',
+        description: 'Send emails and manage campaigns',
+        icon: Mail,
+        color: 'from-red-500 to-red-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'sendgrid', name: 'SendGrid', description: 'Email delivery service' },
+          { id: 'mailgun', name: 'Mailgun', description: 'Email automation' },
+          { id: 'ses', name: 'Amazon SES', description: 'AWS email service' },
+          { id: 'postmark', name: 'Postmark', description: 'Transactional email' }
+        ],
+        features: ['Templates', 'Analytics', 'A/B testing', 'Scheduling'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'notification-hub',
+        name: 'Notification Hub',
+        description: 'Push notifications and real-time messaging',
+        icon: Bell,
+        color: 'from-yellow-500 to-yellow-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'pusher', name: 'Pusher', description: 'Real-time messaging' },
+          { id: 'onesignal', name: 'OneSignal', description: 'Push notifications' },
+          { id: 'fcm', name: 'Firebase Cloud Messaging', description: 'Google notifications' },
+          { id: 'twilio', name: 'Twilio', description: 'SMS and voice' }
+        ],
+        features: ['Cross-platform', 'Targeting', 'Analytics', 'A/B testing'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'file-storage',
+        name: 'File Storage',
+        description: 'Cloud storage and file management',
+        icon: Cloud,
+        color: 'from-cyan-500 to-cyan-600',
+        category: 'integrations',
+        integrations: [
+          { id: 's3', name: 'Amazon S3', description: 'AWS object storage' },
+          { id: 'cloudinary', name: 'Cloudinary', description: 'Media management' },
+          { id: 'uploadcare', name: 'Uploadcare', description: 'File uploading' },
+          { id: 'gcs', name: 'Google Cloud Storage', description: 'Google storage' }
+        ],
+        features: ['CDN delivery', 'Image optimization', 'Security', 'Thumbnails'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'webhook-manager',
+        name: 'Webhook Manager',
+        description: 'Manage webhooks and event-driven integrations',
+        icon: Webhook,
+        color: 'from-purple-500 to-purple-600',
+        category: 'integrations',
+        buildOptions: [
+          { id: 'incoming', name: 'Incoming Webhooks', description: 'Receive webhook events' },
+          { id: 'outgoing', name: 'Outgoing Webhooks', description: 'Send webhook events' },
+          { id: 'transform', name: 'Data Transform', description: 'Transform webhook data' },
+          { id: 'retry', name: 'Retry Logic', description: 'Handle failed deliveries' }
+        ],
+        features: ['Event filtering', 'Payload validation', 'Retry mechanisms'],
+        pricing: { free: true, credits: 5 }
+      },
+      {
+        id: 'search-integration',
+        name: 'Search Engine',
+        description: 'Full-text search and indexing',
+        icon: Search,
+        color: 'from-emerald-500 to-emerald-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'elasticsearch', name: 'Elasticsearch', description: 'Search and analytics' },
+          { id: 'algolia', name: 'Algolia', description: 'Search as a service' },
+          { id: 'meilisearch', name: 'MeiliSearch', description: 'Open source search' },
+          { id: 'typesense', name: 'Typesense', description: 'Fast search engine' }
+        ],
+        features: ['Autocomplete', 'Faceted search', 'Analytics', 'Typo tolerance'],
+        pricing: { free: true, credits: 10 }
+      },
+      // NEW INTEGRATION TOOLS
+      {
+        id: 'crm-integration',
+        name: 'CRM Integration',
+        description: 'Customer relationship management systems',
+        icon: Users,
+        color: 'from-blue-600 to-indigo-600',
+        category: 'integrations',
+        new: true,
+        integrations: [
+          { id: 'salesforce', name: 'Salesforce', description: 'Enterprise CRM platform' },
+          { id: 'hubspot', name: 'HubSpot', description: 'Inbound marketing CRM' },
+          { id: 'pipedrive', name: 'Pipedrive', description: 'Sales-focused CRM' },
+          { id: 'zoho', name: 'Zoho CRM', description: 'All-in-one business suite' }
+        ],
+        features: ['Contact sync', 'Lead management', 'Pipeline tracking', 'Reporting'],
+        pricing: { free: true, credits: 8 }
+      },
+      {
+        id: 'marketing-automation',
+        name: 'Marketing Automation',
+        description: 'Email marketing and campaign automation',
+        icon: Megaphone,
+        color: 'from-pink-600 to-rose-600',
+        category: 'integrations',
+        premium: true,
+        integrations: [
+          { id: 'mailchimp', name: 'Mailchimp', description: 'Email marketing platform' },
+          { id: 'klaviyo', name: 'Klaviyo', description: 'E-commerce email marketing' },
+          { id: 'convertkit', name: 'ConvertKit', description: 'Creator marketing platform' },
+          { id: 'active-campaign', name: 'ActiveCampaign', description: 'Customer experience automation' }
+        ],
+        features: ['Automation workflows', 'Segmentation', 'A/B testing', 'Analytics'],
+        pricing: { free: false, credits: 25, proOnly: true }
+      },
+      {
+        id: 'ecommerce-integration',
+        name: 'E-commerce Integration',
+        description: 'Online store and shopping cart platforms',
+        icon: ShoppingCart,
+        color: 'from-green-600 to-emerald-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'shopify', name: 'Shopify', description: 'E-commerce platform' },
+          { id: 'woocommerce', name: 'WooCommerce', description: 'WordPress e-commerce' },
+          { id: 'magento', name: 'Magento', description: 'Enterprise e-commerce' },
+          { id: 'bigcommerce', name: 'BigCommerce', description: 'SaaS e-commerce platform' }
+        ],
+        features: ['Product sync', 'Order management', 'Inventory tracking', 'Payment processing'],
+        pricing: { free: true, credits: 12 }
+      },
+      {
+        id: 'social-media-integration',
+        name: 'Social Media Integration',
+        description: 'Social media platforms and APIs',
+        icon: Share2,
+        color: 'from-purple-600 to-pink-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'facebook', name: 'Facebook', description: 'Facebook Graph API' },
+          { id: 'twitter', name: 'Twitter/X', description: 'Twitter API v2' },
+          { id: 'instagram', name: 'Instagram', description: 'Instagram Basic Display' },
+          { id: 'linkedin', name: 'LinkedIn', description: 'LinkedIn Marketing API' }
+        ],
+        features: ['Post scheduling', 'Analytics', 'Content management', 'Audience insights'],
+        pricing: { free: true, credits: 15 }
+      },
+      {
+        id: 'calendar-integration',
+        name: 'Calendar Integration',
+        description: 'Calendar and scheduling services',
+        icon: Calendar,
+        color: 'from-orange-600 to-red-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'google-calendar', name: 'Google Calendar', description: 'Google Calendar API' },
+          { id: 'outlook', name: 'Outlook', description: 'Microsoft Graph Calendar' },
+          { id: 'calendly', name: 'Calendly', description: 'Scheduling automation' },
+          { id: 'acuity', name: 'Acuity Scheduling', description: 'Appointment scheduling' }
+        ],
+        features: ['Event sync', 'Availability checking', 'Meeting scheduling', 'Reminders'],
+        pricing: { free: true, credits: 6 }
+      },
+      {
+        id: 'communication-tools',
+        name: 'Communication Tools',
+        description: 'Team communication and collaboration',
+        icon: MessageSquare,
+        color: 'from-slate-600 to-gray-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'slack', name: 'Slack', description: 'Team communication platform' },
+          { id: 'discord', name: 'Discord', description: 'Community platform' },
+          { id: 'teams', name: 'Microsoft Teams', description: 'Business communication' },
+          { id: 'zoom', name: 'Zoom', description: 'Video conferencing' }
+        ],
+        features: ['Bot integration', 'Message automation', 'Channel management', 'File sharing'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'project-management',
+        name: 'Project Management',
+        description: 'Task and project management tools',
+        icon: Briefcase,
+        color: 'from-teal-600 to-cyan-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'asana', name: 'Asana', description: 'Team project management' },
+          { id: 'trello', name: 'Trello', description: 'Visual project boards' },
+          { id: 'notion', name: 'Notion', description: 'All-in-one workspace' },
+          { id: 'monday', name: 'Monday.com', description: 'Work management platform' }
+        ],
+        features: ['Task automation', 'Progress tracking', 'Team collaboration', 'Reporting'],
+        pricing: { free: true, credits: 8 }
+      },
+      {
+        id: 'location-services',
+        name: 'Location Services',
+        description: 'Maps, geolocation, and location-based services',
+        icon: MapPin,
+        color: 'from-red-600 to-pink-600',
+        category: 'integrations',
+        integrations: [
+          { id: 'google-maps', name: 'Google Maps', description: 'Google Maps Platform' },
+          { id: 'mapbox', name: 'Mapbox', description: 'Custom maps and location' },
+          { id: 'foursquare', name: 'Foursquare', description: 'Location intelligence' },
+          { id: 'here', name: 'HERE Maps', description: 'Enterprise mapping platform' }
+        ],
+        features: ['Geocoding', 'Route planning', 'Place search', 'Location tracking'],
+        pricing: { free: true, credits: 12 }
+      }
+    ]
+  },
+  {
+    id: 'ai-ml',
+    name: 'AI & Machine Learning',
+    description: 'Advanced AI and ML capabilities',
+    icon: Brain,
+    color: 'from-violet-500 to-purple-500',
+    tools: [
+      {
+        id: 'chatbot-builder',
+        name: 'AI Chatbot Builder',
+        description: 'Create intelligent conversational AI',
+        icon: MessageSquare,
+        color: 'from-blue-500 to-blue-600',
+        category: 'ai-ml',
+        popular: true,
+        buildOptions: [
+          { id: 'customer-support', name: 'Customer Support', description: 'Support chatbots' },
+          { id: 'sales', name: 'Sales Assistant', description: 'Sales and lead generation' },
+          { id: 'faq', name: 'FAQ Bot', description: 'Frequently asked questions' },
+          { id: 'custom', name: 'Custom Bot', description: 'Specialized chatbots' }
+        ],
+        integrations: [
+          { id: 'openai', name: 'OpenAI', description: 'GPT models' },
+          { id: 'anthropic', name: 'Anthropic', description: 'Claude AI' },
+          { id: 'dialogflow', name: 'Dialogflow', description: 'Google conversational AI' },
+          { id: 'rasa', name: 'Rasa', description: 'Open source framework' }
+        ],
+        features: ['Natural language understanding', 'Multi-language', 'Training'],
+        pricing: { free: true, credits: 15 }
+      },
+      {
+        id: 'image-recognition',
+        name: 'Image Recognition',
+        description: 'AI-powered image analysis and classification',
+        icon: Eye,
+        color: 'from-cyan-500 to-cyan-600',
+        category: 'ai-ml',
+        buildOptions: [
+          { id: 'classification', name: 'Classification', description: 'Classify image content' },
+          { id: 'object-detection', name: 'Object Detection', description: 'Detect objects in images' },
+          { id: 'face-recognition', name: 'Face Recognition', description: 'Identify faces' },
+          { id: 'ocr', name: 'OCR', description: 'Extract text from images' }
+        ],
+        features: ['Real-time processing', 'Custom models', 'High accuracy'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'text-analysis',
+        name: 'Text Analysis',
+        description: 'Natural language processing and sentiment analysis',
+        icon: FileText,
+        color: 'from-green-500 to-green-600',
+        category: 'ai-ml',
+        buildOptions: [
+          { id: 'sentiment', name: 'Sentiment Analysis', description: 'Analyze emotional tone' },
+          { id: 'entities', name: 'Entity Extraction', description: 'Extract named entities' },
+          { id: 'keywords', name: 'Keyword Extraction', description: 'Find important keywords' },
+          { id: 'summarization', name: 'Text Summarization', description: 'Generate summaries' }
+        ],
+        features: ['Multi-language support', 'Custom models', 'Real-time analysis'],
+        pricing: { free: true, credits: 8 }
+      },
+      {
+        id: 'recommendation',
+        name: 'Recommendation Engine',
+        description: 'AI-powered content and product recommendations',
+        icon: Target,
+        color: 'from-orange-500 to-orange-600',
+        category: 'ai-ml',
+        premium: true,
+        buildOptions: [
+          { id: 'collaborative', name: 'Collaborative Filtering', description: 'User-based recommendations' },
+          { id: 'content-based', name: 'Content-Based', description: 'Item-based recommendations' },
+          { id: 'hybrid', name: 'Hybrid Model', description: 'Combined approach' },
+          { id: 'deep-learning', name: 'Deep Learning', description: 'Neural network models' }
+        ],
+        features: ['Real-time updates', 'A/B testing', 'Performance analytics'],
+        pricing: { free: false, credits: 30, proOnly: true }
+      },
+      {
+        id: 'voice-ai',
+        name: 'Voice AI',
+        description: 'Speech recognition and text-to-speech',
+        icon: Music,
+        color: 'from-purple-500 to-purple-600',
+        category: 'ai-ml',
+        buildOptions: [
+          { id: 'speech-to-text', name: 'Speech-to-Text', description: 'Convert speech to text' },
+          { id: 'text-to-speech', name: 'Text-to-Speech', description: 'Convert text to speech' },
+          { id: 'voice-commands', name: 'Voice Commands', description: 'Voice control interface' },
+          { id: 'voice-cloning', name: 'Voice Cloning', description: 'Clone specific voices', premium: true }
+        ],
+        features: ['Multiple languages', 'Custom voices', 'Real-time processing'],
+        pricing: { free: true, credits: 12 }
+      },
+      {
+        id: 'data-analytics',
+        name: 'AI Data Analytics',
+        description: 'Intelligent data analysis and insights',
+        icon: BarChart3,
+        color: 'from-indigo-500 to-indigo-600',
+        category: 'ai-ml',
+        buildOptions: [
+          { id: 'predictive', name: 'Predictive Analytics', description: 'Forecast future trends' },
+          { id: 'anomaly', name: 'Anomaly Detection', description: 'Detect unusual patterns' },
+          { id: 'clustering', name: 'Clustering', description: 'Group similar data' },
+          { id: 'correlation', name: 'Correlation Analysis', description: 'Find data relationships' }
+        ],
+        features: ['Auto-insights', 'Interactive dashboards', 'Export reports'],
+        pricing: { free: true, credits: 20 }
+      },
+      // NEW AI/ML TOOLS
+      {
+        id: 'computer-vision',
+        name: 'Computer Vision',
+        description: 'Advanced image and video processing AI',
+        icon: Camera,
+        color: 'from-purple-600 to-pink-600',
+        category: 'ai-ml',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'video-analysis', name: 'Video Analysis', description: 'Motion detection and tracking' },
+          { id: 'medical-imaging', name: 'Medical Imaging', description: 'Healthcare image analysis' },
+          { id: 'quality-control', name: 'Quality Control', description: 'Manufacturing defect detection' },
+          { id: 'augmented-reality', name: 'AR Integration', description: 'Real-time object overlay' }
+        ],
+        features: ['Real-time processing', 'Custom model training', 'Edge deployment', 'High accuracy'],
+        pricing: { free: false, credits: 45, proOnly: true }
+      },
+      {
+        id: 'nlp-advanced',
+        name: 'Advanced NLP',
+        description: 'Sophisticated natural language processing',
+        icon: Brain,
+        color: 'from-teal-600 to-cyan-600',
+        category: 'ai-ml',
+        premium: true,
+        buildOptions: [
+          { id: 'translation', name: 'Language Translation', description: 'Multi-language translation' },
+          { id: 'generation', name: 'Text Generation', description: 'Creative content generation' },
+          { id: 'question-answering', name: 'Q&A Systems', description: 'Intelligent question answering' },
+          { id: 'document-ai', name: 'Document AI', description: 'Intelligent document processing' }
+        ],
+        features: ['Transformer models', 'Custom training', 'Multi-modal support', 'Fine-tuning'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      },
+      {
+        id: 'predictive-modeling',
+        name: 'Predictive Modeling',
+        description: 'Machine learning models for forecasting',
+        icon: TrendingUp,
+        color: 'from-green-600 to-blue-600',
+        category: 'ai-ml',
+        premium: true,
+        buildOptions: [
+          { id: 'time-series', name: 'Time Series', description: 'Temporal data forecasting' },
+          { id: 'classification', name: 'Classification', description: 'Category prediction models' },
+          { id: 'regression', name: 'Regression', description: 'Numerical value prediction' },
+          { id: 'ensemble', name: 'Ensemble Methods', description: 'Combined model approaches' }
+        ],
+        features: ['Auto ML', 'Model validation', 'Feature engineering', 'Performance metrics'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      },
+      {
+        id: 'neural-networks',
+        name: 'Neural Networks',
+        description: 'Deep learning neural network architectures',
+        icon: Network,
+        color: 'from-violet-600 to-purple-600',
+        category: 'ai-ml',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'cnn', name: 'CNN', description: 'Convolutional neural networks' },
+          { id: 'rnn', name: 'RNN/LSTM', description: 'Recurrent neural networks' },
+          { id: 'transformer', name: 'Transformers', description: 'Attention-based models' },
+          { id: 'gan', name: 'GANs', description: 'Generative adversarial networks' }
+        ],
+        features: ['GPU acceleration', 'Model optimization', 'Transfer learning', 'Distributed training'],
+        pricing: { free: false, credits: 50, proOnly: true }
+      },
+      {
+        id: 'reinforcement-learning',
+        name: 'Reinforcement Learning',
+        description: 'AI agents that learn through interaction',
+        icon: Target,
+        color: 'from-red-600 to-orange-600',
+        category: 'ai-ml',
+        premium: true,
+        buildOptions: [
+          { id: 'q-learning', name: 'Q-Learning', description: 'Value-based learning' },
+          { id: 'policy-gradient', name: 'Policy Gradient', description: 'Policy optimization' },
+          { id: 'actor-critic', name: 'Actor-Critic', description: 'Hybrid approach' },
+          { id: 'multi-agent', name: 'Multi-Agent', description: 'Multiple agent systems' }
+        ],
+        features: ['Environment simulation', 'Agent training', 'Performance tracking', 'Deployment tools'],
+        pricing: { free: false, credits: 55, proOnly: true }
+      },
+      {
+        id: 'automl',
+        name: 'AutoML Platform',
+        description: 'Automated machine learning pipeline',
+        icon: Cog,
+        color: 'from-indigo-600 to-blue-600',
+        category: 'ai-ml',
+        premium: true,
+        buildOptions: [
+          { id: 'tabular', name: 'Tabular Data', description: 'Structured data modeling' },
+          { id: 'image', name: 'Image Classification', description: 'Automated image models' },
+          { id: 'text', name: 'Text Classification', description: 'NLP model automation' },
+          { id: 'forecasting', name: 'Time Series', description: 'Automated forecasting' }
+        ],
+        features: ['No-code interface', 'Model comparison', 'Hyperparameter tuning', 'One-click deployment'],
+        pricing: { free: false, credits: 30, proOnly: true }
+      },
+      {
+        id: 'edge-ai',
+        name: 'Edge AI Deployment',
+        description: 'Deploy AI models to edge devices',
+        icon: Cpu,
+        color: 'from-gray-600 to-slate-600',
+        category: 'ai-ml',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'mobile', name: 'Mobile Devices', description: 'iOS and Android deployment' },
+          { id: 'iot', name: 'IoT Devices', description: 'Embedded systems deployment' },
+          { id: 'raspberry-pi', name: 'Raspberry Pi', description: 'ARM-based deployment' },
+          { id: 'tensorrt', name: 'TensorRT', description: 'NVIDIA GPU optimization' }
+        ],
+        features: ['Model optimization', 'Quantization', 'Real-time inference', 'Offline capability'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      },
+      {
+        id: 'federated-learning',
+        name: 'Federated Learning',
+        description: 'Distributed machine learning without data sharing',
+        icon: Shield,
+        color: 'from-green-700 to-teal-700',
+        category: 'ai-ml',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'horizontal', name: 'Horizontal FL', description: 'Same features, different data' },
+          { id: 'vertical', name: 'Vertical FL', description: 'Different features, shared samples' },
+          { id: 'transfer', name: 'Transfer FL', description: 'Cross-domain learning' },
+          { id: 'hierarchical', name: 'Hierarchical FL', description: 'Multi-level aggregation' }
+        ],
+        features: ['Privacy preservation', 'Secure aggregation', 'Differential privacy', 'Model compression'],
+        pricing: { free: false, credits: 60, proOnly: true }
+      }
+    ]
+  },
+  {
+    id: 'analytics',
+    name: 'Analytics & Monitoring',
+    description: 'Track performance and user behavior',
+    icon: BarChart3,
+    color: 'from-emerald-500 to-teal-500',
+    tools: [
+      {
+        id: 'web-analytics',
+        name: 'Web Analytics',
+        description: 'Track website traffic and user behavior',
+        icon: BarChart,
+        color: 'from-blue-500 to-blue-600',
+        category: 'analytics',
+        popular: true,
+        integrations: [
+          { id: 'google-analytics', name: 'Google Analytics', description: 'Google\'s web analytics' },
+          { id: 'plausible', name: 'Plausible', description: 'Privacy-focused analytics' },
+          { id: 'mixpanel', name: 'Mixpanel', description: 'Product analytics' },
+          { id: 'amplitude', name: 'Amplitude', description: 'User behavior analytics' }
+        ],
+        features: ['Real-time data', 'Custom events', 'Conversion tracking'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'performance-monitor',
+        name: 'Performance Monitor',
+        description: 'Monitor application performance and uptime',
+        icon: Activity,
+        color: 'from-green-500 to-green-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'uptime', name: 'Uptime Monitoring', description: 'Track service availability' },
+          { id: 'speed', name: 'Speed Testing', description: 'Monitor page load times' },
+          { id: 'api', name: 'API Monitoring', description: 'Track API performance' },
+          { id: 'synthetic', name: 'Synthetic Testing', description: 'Automated user journeys' }
+        ],
+        features: ['Alerts', 'SLA reporting', 'Global monitoring'],
+        pricing: { free: true, credits: 5 }
+      },
+      {
+        id: 'heatmap-tracker',
+        name: 'Heatmap Tracker',
+        description: 'Visual user interaction tracking',
+        icon: Grid,
+        color: 'from-red-500 to-red-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'click', name: 'Click Heatmaps', description: 'Track where users click' },
+          { id: 'scroll', name: 'Scroll Maps', description: 'See how far users scroll' },
+          { id: 'move', name: 'Movement Maps', description: 'Track mouse movements' },
+          { id: 'attention', name: 'Attention Maps', description: 'Time spent on elements' }
+        ],
+        features: ['Session recordings', 'Conversion analysis', 'A/B testing'],
+        pricing: { free: true, credits: 10 }
+      },
+      {
+        id: 'error-tracking',
+        name: 'Error Tracking',
+        description: 'Monitor and debug application errors',
+        icon: Bug,
+        color: 'from-orange-500 to-orange-600',
+        category: 'analytics',
+        integrations: [
+          { id: 'sentry', name: 'Sentry', description: 'Error tracking platform' },
+          { id: 'bugsnag', name: 'Bugsnag', description: 'Error monitoring' },
+          { id: 'rollbar', name: 'Rollbar', description: 'Real-time error tracking' },
+          { id: 'airbrake', name: 'Airbrake', description: 'Error and performance monitoring' }
+        ],
+        features: ['Real-time alerts', 'Error grouping', 'Performance impact'],
+        pricing: { free: true, credits: 0 }
+      },
+      {
+        id: 'conversion-optimizer',
+        name: 'Conversion Optimizer',
+        description: 'A/B testing and conversion rate optimization',
+        icon: TrendingUp,
+        color: 'from-purple-500 to-purple-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'ab-test', name: 'A/B Testing', description: 'Compare different versions' },
+          { id: 'multivariate', name: 'Multivariate Testing', description: 'Test multiple elements' },
+          { id: 'funnel', name: 'Funnel Analysis', description: 'Analyze conversion funnels' },
+          { id: 'cohort', name: 'Cohort Analysis', description: 'User behavior over time' }
+        ],
+        features: ['Statistical significance', 'Automated optimization', 'Revenue tracking'],
+        pricing: { free: true, credits: 15 }
+      },
+      {
+        id: 'dashboard-builder',
+        name: 'Dashboard Builder',
+        description: 'Create custom analytics dashboards',
+        icon: PieChart,
+        color: 'from-cyan-500 to-cyan-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'executive', name: 'Executive Dashboard', description: 'High-level metrics' },
+          { id: 'operational', name: 'Operational Dashboard', description: 'Day-to-day operations' },
+          { id: 'customer', name: 'Customer Dashboard', description: 'Customer-facing metrics' },
+          { id: 'custom', name: 'Custom Dashboard', description: 'Fully customizable' }
+        ],
+        features: ['Drag-and-drop builder', 'Real-time updates', 'Export options'],
+        pricing: { free: true, credits: 12 }
+      },
+      // NEW ANALYTICS TOOLS
+      {
+        id: 'business-intelligence',
+        name: 'Business Intelligence',
+        description: 'Enterprise-grade data analysis and reporting',
+        icon: Briefcase,
+        color: 'from-blue-700 to-indigo-700',
+        category: 'analytics',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'data-warehouse', name: 'Data Warehouse', description: 'Centralized data storage' },
+          { id: 'etl', name: 'ETL Pipeline', description: 'Extract, transform, load data' },
+          { id: 'olap', name: 'OLAP Cubes', description: 'Multidimensional analysis' },
+          { id: 'data-mining', name: 'Data Mining', description: 'Pattern discovery' }
+        ],
+        features: ['Advanced analytics', 'Predictive modeling', 'Self-service BI', 'Enterprise security'],
+        pricing: { free: false, credits: 50, proOnly: true }
+      },
+      {
+        id: 'user-journey-analytics',
+        name: 'User Journey Analytics',
+        description: 'Comprehensive user experience tracking',
+        icon: Route,
+        color: 'from-pink-600 to-rose-600',
+        category: 'analytics',
+        premium: true,
+        buildOptions: [
+          { id: 'path-analysis', name: 'Path Analysis', description: 'User navigation patterns' },
+          { id: 'session-replay', name: 'Session Replay', description: 'Watch user sessions' },
+          { id: 'attribution', name: 'Attribution Modeling', description: 'Marketing attribution' },
+          { id: 'retention', name: 'Retention Analysis', description: 'User retention metrics' }
+        ],
+        features: ['Cross-device tracking', 'Real-time insights', 'Behavioral segmentation', 'Journey mapping'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      },
+      {
+        id: 'mobile-analytics',
+        name: 'Mobile Analytics',
+        description: 'Mobile app performance and user analytics',
+        icon: Smartphone,
+        color: 'from-green-600 to-teal-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'app-performance', name: 'App Performance', description: 'Crash reporting and performance' },
+          { id: 'user-engagement', name: 'User Engagement', description: 'In-app behavior tracking' },
+          { id: 'push-analytics', name: 'Push Analytics', description: 'Notification performance' },
+          { id: 'revenue-tracking', name: 'Revenue Tracking', description: 'In-app purchase analytics' }
+        ],
+        features: ['Real-time monitoring', 'Crash symbolication', 'Custom events', 'Cohort analysis'],
+        pricing: { free: true, credits: 18 }
+      },
+      {
+        id: 'social-analytics',
+        name: 'Social Media Analytics',
+        description: 'Social media performance and sentiment tracking',
+        icon: Share2,
+        color: 'from-purple-600 to-pink-600',
+        category: 'analytics',
+        integrations: [
+          { id: 'facebook-insights', name: 'Facebook Insights', description: 'Facebook page analytics' },
+          { id: 'twitter-analytics', name: 'Twitter Analytics', description: 'Tweet performance metrics' },
+          { id: 'instagram-insights', name: 'Instagram Insights', description: 'Instagram business analytics' },
+          { id: 'linkedin-analytics', name: 'LinkedIn Analytics', description: 'LinkedIn page insights' }
+        ],
+        features: ['Sentiment analysis', 'Engagement tracking', 'Competitor analysis', 'Influencer metrics'],
+        pricing: { free: true, credits: 15 }
+      },
+      {
+        id: 'seo-analytics',
+        name: 'SEO Analytics',
+        description: 'Search engine optimization tracking and analysis',
+        icon: Search,
+        color: 'from-yellow-600 to-orange-600',
+        category: 'analytics',
+        buildOptions: [
+          { id: 'keyword-tracking', name: 'Keyword Tracking', description: 'Monitor keyword rankings' },
+          { id: 'backlink-analysis', name: 'Backlink Analysis', description: 'Track inbound links' },
+          { id: 'technical-seo', name: 'Technical SEO', description: 'Site health monitoring' },
+          { id: 'competitor-seo', name: 'Competitor SEO', description: 'Compare SEO performance' }
+        ],
+        features: ['Rank tracking', 'Site audits', 'Content optimization', 'Local SEO'],
+        pricing: { free: true, credits: 20 }
+      },
+      {
+        id: 'financial-analytics',
+        name: 'Financial Analytics',
+        description: 'Business financial metrics and KPI tracking',
+        icon: DollarSign,
+        color: 'from-emerald-600 to-green-600',
+        category: 'analytics',
+        premium: true,
+        buildOptions: [
+          { id: 'revenue-analytics', name: 'Revenue Analytics', description: 'Revenue tracking and forecasting' },
+          { id: 'cost-analysis', name: 'Cost Analysis', description: 'Expense tracking and optimization' },
+          { id: 'profitability', name: 'Profitability', description: 'Profit margin analysis' },
+          { id: 'cash-flow', name: 'Cash Flow', description: 'Cash flow monitoring' }
+        ],
+        features: ['Financial modeling', 'Budget tracking', 'ROI calculation', 'Variance analysis'],
+        pricing: { free: false, credits: 40, proOnly: true }
+      },
+      {
+        id: 'security-analytics',
+        name: 'Security Analytics',
+        description: 'Cybersecurity monitoring and threat detection',
+        icon: ShieldCheck,
+        color: 'from-red-700 to-orange-700',
+        category: 'analytics',
+        premium: true,
+        buildOptions: [
+          { id: 'threat-detection', name: 'Threat Detection', description: 'Identify security threats' },
+          { id: 'vulnerability-scan', name: 'Vulnerability Scanning', description: 'Security weakness detection' },
+          { id: 'compliance', name: 'Compliance Monitoring', description: 'Regulatory compliance tracking' },
+          { id: 'incident-response', name: 'Incident Response', description: 'Security incident management' }
+        ],
+        features: ['Real-time monitoring', 'Automated alerts', 'Forensic analysis', 'Compliance reporting'],
+        pricing: { free: false, credits: 45, proOnly: true }
+      },
+      {
+        id: 'iot-analytics',
+        name: 'IoT Analytics',
+        description: 'Internet of Things data analysis and monitoring',
+        icon: Wifi,
+        color: 'from-cyan-700 to-blue-700',
+        category: 'analytics',
+        premium: true,
+        new: true,
+        buildOptions: [
+          { id: 'sensor-data', name: 'Sensor Data', description: 'IoT sensor data analysis' },
+          { id: 'device-monitoring', name: 'Device Monitoring', description: 'IoT device health tracking' },
+          { id: 'predictive-maintenance', name: 'Predictive Maintenance', description: 'Equipment failure prediction' },
+          { id: 'energy-optimization', name: 'Energy Optimization', description: 'Energy usage analytics' }
+        ],
+        features: ['Real-time streaming', 'Time-series analysis', 'Anomaly detection', 'Edge processing'],
+        pricing: { free: false, credits: 35, proOnly: true }
+      }
+    ]
+  }
+];
+
+export const getAllTools = (): ExtendedTool[] => {
+  return toolCategories.flatMap(category => category.tools);
+};
+
+export const getToolsByCategory = (categoryId: string): ExtendedTool[] => {
+  const category = toolCategories.find(cat => cat.id === categoryId);
+  return category ? category.tools : [];
+};
+
+export const getToolById = (toolId: string): ExtendedTool | undefined => {
+  return getAllTools().find(tool => tool.id === toolId);
+};
+
+export const getPopularTools = (): ExtendedTool[] => {
+  return getAllTools().filter(tool => tool.popular);
+};
+
+export const getNewTools = (): ExtendedTool[] => {
+  return getAllTools().filter(tool => tool.new);
+};
+
+export const getPremiumTools = (): ExtendedTool[] => {
+  return getAllTools().filter(tool => tool.premium);
+};

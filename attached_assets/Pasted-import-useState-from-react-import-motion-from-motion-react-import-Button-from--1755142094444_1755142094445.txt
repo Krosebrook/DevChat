@@ -1,0 +1,441 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { 
+  Search, 
+  Plus, 
+  CheckCircle2, 
+  AlertCircle, 
+  Settings, 
+  ExternalLink,
+  CreditCard,
+  Database,
+  Mail,
+  Bell,
+  Shield,
+  Cloud,
+  BarChart3,
+  MessageSquare,
+  Users,
+  Zap,
+  Globe,
+  Webhook,
+  Link
+} from 'lucide-react';
+
+interface Integration {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  icon: any;
+  color: string;
+  status: 'connected' | 'available' | 'premium';
+  features: string[];
+  setupRequired?: boolean;
+  website?: string;
+}
+
+const integrations: Integration[] = [
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    description: 'Accept payments and manage subscriptions',
+    category: 'payments',
+    icon: CreditCard,
+    color: 'from-purple-500 to-purple-600',
+    status: 'connected',
+    features: ['One-time payments', 'Subscriptions', 'Refunds', 'Webhooks'],
+    website: 'stripe.com'
+  },
+  {
+    id: 'supabase',
+    name: 'Supabase',
+    description: 'Backend-as-a-Service with PostgreSQL',
+    category: 'database',
+    icon: Database,
+    color: 'from-green-500 to-green-600',
+    status: 'connected',
+    features: ['PostgreSQL database', 'Authentication', 'Real-time', 'Storage'],
+    website: 'supabase.com'
+  },
+  {
+    id: 'sendgrid',
+    name: 'SendGrid',
+    description: 'Email delivery and marketing platform',
+    category: 'communications',
+    icon: Mail,
+    color: 'from-blue-500 to-blue-600',
+    status: 'available',
+    features: ['Transactional emails', 'Templates', 'Analytics', 'A/B testing'],
+    website: 'sendgrid.com'
+  },
+  {
+    id: 'pusher',
+    name: 'Pusher',
+    description: 'Real-time messaging and notifications',
+    category: 'communications',
+    icon: Bell,
+    color: 'from-orange-500 to-orange-600',
+    status: 'available',
+    features: ['WebSocket connections', 'Push notifications', 'Channels', 'Presence'],
+    website: 'pusher.com'
+  },
+  {
+    id: 'auth0',
+    name: 'Auth0',
+    description: 'Identity and access management platform',
+    category: 'authentication',
+    icon: Shield,
+    color: 'from-indigo-500 to-indigo-600',
+    status: 'premium',
+    features: ['Social login', 'Multi-factor auth', 'User management', 'SSO'],
+    website: 'auth0.com'
+  },
+  {
+    id: 'cloudinary',
+    name: 'Cloudinary',
+    description: 'Image and video management in the cloud',
+    category: 'media',
+    icon: Cloud,
+    color: 'from-cyan-500 to-cyan-600',
+    status: 'available',
+    features: ['Image optimization', 'Video processing', 'CDN delivery', 'Transformations'],
+    website: 'cloudinary.com'
+  },
+  {
+    id: 'mixpanel',
+    name: 'Mixpanel',
+    description: 'Product analytics and user behavior tracking',
+    category: 'analytics',
+    icon: BarChart3,
+    color: 'from-pink-500 to-pink-600',
+    status: 'premium',
+    features: ['Event tracking', 'Funnels', 'Cohorts', 'A/B testing'],
+    website: 'mixpanel.com'
+  },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    description: 'Customer messaging and support platform',
+    category: 'communications',
+    icon: MessageSquare,
+    color: 'from-emerald-500 to-emerald-600',
+    status: 'premium',
+    features: ['Live chat', 'Help desk', 'Customer data', 'Automation'],
+    website: 'intercom.com'
+  },
+  {
+    id: 'discord',
+    name: 'Discord',
+    description: 'Community and communication platform integration',
+    category: 'social',
+    icon: Users,
+    color: 'from-violet-500 to-violet-600',
+    status: 'available',
+    features: ['Bot integration', 'Webhooks', 'Server management', 'User roles'],
+    website: 'discord.com'
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    description: 'Workflow automation between apps',
+    category: 'automation',
+    icon: Zap,
+    color: 'from-yellow-500 to-yellow-600',
+    status: 'premium',
+    features: ['5000+ app integrations', 'Multi-step workflows', 'Filters', 'Scheduling'],
+    website: 'zapier.com'
+  },
+  {
+    id: 'vercel',
+    name: 'Vercel',
+    description: 'Frontend cloud deployment platform',
+    category: 'deployment',
+    icon: Globe,
+    color: 'from-gray-600 to-gray-700',
+    status: 'connected',
+    features: ['Serverless deployment', 'Edge functions', 'Analytics', 'Custom domains'],
+    website: 'vercel.com'
+  },
+  {
+    id: 'webhook-site',
+    name: 'Webhook.site',
+    description: 'Test webhooks and HTTP requests',
+    category: 'development',
+    icon: Webhook,
+    color: 'from-red-500 to-red-600',
+    status: 'available',
+    features: ['Webhook testing', 'Request inspection', 'Custom responses', 'Rate limiting'],
+    website: 'webhook.site'
+  }
+];
+
+const categories = [
+  { id: 'all', name: 'All Integrations', count: integrations.length },
+  { id: 'payments', name: 'Payments', count: integrations.filter(i => i.category === 'payments').length },
+  { id: 'database', name: 'Database', count: integrations.filter(i => i.category === 'database').length },
+  { id: 'communications', name: 'Communications', count: integrations.filter(i => i.category === 'communications').length },
+  { id: 'authentication', name: 'Authentication', count: integrations.filter(i => i.category === 'authentication').length },
+  { id: 'analytics', name: 'Analytics', count: integrations.filter(i => i.category === 'analytics').length },
+  { id: 'deployment', name: 'Deployment', count: integrations.filter(i => i.category === 'deployment').length }
+];
+
+export function IntegrationsPage({ userRole }: { userRole?: string }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showConnectModal, setShowConnectModal] = useState<string | null>(null);
+
+  const filteredIntegrations = integrations.filter(integration => {
+    const matchesSearch = integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         integration.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || integration.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const connectedIntegrations = integrations.filter(i => i.status === 'connected');
+  const availableIntegrations = integrations.filter(i => i.status === 'available');
+  const premiumIntegrations = integrations.filter(i => i.status === 'premium');
+
+  const handleConnect = (integrationId: string) => {
+    const integration = integrations.find(i => i.id === integrationId);
+    if (integration?.status === 'premium' && userRole !== 'pro') {
+      // Show upgrade modal
+      return;
+    }
+    setShowConnectModal(integrationId);
+  };
+
+  const renderIntegrationCard = (integration: Integration, index: number) => {
+    const IconComponent = integration.icon;
+    const isAccessible = integration.status !== 'premium' || userRole === 'pro';
+
+    return (
+      <motion.div
+        key={integration.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+      >
+        <Card className={`ff-card-interactive ${!isAccessible ? 'opacity-75' : ''}`}>
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className={`w-12 h-12 bg-gradient-to-br ${integration.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                <IconComponent className="h-6 w-6 text-white" />
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold truncate">{integration.name}</h3>
+                  <Badge 
+                    variant={
+                      integration.status === 'connected' ? 'default' : 
+                      integration.status === 'premium' ? 'secondary' : 'outline'
+                    }
+                    className={`text-xs ${
+                      integration.status === 'connected' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                      integration.status === 'premium' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                      'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                    }`}
+                  >
+                    {integration.status === 'connected' ? (
+                      <>
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Connected
+                      </>
+                    ) : integration.status === 'premium' ? (
+                      'Premium'
+                    ) : (
+                      'Available'
+                    )}
+                  </Badge>
+                </div>
+                
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                  {integration.description}
+                </p>
+                
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {integration.features.slice(0, 3).map((feature, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      {feature}
+                    </Badge>
+                  ))}
+                  {integration.features.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{integration.features.length - 3} more
+                    </Badge>
+                  )}
+                </div>
+                
+                <div className="flex gap-2">
+                  {integration.status === 'connected' ? (
+                    <>
+                      <Button size="sm" variant="outline" className="flex-1">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Configure
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button 
+                        size="sm" 
+                        className="flex-1 ff-btn-primary"
+                        onClick={() => handleConnect(integration.id)}
+                        disabled={!isAccessible}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Connect
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  return (
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1>Integrations</h1>
+          <p className="text-muted-foreground">Connect your favorite tools and services</p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="text-center">
+            <div className="text-xl font-bold text-green-500">{connectedIntegrations.length}</div>
+            <div className="text-xs text-muted-foreground">Connected</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-blue-500">{availableIntegrations.length}</div>
+            <div className="text-xs text-muted-foreground">Available</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-purple-500">{premiumIntegrations.length}</div>
+            <div className="text-xs text-muted-foreground">Premium</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filter */}
+      <Card className="p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search integrations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          
+          <div className="flex gap-2 overflow-x-auto">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={selectedCategory === category.id ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedCategory(category.id)}
+                className="whitespace-nowrap"
+              >
+                {category.name}
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  {category.count}
+                </Badge>
+              </Button>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Integrations Content */}
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">All ({integrations.length})</TabsTrigger>
+          <TabsTrigger value="connected">Connected ({connectedIntegrations.length})</TabsTrigger>
+          <TabsTrigger value="available">Available ({availableIntegrations.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-6">
+          {filteredIntegrations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredIntegrations.map((integration, index) => renderIntegrationCard(integration, index))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="font-semibold mb-2">No integrations found</h3>
+              <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="connected" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {connectedIntegrations.map((integration, index) => renderIntegrationCard(integration, index))}
+          </div>
+          {connectedIntegrations.length === 0 && (
+            <div className="text-center py-12">
+              <Link className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="font-semibold mb-2">No connected integrations</h3>
+              <p className="text-muted-foreground mb-4">Connect your first integration to get started.</p>
+              <Button onClick={() => setSelectedCategory('all')}>
+                Browse Integrations
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="available" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {availableIntegrations.map((integration, index) => renderIntegrationCard(integration, index))}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Popular Integration Categories */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { name: 'Payments', icon: CreditCard, count: integrations.filter(i => i.category === 'payments').length, color: 'text-green-500' },
+          { name: 'Database', icon: Database, count: integrations.filter(i => i.category === 'database').length, color: 'text-blue-500' },
+          { name: 'Communications', icon: Mail, count: integrations.filter(i => i.category === 'communications').length, color: 'text-purple-500' },
+          { name: 'Analytics', icon: BarChart3, count: integrations.filter(i => i.category === 'analytics').length, color: 'text-orange-500' }
+        ].map((cat, index) => (
+          <motion.div
+            key={cat.name}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="p-4 text-center ff-card-interactive" onClick={() => setSelectedCategory(cat.name.toLowerCase())}>
+              <cat.icon className={`h-8 w-8 mx-auto mb-2 ${cat.color}`} />
+              <h4 className="font-semibold text-sm">{cat.name}</h4>
+              <p className="text-xs text-muted-foreground">{cat.count} available</p>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}

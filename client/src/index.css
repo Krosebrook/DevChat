@@ -2,6 +2,315 @@
 @tailwind components;
 @tailwind utilities;
 
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 14px;
+  
+  /* FlashFusion Brand Colors - Updated from Brand Kit */
+  --ff-primary: #FF7B00; /* Primary Orange */
+  --ff-secondary: #00B4D8; /* Secondary Cyan */
+  --ff-accent: #E91E63; /* Accent Magenta */
+  --ff-bg-dark: #0F172A; /* BG Dark Navy */
+  --ff-surface: #1E293B; /* Surface Slate */
+  --ff-surface-light: #334155; /* Light Surface */
+  --ff-text-primary: #FFFFFF; /* Text Primary */
+  --ff-text-secondary: #CBD5E1; /* Text Secondary */
+  --ff-text-muted: #94A3B8; /* Text Muted */
+  
+  /* Additional Brand Colors */
+  --ff-success: #10B981; /* Success Green */
+  --ff-warning: #F59E0B; /* Warning Yellow */
+  --ff-error: #EF4444; /* Error Red */
+  --ff-info: var(--ff-secondary); /* Info (same as secondary) */
+  
+  /* Animation Variables */
+  --ff-animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ff-animation-duration: 300ms;
+  --ff-animation-duration-slow: 450ms;
+  --ff-radius: 12px;
+  --ff-radius-sm: 6px;
+  --ff-radius-lg: 16px;
+  --ff-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --ff-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --ff-glow: 0 0 20px rgba(255, 123, 0, 0.5);
+  --ff-glow-secondary: 0 0 20px rgba(0, 180, 216, 0.4);
+  --ff-glow-accent: 0 0 20px rgba(233, 30, 99, 0.4);
+  
+  /* Spacing System */
+  --ff-spacing-xs: 0.25rem;
+  --ff-spacing-sm: 0.5rem;
+  --ff-spacing-md: 1rem;
+  --ff-spacing-lg: 1.5rem;
+  --ff-spacing-xl: 2rem;
+  --ff-spacing-2xl: 3rem;
+  
+  --background: var(--ff-bg-dark);
+  --foreground: var(--ff-text-primary);
+  --card: var(--ff-surface);
+  --card-foreground: var(--ff-text-primary);
+  --popover: var(--ff-surface);
+  --popover-foreground: var(--ff-text-primary);
+  --primary: var(--ff-primary);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--ff-surface-light);
+  --secondary-foreground: var(--ff-text-primary);
+  --muted: var(--ff-surface);
+  --muted-foreground: var(--ff-text-muted);
+  --accent: var(--ff-accent);
+  --accent-foreground: #FFFFFF;
+  --destructive: var(--ff-error);
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(203, 213, 225, 0.1);
+  --input: transparent;
+  --input-background: var(--ff-surface);
+  --switch-background: var(--ff-surface-light);
+  --font-weight-medium: 600;
+  --font-weight-normal: 500;
+  --ring: var(--ff-primary);
+  --chart-1: var(--ff-primary);
+  --chart-2: var(--ff-secondary);
+  --chart-3: var(--ff-accent);
+  --chart-4: var(--ff-success);
+  --chart-5: var(--ff-warning);
+  --radius: var(--ff-radius);
+  --sidebar: var(--ff-surface);
+  --sidebar-foreground: var(--ff-text-primary);
+  --sidebar-primary: var(--ff-primary);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255, 123, 0, 0.1);
+  --sidebar-accent-foreground: var(--ff-text-primary);
+  --sidebar-border: rgba(203, 213, 225, 0.05);
+  --sidebar-ring: var(--ff-primary);
+}
+
+.dark {
+  --background: var(--ff-bg-dark);
+  --foreground: var(--ff-text-primary);
+  --card: var(--ff-surface);
+  --card-foreground: var(--ff-text-primary);
+  --popover: var(--ff-surface);
+  --popover-foreground: var(--ff-text-primary);
+  --primary: var(--ff-primary);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--ff-surface-light);
+  --secondary-foreground: var(--ff-text-primary);
+  --muted: var(--ff-surface);
+  --muted-foreground: var(--ff-text-muted);
+  --accent: var(--ff-accent);
+  --accent-foreground: #FFFFFF;
+  --destructive: var(--ff-error);
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(203, 213, 225, 0.1);
+  --input: var(--ff-surface);
+  --ring: var(--ff-primary);
+  --font-weight-medium: 600;
+  --font-weight-normal: 500;
+  --chart-1: var(--ff-primary);
+  --chart-2: var(--ff-secondary);
+  --chart-3: var(--ff-accent);
+  --chart-4: var(--ff-success);
+  --chart-5: var(--ff-warning);
+  --sidebar: var(--ff-surface);
+  --sidebar-foreground: var(--ff-text-primary);
+  --sidebar-primary: var(--ff-primary);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255, 123, 0, 0.1);
+  --sidebar-accent-foreground: var(--ff-text-primary);
+  --sidebar-border: rgba(203, 213, 225, 0.05);
+  --sidebar-ring: var(--ff-primary);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+}
+
+/* FlashFusion Core Motion Patterns */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scalePop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 123, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 123, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Animation utility classes */
+.ff-fade-in-up {
+  animation: fadeInUp var(--ff-animation-duration) var(--ff-animation-ease) forwards;
+}
+
+.ff-scale-pop {
+  animation: scalePop var(--ff-animation-duration) var(--ff-animation-ease) forwards;
+}
+
+.ff-slide-in-left {
+  animation: slideInLeft var(--ff-animation-duration) var(--ff-animation-ease) forwards;
+}
+
+.ff-slide-in-right {
+  animation: slideInRight var(--ff-animation-duration) var(--ff-animation-ease) forwards;
+}
+
+.ff-pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+/* Enhanced hover effects */
+.ff-hover-glow:hover {
+  box-shadow: var(--ff-glow);
+  transition: all var(--ff-animation-duration) var(--ff-animation-ease);
+}
+
+.ff-hover-scale:hover {
+  transform: scale(1.05);
+  transition: transform var(--ff-animation-duration) var(--ff-animation-ease);
+}
+
+.ff-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ff-shadow-lg);
+  transition: all var(--ff-animation-duration) var(--ff-animation-ease);
+}
+
+/* Button improvements */
+.ff-btn-primary {
+  background: linear-gradient(135deg, var(--ff-primary) 0%, #FF8F1F 100%);
+  border: none;
+  color: white;
+  transition: all var(--ff-animation-duration) var(--ff-animation-ease);
+}
+
+.ff-btn-primary:hover {
+  background: linear-gradient(135deg, #FF8F1F 0%, var(--ff-primary) 100%);
+  box-shadow: var(--ff-glow);
+  transform: translateY(-1px);
+}
+
+.ff-btn-secondary {
+  background: linear-gradient(135deg, var(--ff-secondary) 0%, #1FC7ED 100%);
+  border: none;
+  color: white;
+  transition: all var(--ff-animation-duration) var(--ff-animation-ease);
+}
+
+.ff-btn-secondary:hover {
+  background: linear-gradient(135deg, #1FC7ED 0%, var(--ff-secondary) 100%);
+  box-shadow: var(--ff-glow-secondary);
+  transform: translateY(-1px);
+}
+
+/* Card improvements */
+.ff-card-interactive {
+  transition: all var(--ff-animation-duration) var(--ff-animation-ease);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.ff-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ff-shadow-lg);
+  border-color: rgba(255, 123, 0, 0.2);
+}
+
+/* Staggered animations */
+.ff-stagger-fade > * {
+  opacity: 0;
+  animation: fadeInUp var(--ff-animation-duration) var(--ff-animation-ease) forwards;
+}
+
+.ff-stagger-fade > *:nth-child(1) { animation-delay: 0ms; }
+.ff-stagger-fade > *:nth-child(2) { animation-delay: 100ms; }
+.ff-stagger-fade > *:nth-child(3) { animation-delay: 200ms; }
+.ff-stagger-fade > *:nth-child(4) { animation-delay: 300ms; }
+.ff-stagger-fade > *:nth-child(5) { animation-delay: 400ms; }
+.ff-stagger-fade > *:nth-child(6) { animation-delay: 500ms; }
+
+/* Utility classes for better UX */
+.ff-glass {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(203, 213, 225, 0.1);
+}
+
+.ff-focus-ring:focus {
+  outline: 2px solid var(--ff-primary);
+  outline-offset: 2px;
+}
+
+.ff-text-gradient {
+  background: linear-gradient(135deg, var(--ff-primary) 0%, var(--ff-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

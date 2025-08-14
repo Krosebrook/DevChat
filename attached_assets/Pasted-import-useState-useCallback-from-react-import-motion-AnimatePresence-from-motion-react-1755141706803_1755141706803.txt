@@ -1,0 +1,705 @@
+import { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
+import { Progress } from '../ui/progress';
+import { Checkbox } from '../ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Label } from '../ui/label';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Check, 
+  Zap, 
+  Target, 
+  Layers, 
+  Wrench, 
+  Eye, 
+  Rocket,
+  Globe,
+  Smartphone,
+  Monitor,
+  Palette,
+  Database,
+  CreditCard,
+  Users,
+  Bell,
+  Search,
+  BarChart3,
+  Shield,
+  Cloud
+} from 'lucide-react';
+
+interface WizardStep {
+  id: string;
+  title: string;
+  description: string;
+  component: React.ReactNode;
+}
+
+interface ProjectConfig {
+  // Step 1: Project Scope
+  name: string;
+  description: string;
+  type: 'web' | 'mobile' | 'desktop' | 'fullstack';
+  complexity: 'simple' | 'medium' | 'complex' | 'enterprise';
+  
+  // Step 2: Platform Selection
+  platforms: string[];
+  framework: string;
+  language: 'typescript' | 'javascript';
+  
+  // Step 3: Feature Configuration
+  features: {
+    authentication: boolean;
+    database: boolean;
+    payments: boolean;
+    realtime: boolean;
+    analytics: boolean;
+    api: boolean;
+    notifications: boolean;
+    search: boolean;
+    fileUpload: boolean;
+    social: boolean;
+  };
+  
+  // Step 4: Review
+  estimatedCost: number;
+  estimatedTime: string;
+  
+  // Step 5: Generation
+  generationStatus: 'pending' | 'generating' | 'completed' | 'error';
+}
+
+export function ConfigWizard({ onComplete }: { onComplete?: (config: ProjectConfig) => void }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [config, setConfig] = useState<ProjectConfig>({
+    name: '',
+    description: '',
+    type: 'web',
+    complexity: 'medium',
+    platforms: [],
+    framework: '',
+    language: 'typescript',
+    features: {
+      authentication: false,
+      database: false,
+      payments: false,
+      realtime: false,
+      analytics: false,
+      api: false,
+      notifications: false,
+      search: false,
+      fileUpload: false,
+      social: false
+    },
+    estimatedCost: 0,
+    estimatedTime: '',
+    generationStatus: 'pending'
+  });
+
+  const updateConfig = useCallback((updates: Partial<ProjectConfig>) => {
+    setConfig(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  // Step 1: Project Scope Component
+  const ProjectScopeStep = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-6"
+    >
+      <div className="text-center mb-8">
+        <Target className="h-12 w-12 text-primary mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Project Scope</h2>
+        <p className="text-muted-foreground">Define your project's core characteristics</p>
+      </div>
+
+      <div className="grid gap-6">
+        <div>
+          <label className="text-sm font-medium mb-2 block">Project Name *</label>
+          <Input
+            placeholder="My Awesome App"
+            value={config.name}
+            onChange={(e) => updateConfig({ name: e.target.value })}
+            className="ff-focus-ring"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-2 block">Description *</label>
+          <Textarea
+            placeholder="Describe what your application will do..."
+            value={config.description}
+            onChange={(e) => updateConfig({ description: e.target.value })}
+            className="ff-focus-ring min-h-[100px]"
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-3 block">Project Type *</label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { id: 'web', name: 'Web App', icon: Globe, description: 'Browser-based application' },
+              { id: 'mobile', name: 'Mobile App', icon: Smartphone, description: 'iOS & Android' },
+              { id: 'desktop', name: 'Desktop App', icon: Monitor, description: 'Cross-platform desktop' },
+              { id: 'fullstack', name: 'Full Stack', icon: Layers, description: 'Complete solution' }
+            ].map((type) => {
+              const IconComponent = type.icon;
+              return (
+                <motion.div
+                  key={type.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Card
+                    className={`cursor-pointer transition-all ${
+                      config.type === type.id
+                        ? 'ring-2 ring-primary bg-primary/5'
+                        : 'hover:bg-muted/50'
+                    }`}
+                    onClick={() => updateConfig({ type: type.id as any })}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <IconComponent className="h-8 w-8 mx-auto mb-2 text-primary" />
+                      <h4 className="font-semibold text-sm">{type.name}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">{type.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-3 block">Complexity Level</label>
+          <RadioGroup
+            value={config.complexity}
+            onValueChange={(value) => updateConfig({ complexity: value as any })}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+          >
+            {[
+              { id: 'simple', name: 'Simple', description: 'Basic functionality', time: '1-2 weeks' },
+              { id: 'medium', name: 'Medium', description: 'Standard features', time: '2-4 weeks' },
+              { id: 'complex', name: 'Complex', description: 'Advanced features', time: '1-2 months' },
+              { id: 'enterprise', name: 'Enterprise', description: 'Full enterprise solution', time: '2+ months' }
+            ].map((level) => (
+              <div key={level.id} className="flex items-center space-x-2">
+                <RadioGroupItem value={level.id} id={level.id} />
+                <Label htmlFor={level.id} className="cursor-pointer flex-1">
+                  <div>
+                    <div className="font-medium text-sm">{level.name}</div>
+                    <div className="text-xs text-muted-foreground">{level.description}</div>
+                    <div className="text-xs text-primary">{level.time}</div>
+                  </div>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  // Step 2: Platform Selection Component
+  const PlatformSelectionStep = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-6"
+    >
+      <div className="text-center mb-8">
+        <Layers className="h-12 w-12 text-primary mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Platform & Framework</h2>
+        <p className="text-muted-foreground">Choose your technology stack</p>
+      </div>
+
+      <div className="grid gap-6">
+        <div>
+          <label className="text-sm font-medium mb-3 block">Framework *</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {[
+              { id: 'react', name: 'React', description: 'Modern web applications', icon: '⚛️', platforms: ['web'] },
+              { id: 'nextjs', name: 'Next.js', description: 'Full-stack React framework', icon: '▲', platforms: ['web', 'fullstack'] },
+              { id: 'vue', name: 'Vue.js', description: 'Progressive framework', icon: '💚', platforms: ['web'] },
+              { id: 'svelte', name: 'Svelte', description: 'Compile-time optimized', icon: '🧡', platforms: ['web'] },
+              { id: 'react-native', name: 'React Native', description: 'Cross-platform mobile', icon: '📱', platforms: ['mobile'] },
+              { id: 'flutter', name: 'Flutter', description: 'Multi-platform apps', icon: '💙', platforms: ['mobile', 'desktop'] },
+              { id: 'electron', name: 'Electron', description: 'Desktop applications', icon: '⚡', platforms: ['desktop'] },
+              { id: 'tauri', name: 'Tauri', description: 'Lightweight desktop', icon: '🦀', platforms: ['desktop'] }
+            ].filter(fw => fw.platforms.includes(config.type)).map((framework) => (
+              <motion.div
+                key={framework.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card
+                  className={`cursor-pointer transition-all ${
+                    config.framework === framework.id
+                      ? 'ring-2 ring-primary bg-primary/5'
+                      : 'hover:bg-muted/50'
+                  }`}
+                  onClick={() => updateConfig({ framework: framework.id })}
+                >
+                  <CardContent className="p-4 text-center">
+                    <div className="text-3xl mb-2">{framework.icon}</div>
+                    <h4 className="font-semibold text-sm">{framework.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1">{framework.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-3 block">Language</label>
+          <RadioGroup
+            value={config.language}
+            onValueChange={(value) => updateConfig({ language: value as any })}
+            className="flex gap-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="typescript" id="typescript" />
+              <Label htmlFor="typescript" className="cursor-pointer">
+                <div>
+                  <div className="font-medium text-sm">TypeScript</div>
+                  <div className="text-xs text-muted-foreground">Type-safe JavaScript</div>
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="javascript" id="javascript" />
+              <Label htmlFor="javascript" className="cursor-pointer">
+                <div>
+                  <div className="font-medium text-sm">JavaScript</div>
+                  <div className="text-xs text-muted-foreground">Dynamic and flexible</div>
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {config.type === 'mobile' && (
+          <div>
+            <label className="text-sm font-medium mb-3 block">Target Platforms</label>
+            <div className="flex flex-wrap gap-2">
+              {['iOS', 'Android', 'Web'].map((platform) => (
+                <div key={platform} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={platform}
+                    checked={config.platforms.includes(platform)}
+                    onCheckedChange={(checked) => {
+                      const platforms = checked
+                        ? [...config.platforms, platform]
+                        : config.platforms.filter(p => p !== platform);
+                      updateConfig({ platforms });
+                    }}
+                  />
+                  <Label htmlFor={platform} className="text-sm">{platform}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+
+  // Step 3: Feature Configuration Component
+  const FeatureConfigurationStep = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-6"
+    >
+      <div className="text-center mb-8">
+        <Wrench className="h-12 w-12 text-primary mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Feature Configuration</h2>
+        <p className="text-muted-foreground">Select the features your app needs</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          { 
+            key: 'authentication', 
+            name: 'Authentication', 
+            description: 'User registration, login, and session management',
+            icon: Shield,
+            category: 'Security'
+          },
+          { 
+            key: 'database', 
+            name: 'Database', 
+            description: 'Data persistence with PostgreSQL/MongoDB',
+            icon: Database,
+            category: 'Data'
+          },
+          { 
+            key: 'payments', 
+            name: 'Payments', 
+            description: 'Stripe integration for subscriptions and one-time payments',
+            icon: CreditCard,
+            category: 'Commerce'
+          },
+          { 
+            key: 'realtime', 
+            name: 'Real-time', 
+            description: 'WebSocket connections and live updates',
+            icon: Zap,
+            category: 'Communication'
+          },
+          { 
+            key: 'analytics', 
+            name: 'Analytics', 
+            description: 'User behavior tracking and insights',
+            icon: BarChart3,
+            category: 'Insights'
+          },
+          { 
+            key: 'api', 
+            name: 'REST API', 
+            description: 'RESTful API endpoints with documentation',
+            icon: Globe,
+            category: 'Integration'
+          },
+          { 
+            key: 'notifications', 
+            name: 'Notifications', 
+            description: 'Push notifications and email alerts',
+            icon: Bell,
+            category: 'Communication'
+          },
+          { 
+            key: 'search', 
+            name: 'Search', 
+            description: 'Full-text search with Elasticsearch',
+            icon: Search,
+            category: 'Features'
+          },
+          { 
+            key: 'fileUpload', 
+            name: 'File Upload', 
+            description: 'S3-compatible file storage and management',
+            icon: Cloud,
+            category: 'Storage'
+          },
+          { 
+            key: 'social', 
+            name: 'Social Features', 
+            description: 'Social login, sharing, and user interactions',
+            icon: Users,
+            category: 'Social'
+          }
+        ].map((feature) => {
+          const IconComponent = feature.icon;
+          const isEnabled = config.features[feature.key as keyof typeof config.features];
+          
+          return (
+            <motion.div
+              key={feature.key}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card
+                className={`cursor-pointer transition-all ${
+                  isEnabled
+                    ? 'ring-2 ring-primary bg-primary/5'
+                    : 'hover:bg-muted/50'
+                }`}
+                onClick={() => {
+                  updateConfig({
+                    features: {
+                      ...config.features,
+                      [feature.key]: !isEnabled
+                    }
+                  });
+                }}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${isEnabled ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                      <IconComponent className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-semibold text-sm">{feature.name}</h4>
+                        <Badge variant="outline" className="text-xs">{feature.category}</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{feature.description}</p>
+                    </div>
+                    {isEnabled && (
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+
+  // Step 4: Review Component
+  const ReviewStep = () => {
+    const enabledFeatures = Object.entries(config.features).filter(([, enabled]) => enabled);
+    const estimatedCost = enabledFeatures.length * 5 + (config.complexity === 'enterprise' ? 50 : config.complexity === 'complex' ? 30 : config.complexity === 'medium' ? 15 : 5);
+    const estimatedTime = config.complexity === 'enterprise' ? '2-3 months' : config.complexity === 'complex' ? '1-2 months' : config.complexity === 'medium' ? '2-4 weeks' : '1-2 weeks';
+
+    return (
+      <motion.div 
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="space-y-6"
+      >
+        <div className="text-center mb-8">
+          <Eye className="h-12 w-12 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Review Configuration</h2>
+          <p className="text-muted-foreground">Confirm your project settings before generation</p>
+        </div>
+
+        <div className="grid gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Project Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Project Name</label>
+                  <p className="font-semibold">{config.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Type</label>
+                  <p className="font-semibold capitalize">{config.type}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Framework</label>
+                  <p className="font-semibold">{config.framework}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Language</label>
+                  <p className="font-semibold capitalize">{config.language}</p>
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Description</label>
+                <p className="text-sm mt-1">{config.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Selected Features</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {enabledFeatures.map(([key, enabled]) => (
+                  <Badge key={key} variant="secondary" className="capitalize">
+                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                  </Badge>
+                ))}
+                {enabledFeatures.length === 0 && (
+                  <p className="text-muted-foreground text-sm">No additional features selected</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Project Estimates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary mb-1">{estimatedTime}</div>
+                  <div className="text-sm text-muted-foreground">Estimated Development Time</div>
+                </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary mb-1">{enabledFeatures.length + 5}</div>
+                  <div className="text-sm text-muted-foreground">Files to Generate</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Step 5: Generation Component
+  const GenerationStep = () => (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="space-y-6"
+    >
+      <div className="text-center mb-8">
+        <Rocket className="h-12 w-12 text-primary mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-2">Generate Project</h2>
+        <p className="text-muted-foreground">Your project is being created with AI</p>
+      </div>
+
+      <Card>
+        <CardContent className="p-8 text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="inline-block mb-4"
+          >
+            <Zap className="h-16 w-16 text-primary" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Generating {config.name}</h3>
+          <p className="text-muted-foreground mb-4">
+            Please wait while we create your {config.framework} project with AI...
+          </p>
+          <Button 
+            size="lg" 
+            className="ff-btn-primary"
+            onClick={() => onComplete?.(config)}
+          >
+            View Generated Project
+          </Button>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+
+  const steps: WizardStep[] = [
+    {
+      id: 'scope',
+      title: 'Project Scope',
+      description: 'Define your project basics',
+      component: <ProjectScopeStep />
+    },
+    {
+      id: 'platform',
+      title: 'Platform Selection',
+      description: 'Choose technology stack',
+      component: <PlatformSelectionStep />
+    },
+    {
+      id: 'features',
+      title: 'Feature Configuration',
+      description: 'Select app features',
+      component: <FeatureConfigurationStep />
+    },
+    {
+      id: 'review',
+      title: 'Review',
+      description: 'Confirm configuration',
+      component: <ReviewStep />
+    },
+    {
+      id: 'generation',
+      title: 'Generation',
+      description: 'Create your project',
+      component: <GenerationStep />
+    }
+  ];
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0:
+        return config.name && config.description && config.type;
+      case 1:
+        return config.framework;
+      case 2:
+        return true; // Features are optional
+      case 3:
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1 && canProceed()) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Progress Header */}
+      <Card className="ff-card-interactive">
+        <CardHeader>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <CardTitle>Project Configuration Wizard</CardTitle>
+              <CardDescription>
+                Step {currentStep + 1} of {steps.length}: {steps[currentStep].title}
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="px-3 py-1">
+              {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
+            </Badge>
+          </div>
+          
+          <Progress value={((currentStep + 1) / steps.length) * 100} className="ff-progress-bar" />
+          
+          <div className="flex justify-between text-xs text-muted-foreground mt-2">
+            {steps.map((step, index) => (
+              <div 
+                key={step.id} 
+                className={`flex-1 text-center ${index <= currentStep ? 'text-primary font-medium' : ''}`}
+              >
+                {step.title}
+              </div>
+            ))}
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Current Step Content */}
+      <Card className="ff-card-interactive min-h-[600px]">
+        <CardContent className="p-8">
+          <AnimatePresence mode="wait">
+            {steps[currentStep].component}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
+      {/* Navigation */}
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="ff-hover-glow"
+        >
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Previous
+        </Button>
+
+        <Button
+          onClick={nextStep}
+          disabled={!canProceed() || currentStep === steps.length - 1}
+          className="ff-btn-primary"
+        >
+          {currentStep === steps.length - 2 ? 'Generate Project' : 'Next Step'}
+          <ChevronRight className="h-4 w-4 ml-2" />
+        </Button>
+      </div>
+    </div>
+  );
+}

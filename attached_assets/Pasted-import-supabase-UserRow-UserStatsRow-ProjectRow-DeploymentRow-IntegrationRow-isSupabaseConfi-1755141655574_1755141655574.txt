@@ -1,0 +1,779 @@
+import { supabase, UserRow, UserStatsRow, ProjectRow, DeploymentRow, IntegrationRow, isSupabaseConfigured } from '../lib/supabase';
+import { UserStats, Badge, DailyTask, Project } from '../types';
+
+// Demo data for fallback mode
+const demoProjects: ProjectRow[] = [
+  {
+    id: 'demo-project-1',
+    user_id: 'demo-user-123',
+    name: 'FlashFusion Portfolio',
+    description: 'A modern portfolio website built with React and Tailwind CSS',
+    framework: 'React',
+    status: 'active',
+    image_url: null,
+    config: { theme: 'dark', animations: true },
+    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 1).toISOString()
+  },
+  {
+    id: 'demo-project-2',
+    user_id: 'demo-user-123',
+    name: 'E-commerce Dashboard',
+    description: 'Admin dashboard for managing online store',
+    framework: 'Next.js',
+    status: 'completed',
+    image_url: null,
+    config: { charts: true, realtime: true },
+    created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 3).toISOString()
+  },
+  {
+    id: 'demo-project-3',
+    user_id: 'demo-user-123',
+    name: 'Mobile Chat App',
+    description: 'Real-time chat application with React Native',
+    framework: 'React Native',
+    status: 'draft',
+    image_url: null,
+    config: { push_notifications: true, offline: true },
+    created_at: new Date(Date.now() - 86400000 * 14).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 5).toISOString()
+  }
+];
+
+const demoDeployments: DeploymentRow[] = [
+  {
+    id: 'demo-deploy-1',
+    user_id: 'demo-user-123',
+    project_id: 'demo-project-1',
+    platform: 'Vercel',
+    url: 'https://flashfusion-portfolio.vercel.app',
+    status: 'deployed',
+    build_time: '2m 34s',
+    auto_deploy: true,
+    created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 1).toISOString()
+  },
+  {
+    id: 'demo-deploy-2',
+    user_id: 'demo-user-123',
+    project_id: 'demo-project-2',
+    platform: 'Netlify',
+    url: 'https://ecommerce-dashboard.netlify.app',
+    status: 'deployed',
+    build_time: '1m 42s',
+    auto_deploy: false,
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 3).toISOString()
+  }
+];
+
+const demoIntegrations: IntegrationRow[] = [
+  {
+    id: 'demo-int-1',
+    user_id: 'demo-user-123',
+    service: 'GitHub',
+    status: 'connected',
+    config: { repo: 'flashfusion/projects' },
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 5).toISOString()
+  },
+  {
+    id: 'demo-int-2',
+    user_id: 'demo-user-123',
+    service: 'Stripe',
+    status: 'connected',
+    config: { account_id: 'acct_demo123' },
+    created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString()
+  }
+];
+
+// Auth Services
+export const authService = {
+  // Sign up new user
+  async signUp(email: string, password: string, metadata?: any) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: { user: { id: 'demo-user-123', email } }, 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata
+      }
+    });
+    return { data, error };
+  },
+
+  // Sign in user
+  async signIn(email: string, password: string) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: { user: { id: 'demo-user-123', email } }, 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    return { data, error };
+  },
+
+  // Sign in with Google
+  async signInWithGoogle() {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: { user: { id: 'demo-user-123', email: 'demo@google.com' } }, 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    return { data, error };
+  },
+
+  // Sign out
+  async signOut() {
+    if (!isSupabaseConfigured) {
+      return { error: null };
+    }
+    
+    const { error } = await supabase.auth.signOut();
+    return { error };
+  },
+
+  // Get current session
+  async getSession() {
+    if (!isSupabaseConfigured) {
+      return { data: { session: null }, error: null };
+    }
+    
+    const { data, error } = await supabase.auth.getSession();
+    return { data, error };
+  },
+
+  // Listen to auth changes
+  onAuthChange(callback: (event: string, session: any) => void) {
+    if (!isSupabaseConfigured) {
+      return {
+        data: {
+          subscription: {
+            unsubscribe: () => {}
+          }
+        }
+      };
+    }
+    
+    return supabase.auth.onAuthStateChange(callback);
+  }
+};
+
+// User Services
+export const userService = {
+  // Get user profile
+  async getProfile(userId: string): Promise<UserRow | null> {
+    if (!isSupabaseConfigured) {
+      return {
+        id: 'demo-user-123',
+        email: 'demo@flashfusion.dev',
+        full_name: 'Demo User',
+        avatar_url: null,
+        role: 'pro',
+        credits: 500,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+    
+    return data;
+  },
+
+  // Update user profile
+  async updateProfile(userId: string, updates: Partial<UserRow>) {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId);
+    
+    return { data, error };
+  },
+
+  // Get user stats
+  async getStats(userId: string): Promise<UserStatsRow | null> {
+    if (!isSupabaseConfigured) {
+      return {
+        id: 'demo-stats-123',
+        user_id: 'demo-user-123',
+        level: 12,
+        xp: 11500,
+        total_projects: 8,
+        total_images: 24,
+        total_code: 156,
+        daily_tasks_completed: 3,
+        streak: 7,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('user_stats')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching user stats:', error);
+      return null;
+    }
+    
+    return data;
+  },
+
+  // Update user stats
+  async updateStats(userId: string, updates: Partial<UserStatsRow>) {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('user_stats')
+      .update(updates)
+      .eq('user_id', userId);
+    
+    return { data, error };
+  },
+
+  // Add XP using database function
+  async addXP(userId: string, xpAmount: number) {
+    if (!isSupabaseConfigured) {
+      return { data: true, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .rpc('add_user_xp', {
+        user_uuid: userId,
+        xp_to_add: xpAmount
+      });
+    
+    return { data, error };
+  },
+
+  // Use tool credits
+  async useCredits(userId: string, toolId: string, creditsNeeded: number, config: any = {}) {
+    if (!isSupabaseConfigured) {
+      return { data: true, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .rpc('use_tool_credits', {
+        user_uuid: userId,
+        tool_id_param: toolId,
+        credits_needed: creditsNeeded,
+        tool_config: config
+      });
+    
+    return { data, error };
+  }
+};
+
+// Badge Services
+export const badgeService = {
+  // Get user badges
+  async getUserBadges(userId: string) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: [
+          { id: '1', user_id: userId, badge_id: 'first-project', earned: true, earned_at: new Date().toISOString(), created_at: new Date().toISOString() },
+          { id: '2', user_id: userId, badge_id: 'code-ninja', earned: true, earned_at: new Date().toISOString(), created_at: new Date().toISOString() },
+          { id: '3', user_id: userId, badge_id: 'streak-master', earned: true, earned_at: new Date().toISOString(), created_at: new Date().toISOString() }
+        ], 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('user_badges')
+      .select('*')
+      .eq('user_id', userId);
+    
+    return { data, error };
+  },
+
+  // Award badge to user
+  async awardBadge(userId: string, badgeId: string) {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('user_badges')
+      .upsert({
+        user_id: userId,
+        badge_id: badgeId,
+        earned: true,
+        earned_at: new Date().toISOString()
+      });
+    
+    return { data, error };
+  }
+};
+
+// Daily Tasks Services
+export const dailyTaskService = {
+  // Get today's tasks for user
+  async getTodaysTasks(userId: string) {
+    if (!isSupabaseConfigured) {
+      const today = new Date().toISOString().split('T')[0];
+      return { 
+        data: [
+          { id: '1', user_id: userId, task_id: 'create-project', completed: true, completed_at: new Date().toISOString(), date: today, created_at: new Date().toISOString() },
+          { id: '2', user_id: userId, task_id: 'use-tool', completed: true, completed_at: new Date().toISOString(), date: today, created_at: new Date().toISOString() },
+          { id: '3', user_id: userId, task_id: 'deploy-project', completed: false, completed_at: null, date: today, created_at: new Date().toISOString() }
+        ], 
+        error: null 
+      };
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    const { data, error } = await supabase
+      .from('daily_tasks')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('date', today);
+    
+    return { data, error };
+  },
+
+  // Complete daily task
+  async completeTask(userId: string, taskId: string, xpReward: number) {
+    if (!isSupabaseConfigured) {
+      return { data: true, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .rpc('complete_daily_task', {
+        user_uuid: userId,
+        task_uuid: taskId,
+        xp_reward: xpReward
+      });
+    
+    return { data, error };
+  }
+};
+
+// Project Services
+export const projectService = {
+  // Get user projects
+  async getUserProjects(userId: string): Promise<ProjectRow[]> {
+    if (!isSupabaseConfigured) {
+      return demoProjects;
+    }
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
+    
+    return data || [];
+  },
+
+  // Create new project
+  async createProject(userId: string, project: {
+    name: string;
+    description: string;
+    framework: string;
+    config?: any;
+    image_url?: string;
+  }) {
+    if (!isSupabaseConfigured) {
+      const newProject: ProjectRow = {
+        id: `demo-project-${Date.now()}`,
+        user_id: userId,
+        status: 'draft',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        ...project
+      };
+      demoProjects.unshift(newProject);
+      return { data: newProject, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .insert({
+        user_id: userId,
+        ...project
+      })
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
+  // Update project
+  async updateProject(projectId: string, updates: Partial<ProjectRow>) {
+    if (!isSupabaseConfigured) {
+      const projectIndex = demoProjects.findIndex(p => p.id === projectId);
+      if (projectIndex !== -1) {
+        demoProjects[projectIndex] = { ...demoProjects[projectIndex], ...updates };
+      }
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .update(updates)
+      .eq('id', projectId);
+    
+    return { data, error };
+  },
+
+  // Delete project
+  async deleteProject(projectId: string) {
+    if (!isSupabaseConfigured) {
+      const projectIndex = demoProjects.findIndex(p => p.id === projectId);
+      if (projectIndex !== -1) {
+        demoProjects.splice(projectIndex, 1);
+      }
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', projectId);
+    
+    return { data, error };
+  }
+};
+
+// Deployment Services
+export const deploymentService = {
+  // Get user deployments
+  async getUserDeployments(userId: string): Promise<DeploymentRow[]> {
+    if (!isSupabaseConfigured) {
+      return demoDeployments;
+    }
+    
+    const { data, error } = await supabase
+      .from('deployments')
+      .select(`
+        *,
+        projects:project_id (
+          name,
+          framework
+        )
+      `)
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching deployments:', error);
+      return [];
+    }
+    
+    return data || [];
+  },
+
+  // Create deployment
+  async createDeployment(userId: string, deployment: {
+    project_id: string;
+    platform: string;
+    url?: string;
+    auto_deploy?: boolean;
+  }) {
+    if (!isSupabaseConfigured) {
+      const newDeployment: DeploymentRow = {
+        id: `demo-deploy-${Date.now()}`,
+        user_id: userId,
+        status: 'deploying',
+        build_time: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        ...deployment
+      };
+      demoDeployments.unshift(newDeployment);
+      
+      // Simulate deployment completion after 3 seconds
+      setTimeout(() => {
+        newDeployment.status = 'deployed';
+        newDeployment.build_time = '2m 15s';
+        newDeployment.url = `https://demo-${deployment.platform.toLowerCase()}.app`;
+        newDeployment.updated_at = new Date().toISOString();
+      }, 3000);
+      
+      return { data: newDeployment, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('deployments')
+      .insert({
+        user_id: userId,
+        ...deployment
+      })
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
+  // Update deployment status
+  async updateDeployment(deploymentId: string, updates: Partial<DeploymentRow>) {
+    if (!isSupabaseConfigured) {
+      const deploymentIndex = demoDeployments.findIndex(d => d.id === deploymentId);
+      if (deploymentIndex !== -1) {
+        demoDeployments[deploymentIndex] = { ...demoDeployments[deploymentIndex], ...updates };
+      }
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('deployments')
+      .update(updates)
+      .eq('id', deploymentId);
+    
+    return { data, error };
+  }
+};
+
+// Integration Services
+export const integrationService = {
+  // Get user integrations
+  async getUserIntegrations(userId: string): Promise<IntegrationRow[]> {
+    if (!isSupabaseConfigured) {
+      return demoIntegrations;
+    }
+    
+    const { data, error } = await supabase
+      .from('integrations')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching integrations:', error);
+      return [];
+    }
+    
+    return data || [];
+  },
+
+  // Connect integration
+  async connectIntegration(userId: string, service: string, config: any = {}) {
+    if (!isSupabaseConfigured) {
+      const newIntegration: IntegrationRow = {
+        id: `demo-int-${Date.now()}`,
+        user_id: userId,
+        service,
+        status: 'connected',
+        config,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      const existingIndex = demoIntegrations.findIndex(i => i.service === service);
+      if (existingIndex !== -1) {
+        demoIntegrations[existingIndex] = newIntegration;
+      } else {
+        demoIntegrations.push(newIntegration);
+      }
+      
+      return { data: newIntegration, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('integrations')
+      .upsert({
+        user_id: userId,
+        service,
+        status: 'connected',
+        config
+      })
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
+  // Disconnect integration
+  async disconnectIntegration(userId: string, service: string) {
+    if (!isSupabaseConfigured) {
+      const integrationIndex = demoIntegrations.findIndex(i => i.service === service && i.user_id === userId);
+      if (integrationIndex !== -1) {
+        demoIntegrations[integrationIndex].status = 'disconnected';
+        demoIntegrations[integrationIndex].config = {};
+      }
+      return { data: null, error: null };
+    }
+    
+    const { data, error } = await supabase
+      .from('integrations')
+      .update({
+        status: 'disconnected',
+        config: {}
+      })
+      .eq('user_id', userId)
+      .eq('service', service);
+    
+    return { data, error };
+  }
+};
+
+// Analytics Services
+export const analyticsService = {
+  // Get tool usage stats
+  async getToolUsageStats(userId: string) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: [
+          { tool_id: 'image-generator', credits_used: 15, created_at: new Date().toISOString() },
+          { tool_id: 'code-generator', credits_used: 8, created_at: new Date().toISOString() },
+          { tool_id: 'api-builder', credits_used: 25, created_at: new Date().toISOString() }
+        ], 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('tool_usage')
+      .select('tool_id, credits_used, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(100);
+    
+    return { data, error };
+  },
+
+  // Get project stats
+  async getProjectStats(userId: string) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: demoProjects.map(p => ({ framework: p.framework, status: p.status, created_at: p.created_at })), 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .select('framework, status, created_at')
+      .eq('user_id', userId);
+    
+    return { data, error };
+  },
+
+  // Get leaderboard data
+  async getLeaderboard(limit: number = 10) {
+    if (!isSupabaseConfigured) {
+      return { 
+        data: [
+          { id: '1', user_id: 'demo-user-123', level: 12, xp: 11500, users: { full_name: 'Demo User', avatar_url: null } },
+          { id: '2', user_id: 'demo-user-456', level: 8, xp: 7200, users: { full_name: 'Alex Developer', avatar_url: null } },
+          { id: '3', user_id: 'demo-user-789', level: 6, xp: 5100, users: { full_name: 'Sarah Coder', avatar_url: null } }
+        ], 
+        error: null 
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from('user_stats')
+      .select(`
+        *,
+        users:user_id (
+          full_name,
+          avatar_url
+        )
+      `)
+      .order('xp', { ascending: false })
+      .limit(limit);
+    
+    return { data, error };
+  }
+};
+
+// Real-time subscriptions
+export const subscriptions = {
+  // Subscribe to user stats changes
+  subscribeToUserStats(userId: string, callback: (payload: any) => void) {
+    if (!isSupabaseConfigured) {
+      return { unsubscribe: () => {} };
+    }
+    
+    return supabase
+      .channel('user_stats_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'user_stats',
+        filter: `user_id=eq.${userId}`
+      }, callback)
+      .subscribe();
+  },
+
+  // Subscribe to project changes
+  subscribeToProjects(userId: string, callback: (payload: any) => void) {
+    if (!isSupabaseConfigured) {
+      return { unsubscribe: () => {} };
+    }
+    
+    return supabase
+      .channel('projects_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'projects',
+        filter: `user_id=eq.${userId}`
+      }, callback)
+      .subscribe();
+  },
+
+  // Subscribe to deployment changes
+  subscribeToDeployments(userId: string, callback: (payload: any) => void) {
+    if (!isSupabaseConfigured) {
+      return { unsubscribe: () => {} };
+    }
+    
+    return supabase
+      .channel('deployments_changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'deployments',
+        filter: `user_id=eq.${userId}`
+      }, callback)
+      .subscribe();
+  }
+};

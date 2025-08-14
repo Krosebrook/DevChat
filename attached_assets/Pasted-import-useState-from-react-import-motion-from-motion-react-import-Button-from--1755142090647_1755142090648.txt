@@ -1,0 +1,515 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Progress } from '../ui/progress';
+import { Checkbox } from '../ui/checkbox';
+import { 
+  ArrowLeft, 
+  Star, 
+  Crown, 
+  Sparkles, 
+  Zap, 
+  Settings, 
+  Cloud, 
+  Link, 
+  CheckCircle2,
+  Play,
+  Code,
+  Palette,
+  Database,
+  Smartphone,
+  Monitor,
+  Globe,
+  Rocket,
+  Shield,
+  Activity,
+  Users,
+  ChevronRight
+} from 'lucide-react';
+import { getToolById } from '../../data/tools';
+import { PageType } from '../../types';
+
+interface ToolDetailPageProps {
+  toolId: string;
+  setCurrentPage: (page: PageType) => void;
+  userRole?: string;
+}
+
+export function ToolDetailPage({ toolId, setCurrentPage, userRole }: ToolDetailPageProps) {
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedIntegrations, setSelectedIntegrations] = useState<string[]>([]);
+  const [selectedDeployments, setSelectedDeployments] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
+
+  const tool = getToolById(toolId);
+
+  if (!tool) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold mb-2">Tool not found</h2>
+        <p className="text-muted-foreground mb-4">The requested tool could not be found.</p>
+        <Button onClick={() => setCurrentPage('tools')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Tools
+        </Button>
+      </div>
+    );
+  }
+
+  const IconComponent = tool.icon;
+  const isAccessible = !tool.premium || userRole === 'pro';
+
+  const handleGenerate = async () => {
+    if (!isAccessible) return;
+    
+    setIsGenerating(true);
+    setGenerationProgress(0);
+
+    // Simulate generation process
+    const steps = [
+      'Initializing AI engine...',
+      'Processing build options...',
+      'Setting up integrations...',
+      'Configuring deployment...',
+      'Generating code...',
+      'Finalizing project...'
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setGenerationProgress(((i + 1) / steps.length) * 100);
+    }
+
+    setIsGenerating(false);
+    // Navigate to appropriate page after generation
+    if (tool.page) {
+      setCurrentPage(tool.page as PageType);
+    } else {
+      setCurrentPage('projects');
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'generators': return Code;
+      case 'design': return Palette;
+      case 'deployment': return Rocket;
+      case 'integrations': return Link;
+      case 'ai-ml': return Sparkles;
+      case 'analytics': return Activity;
+      default: return Settings;
+    }
+  };
+
+  const CategoryIcon = getCategoryIcon(tool.category);
+
+  return (
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-6">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => setCurrentPage('tools')}
+          className="ff-hover-glow"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Tools
+        </Button>
+        <div className="h-6 w-px bg-border" />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CategoryIcon className="h-4 w-4" />
+          <span className="capitalize">{tool.category}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Tool Overview */}
+          <Card className="ff-card-interactive">
+            <CardHeader>
+              <div className="flex items-start gap-4">
+                <div className={`w-16 h-16 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center flex-shrink-0 relative`}>
+                  <IconComponent className="h-8 w-8 text-white" />
+                  {!isAccessible && (
+                    <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                      <Crown className="h-6 w-6 text-white/80" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CardTitle className="text-2xl">{tool.name}</CardTitle>
+                    <div className="flex gap-1">
+                      {tool.popular && (
+                        <Badge variant="secondary" className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                          <Star className="h-3 w-3 mr-1" />
+                          Popular
+                        </Badge>
+                      )}
+                      {tool.new && (
+                        <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30">
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          New
+                        </Badge>
+                      )}
+                      {tool.premium && (
+                        <Badge variant="secondary" className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                          <Crown className="h-3 w-3 mr-1" />
+                          Pro Only
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <CardDescription className="text-base">
+                    {tool.description}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            
+            {tool.features && tool.features.length > 0 && (
+              <CardContent>
+                <h4 className="font-semibold mb-3">Key Features</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {tool.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Configuration Tabs */}
+          <Tabs defaultValue="options" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="options" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Build Options
+              </TabsTrigger>
+              <TabsTrigger value="integrations" className="flex items-center gap-2">
+                <Link className="h-4 w-4" />
+                Integrations
+              </TabsTrigger>
+              <TabsTrigger value="deployment" className="flex items-center gap-2">
+                <Cloud className="h-4 w-4" />
+                Deployment
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Build Options */}
+            <TabsContent value="options" className="space-y-4">
+              {tool.buildOptions && tool.buildOptions.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.buildOptions.map((option, index) => (
+                    <motion.div
+                      key={option.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          selectedOptions.includes(option.id)
+                            ? 'ring-2 ring-primary bg-primary/5'
+                            : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => {
+                          setSelectedOptions(prev => 
+                            prev.includes(option.id)
+                              ? prev.filter(id => id !== option.id)
+                              : [...prev, option.id]
+                          );
+                        }}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <Checkbox 
+                              checked={selectedOptions.includes(option.id)}
+                              className="mt-1"
+                            />
+                            <div className="flex-1">
+                              <h4 className="font-semibold mb-1">{option.name}</h4>
+                              <p className="text-sm text-muted-foreground">{option.description}</p>
+                              {option.premium && (
+                                <Badge variant="outline" className="mt-2 text-xs">
+                                  Pro Feature
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Settings className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No build options available for this tool.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Integrations */}
+            <TabsContent value="integrations" className="space-y-4">
+              {tool.integrations && tool.integrations.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.integrations.map((integration, index) => (
+                    <motion.div
+                      key={integration.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          selectedIntegrations.includes(integration.id)
+                            ? 'ring-2 ring-secondary bg-secondary/5'
+                            : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => {
+                          setSelectedIntegrations(prev => 
+                            prev.includes(integration.id)
+                              ? prev.filter(id => id !== integration.id)
+                              : [...prev, integration.id]
+                          );
+                        }}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <Checkbox 
+                              checked={selectedIntegrations.includes(integration.id)}
+                              className="mt-1"
+                            />
+                            <div className="flex-1">
+                              <h4 className="font-semibold mb-1">{integration.name}</h4>
+                              <p className="text-sm text-muted-foreground">{integration.description}</p>
+                            </div>
+                            {integration.icon && (
+                              <integration.icon className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Link className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No integrations available for this tool.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Deployment */}
+            <TabsContent value="deployment" className="space-y-4">
+              {tool.deploymentTargets && tool.deploymentTargets.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.deploymentTargets.map((deployment, index) => (
+                    <motion.div
+                      key={deployment.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card 
+                        className={`cursor-pointer transition-all ${
+                          selectedDeployments.includes(deployment.id)
+                            ? 'ring-2 ring-accent bg-accent/5'
+                            : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => {
+                          setSelectedDeployments(prev => 
+                            prev.includes(deployment.id)
+                              ? prev.filter(id => id !== deployment.id)
+                              : [...prev, deployment.id]
+                          );
+                        }}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <Checkbox 
+                              checked={selectedDeployments.includes(deployment.id)}
+                              className="mt-1"
+                            />
+                            <div className="flex-1">
+                              <h4 className="font-semibold mb-1">{deployment.name}</h4>
+                              <p className="text-sm text-muted-foreground">{deployment.description}</p>
+                            </div>
+                            <Cloud className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Cloud className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No deployment options available for this tool.</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Pricing */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary" />
+                Pricing
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {tool.pricing ? (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {tool.pricing.free ? 'Free' : 'Pro Only'}
+                    </div>
+                    {tool.pricing.credits > 0 && (
+                      <div className="text-sm text-muted-foreground">
+                        {tool.pricing.credits} credits per use
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!isAccessible && (
+                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Crown className="h-4 w-4 text-purple-400" />
+                        <span className="text-sm font-semibold text-purple-400">Pro Required</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Upgrade to Pro to access this premium tool and all its features.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-muted-foreground">
+                  <span>Pricing information not available</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Play className="h-5 w-5 text-primary" />
+                Quick Start
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                className="w-full ff-btn-primary"
+                onClick={handleGenerate}
+                disabled={!isAccessible || isGenerating}
+                size="lg"
+              >
+                {isGenerating ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                  </motion.div>
+                ) : (
+                  <Zap className="h-4 w-4 mr-2" />
+                )}
+                {isGenerating ? 'Generating...' : `Use ${tool.name}`}
+              </Button>
+              
+              {isGenerating && (
+                <div className="space-y-2">
+                  <Progress value={generationProgress} className="ff-progress-bar" />
+                  <p className="text-xs text-center text-muted-foreground">
+                    {generationProgress < 20 ? 'Initializing...' :
+                     generationProgress < 40 ? 'Processing...' :
+                     generationProgress < 60 ? 'Configuring...' :
+                     generationProgress < 80 ? 'Building...' :
+                     'Finalizing...'}
+                  </p>
+                </div>
+              )}
+              
+              <Button variant="outline" className="w-full">
+                <Users className="h-4 w-4 mr-2" />
+                View Examples
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Usage Stats</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Projects Created</span>
+                <span className="font-semibold">
+                  {tool.popular ? '2,500+' : tool.new ? '150+' : '850+'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Success Rate</span>
+                <span className="font-semibold text-green-500">
+                  {tool.premium ? '98%' : '94%'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Avg. Build Time</span>
+                <span className="font-semibold">
+                  {tool.category === 'generators' ? '2-5 min' : '< 1 min'}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Related Tools */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Related Tools</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Mock related tools */}
+              {[
+                { name: 'Code Generator', icon: Code, color: 'from-orange-500 to-orange-600' },
+                { name: 'API Builder', icon: Globe, color: 'from-green-500 to-green-600' },
+                { name: 'Auto Deploy', icon: Rocket, color: 'from-blue-500 to-blue-600' }
+              ].filter(relatedTool => relatedTool.name !== tool.name).slice(0, 3).map((relatedTool, index) => (
+                <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                  <div className={`w-8 h-8 bg-gradient-to-br ${relatedTool.color} rounded-lg flex items-center justify-center`}>
+                    <relatedTool.icon className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium flex-1">{relatedTool.name}</span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </motion.div>
+  );
+}

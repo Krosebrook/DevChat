@@ -1,0 +1,694 @@
+import { useState } from 'react';
+import { motion } from 'motion/react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
+import { Progress } from '../ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { 
+  Code, 
+  Zap, 
+  Download, 
+  Copy, 
+  Play, 
+  Settings, 
+  FileCode, 
+  Folder,
+  ChevronRight,
+  Sparkles,
+  Rocket,
+  CheckCircle2
+} from 'lucide-react';
+
+interface GeneratedFile {
+  path: string;
+  content: string;
+  type: 'javascript' | 'typescript' | 'css' | 'html' | 'json' | 'markdown';
+  size: number;
+}
+
+interface GenerationConfig {
+  projectName: string;
+  description: string;
+  framework: string;
+  language: string;
+  features: string[];
+  complexity: 'simple' | 'medium' | 'complex';
+}
+
+interface GenerationStep {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'processing' | 'completed' | 'error';
+  progress: number;
+  files?: GeneratedFile[];
+}
+
+export function CodeGenerator() {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<GeneratedFile | null>(null);
+  const [config, setConfig] = useState<GenerationConfig>({
+    projectName: '',
+    description: '',
+    framework: '',
+    language: 'typescript',
+    features: [],
+    complexity: 'medium'
+  });
+
+  const [generationSteps, setGenerationSteps] = useState<GenerationStep[]>([
+    {
+      id: 'scaffold',
+      title: 'Project Scaffolding',
+      description: 'Creating project structure and configuration files',
+      status: 'pending',
+      progress: 0
+    },
+    {
+      id: 'components',
+      title: 'Component Generation',
+      description: 'Generating React components and utilities',
+      status: 'pending',
+      progress: 0
+    },
+    {
+      id: 'features',
+      title: 'Feature Implementation',
+      description: 'Adding authentication, database, and API features',
+      status: 'pending',
+      progress: 0
+    },
+    {
+      id: 'styling',
+      title: 'Styling & UI',
+      description: 'Applying themes and responsive design',
+      status: 'pending',
+      progress: 0
+    },
+    {
+      id: 'optimization',
+      title: 'Code Optimization',
+      description: 'Performance optimization and best practices',
+      status: 'pending',
+      progress: 0
+    }
+  ]);
+
+  const frameworks = [
+    { id: 'react', name: 'React', description: 'Modern web applications with React', icon: '⚛️' },
+    { id: 'nextjs', name: 'Next.js', description: 'Full-stack React framework', icon: '▲' },
+    { id: 'vue', name: 'Vue.js', description: 'Progressive JavaScript framework', icon: '💚' },
+    { id: 'svelte', name: 'Svelte', description: 'Compile-time optimized framework', icon: '🧡' },
+    { id: 'react-native', name: 'React Native', description: 'Cross-platform mobile apps', icon: '📱' },
+    { id: 'flutter', name: 'Flutter', description: 'Multi-platform applications', icon: '💙' }
+  ];
+
+  const features = [
+    { id: 'auth', name: 'Authentication', description: 'User login and registration' },
+    { id: 'database', name: 'Database', description: 'Data persistence and management' },
+    { id: 'api', name: 'REST API', description: 'Backend API endpoints' },
+    { id: 'payments', name: 'Payments', description: 'Stripe payment integration' },
+    { id: 'realtime', name: 'Real-time', description: 'WebSocket communication' },
+    { id: 'analytics', name: 'Analytics', description: 'Usage tracking and insights' },
+    { id: 'notifications', name: 'Notifications', description: 'Push notifications' },
+    { id: 'search', name: 'Search', description: 'Full-text search functionality' }
+  ];
+
+  // AI-powered code generation templates
+  const generateProjectStructure = (config: GenerationConfig): GeneratedFile[] => {
+    const files: GeneratedFile[] = [];
+    
+    // Package.json
+    files.push({
+      path: 'package.json',
+      type: 'json',
+      size: 1024,
+      content: JSON.stringify({
+        name: config.projectName.toLowerCase().replace(/\s+/g, '-'),
+        version: '1.0.0',
+        description: config.description,
+        private: true,
+        scripts: {
+          dev: config.framework === 'nextjs' ? 'next dev' : 'vite dev',
+          build: config.framework === 'nextjs' ? 'next build' : 'vite build',
+          start: config.framework === 'nextjs' ? 'next start' : 'vite preview',
+          lint: 'eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0'
+        },
+        dependencies: {
+          react: '^18.2.0',
+          'react-dom': '^18.2.0',
+          ...(config.framework === 'nextjs' && { next: '^14.0.0' }),
+          ...(config.features.includes('auth') && { 'next-auth': '^4.24.5' }),
+          ...(config.features.includes('database') && { prisma: '^5.7.1', '@prisma/client': '^5.7.1' }),
+          ...(config.features.includes('payments') && { stripe: '^14.10.0' })
+        },
+        devDependencies: {
+          '@types/react': '^18.2.43',
+          '@types/react-dom': '^18.2.17',
+          '@typescript-eslint/eslint-plugin': '^6.14.0',
+          '@typescript-eslint/parser': '^6.14.0',
+          '@vitejs/plugin-react': '^4.2.1',
+          eslint: '^8.55.0',
+          'eslint-plugin-react-hooks': '^4.6.0',
+          'eslint-plugin-react-refresh': '^0.4.5',
+          typescript: '^5.2.2',
+          vite: '^5.0.8'
+        }
+      }, null, 2)
+    });
+
+    // Main App component
+    files.push({
+      path: config.framework === 'nextjs' ? 'pages/_app.tsx' : 'src/App.tsx',
+      type: 'typescript',
+      size: 2048,
+      content: `import { useState } from 'react';
+${config.features.includes('auth') ? "import { AuthProvider } from './contexts/AuthContext';" : ''}
+${config.features.includes('database') ? "import { QueryClient, QueryClientProvider } from '@tanstack/react-query';" : ''}
+import './globals.css';
+
+${config.features.includes('database') ? 'const queryClient = new QueryClient();' : ''}
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    ${config.features.includes('database') ? '<QueryClientProvider client={queryClient}>' : ''}
+      ${config.features.includes('auth') ? '<AuthProvider>' : ''}
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+          <header className="bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center py-6">
+                <h1 className="text-3xl font-bold text-gray-900">
+                  ${config.projectName}
+                </h1>
+                ${config.features.includes('auth') ? '<AuthButton />' : ''}
+              </div>
+            </div>
+          </header>
+
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Welcome to ${config.projectName}
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                ${config.description}
+              </p>
+              
+              <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+                <p className="text-lg mb-4">Counter: {count}</p>
+                <div className="space-x-4">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setCount(count + 1)}
+                  >
+                    Increment
+                  </button>
+                  <button
+                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setCount(0)}
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      ${config.features.includes('auth') ? '</AuthProvider>' : ''}
+    ${config.features.includes('database') ? '</QueryClientProvider>' : ''}
+  );
+}`
+    });
+
+    // Add authentication files if selected
+    if (config.features.includes('auth')) {
+      files.push({
+        path: 'src/contexts/AuthContext.tsx',
+        type: 'typescript',
+        size: 1536,
+        content: `import React, { createContext, useContext, useEffect, useState } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+  register: (email: string, password: string, name: string) => Promise<void>;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for existing session
+    const token = localStorage.getItem('auth-token');
+    if (token) {
+      // Validate token and set user
+      // This would typically make an API call
+      setUser({ id: '1', email: 'user@example.com', name: 'Demo User' });
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      // Mock authentication
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('auth-token', data.token);
+        setUser(data.user);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('auth-token');
+    setUser(null);
+  };
+
+  const register = async (email: string, password: string, name: string) => {
+    setLoading(true);
+    try {
+      // Mock registration
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('auth-token', data.token);
+        setUser(data.user);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = {
+    user,
+    login,
+    logout,
+    register,
+    loading,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}`
+      });
+    }
+
+    // Add styling files
+    files.push({
+      path: 'src/globals.css',
+      type: 'css',
+      size: 512,
+      content: `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply h-10 px-4 py-2;
+  }
+}`
+    });
+
+    return files;
+  };
+
+  const handleGenerate = async () => {
+    if (!config.projectName || !config.framework) return;
+
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    setCurrentStep(0);
+
+    const steps = [...generationSteps];
+
+    for (let i = 0; i < steps.length; i++) {
+      setCurrentStep(i);
+      steps[i].status = 'processing';
+      setGenerationSteps([...steps]);
+
+      // Simulate generation process
+      for (let progress = 0; progress <= 100; progress += 10) {
+        steps[i].progress = progress;
+        setGenerationProgress(((i * 100) + progress) / steps.length);
+        setGenerationSteps([...steps]);
+        await new Promise(resolve => setTimeout(resolve, 150));
+      }
+
+      // Generate actual files for the first step
+      if (i === 0) {
+        const files = generateProjectStructure(config);
+        steps[i].files = files;
+      }
+
+      steps[i].status = 'completed';
+      setGenerationSteps([...steps]);
+    }
+
+    setIsGenerating(false);
+  };
+
+  const handleDownload = () => {
+    // Create a zip file with all generated files
+    const allFiles = generationSteps.flatMap(step => step.files || []);
+    console.log('Downloading project with files:', allFiles);
+    // In a real implementation, this would create and download a zip file
+  };
+
+  const copyToClipboard = (content: string) => {
+    navigator.clipboard.writeText(content);
+  };
+
+  const completedSteps = generationSteps.filter(step => step.status === 'completed').length;
+  const hasGeneratedFiles = generationSteps.some(step => step.files && step.files.length > 0);
+
+  return (
+    <div className="space-y-6">
+      <Card className="ff-card-interactive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Rocket className="h-5 w-5 text-primary" />
+            AI Project Generator
+          </CardTitle>
+          <CardDescription>
+            Generate complete applications with AI-powered code generation
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Project Name</label>
+              <Input
+                placeholder="My Awesome App"
+                value={config.projectName}
+                onChange={(e) => setConfig(prev => ({ ...prev, projectName: e.target.value }))}
+                className="ff-focus-ring"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Language</label>
+              <Select value={config.language} onValueChange={(value) => setConfig(prev => ({ ...prev, language: value }))}>
+                <SelectTrigger className="ff-focus-ring">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="typescript">TypeScript</SelectItem>
+                  <SelectItem value="javascript">JavaScript</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Description</label>
+            <Textarea
+              placeholder="Describe your project..."
+              value={config.description}
+              onChange={(e) => setConfig(prev => ({ ...prev, description: e.target.value }))}
+              className="ff-focus-ring"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-3 block">Framework</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {frameworks.map((framework) => (
+                <motion.div
+                  key={framework.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Card
+                    className={`cursor-pointer transition-all ${
+                      config.framework === framework.id
+                        ? 'ring-2 ring-primary bg-primary/5'
+                        : 'hover:bg-muted/50'
+                    }`}
+                    onClick={() => setConfig(prev => ({ ...prev, framework: framework.id }))}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl mb-2">{framework.icon}</div>
+                      <h4 className="font-semibold text-sm">{framework.name}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">{framework.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-3 block">Features</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {features.map((feature) => (
+                <Button
+                  key={feature.id}
+                  variant={config.features.includes(feature.id) ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    const newFeatures = config.features.includes(feature.id)
+                      ? config.features.filter(f => f !== feature.id)
+                      : [...config.features, feature.id];
+                    setConfig(prev => ({ ...prev, features: newFeatures }));
+                  }}
+                  className="justify-start h-auto p-3"
+                >
+                  <div className="text-left">
+                    <div className="font-medium text-xs">{feature.name}</div>
+                    <div className="text-xs opacity-70">{feature.description}</div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              onClick={handleGenerate}
+              disabled={!config.projectName || !config.framework || isGenerating}
+              className={`flex-1 ff-btn-primary ${isGenerating ? 'ff-pulse-glow' : ''}`}
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Zap className="h-4 w-4 mr-2" />
+                  Generate Project
+                </>
+              )}
+            </Button>
+            
+            {hasGeneratedFiles && (
+              <Button
+                onClick={handleDownload}
+                variant="outline"
+                size="lg"
+                className="ff-hover-glow"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {(isGenerating || completedSteps > 0) && (
+        <Card className="ff-card-interactive">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Generation Progress</span>
+              <Badge variant="outline">
+                {completedSteps}/{generationSteps.length} Steps
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Progress value={generationProgress} className="ff-progress-bar" />
+            
+            <div className="space-y-3">
+              {generationSteps.map((step, index) => (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`flex items-center gap-3 p-3 rounded-lg ${
+                    step.status === 'completed' ? 'bg-green-50 dark:bg-green-900/20' :
+                    step.status === 'processing' ? 'bg-blue-50 dark:bg-blue-900/20' :
+                    step.status === 'error' ? 'bg-red-50 dark:bg-red-900/20' :
+                    'bg-muted/50'
+                  }`}
+                >
+                  <div className="flex-shrink-0">
+                    {step.status === 'completed' ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    ) : step.status === 'processing' ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      >
+                        <Settings className="h-5 w-5 text-blue-500" />
+                      </motion.div>
+                    ) : (
+                      <div className="h-5 w-5 rounded-full border-2 border-muted" />
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h4 className="font-medium text-sm">{step.title}</h4>
+                    <p className="text-xs text-muted-foreground">{step.description}</p>
+                    {step.status === 'processing' && (
+                      <Progress value={step.progress} className="mt-2 h-1" />
+                    )}
+                  </div>
+                  
+                  {step.files && step.files.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {step.files.length} files
+                    </Badge>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasGeneratedFiles && (
+        <Card className="ff-card-interactive">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileCode className="h-5 w-5" />
+              Generated Files
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="structure" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="structure">File Structure</TabsTrigger>
+                <TabsTrigger value="preview">Code Preview</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="structure" className="space-y-3">
+                {generationSteps.map((step) => 
+                  step.files?.map((file, index) => (
+                    <motion.div
+                      key={`${step.id}-${index}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted/70 cursor-pointer transition-colors"
+                      onClick={() => setSelectedFile(file)}
+                    >
+                      <Folder className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-mono text-sm">{file.path}</span>
+                      <Badge variant="outline" className="text-xs ml-auto">
+                        {file.type}
+                      </Badge>
+                    </motion.div>
+                  ))
+                )}
+              </TabsContent>
+              
+              <TabsContent value="preview">
+                {selectedFile ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-mono text-sm font-medium">{selectedFile.path}</h4>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => copyToClipboard(selectedFile.content)}
+                      >
+                        <Copy className="h-4 w-4 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                    <Textarea
+                      value={selectedFile.content}
+                      readOnly
+                      className="font-mono text-xs min-h-[400px] bg-muted/30"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center text-muted-foreground py-8">
+                    <FileCode className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Select a file from the structure to preview its contents</p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

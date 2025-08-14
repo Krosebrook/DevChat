@@ -1,0 +1,468 @@
+import { useState, useMemo } from 'react';
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Card, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { 
+  Search, 
+  Filter, 
+  Star, 
+  Zap, 
+  Crown,
+  ChevronRight,
+  Grid3X3,
+  List,
+  SlidersHorizontal,
+  Sparkles
+} from 'lucide-react';
+import { toolCategories, getAllTools, getPopularTools, getNewTools, getPremiumTools } from '../../data/tools';
+import { PageType } from '../../types';
+
+interface ToolsPageProps {
+  setCurrentPage: (page: PageType) => void;
+  setSelectedTool: (toolId: string) => void;
+  userRole?: string;
+}
+
+export function ToolsPage({ setCurrentPage, setSelectedTool, userRole }: ToolsPageProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('popular');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [filterBy, setFilterBy] = useState('all');
+
+  const allTools = getAllTools();
+  const popularTools = getPopularTools();
+  const newTools = getNewTools();
+  const premiumTools = getPremiumTools();
+
+  const filteredTools = useMemo(() => {
+    let tools = allTools;
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      tools = tools.filter(tool => tool.category === selectedCategory);
+    }
+
+    // Filter by type
+    switch (filterBy) {
+      case 'popular':
+        tools = tools.filter(tool => tool.popular);
+        break;
+      case 'new':
+        tools = tools.filter(tool => tool.new);
+        break;
+      case 'premium':
+        tools = tools.filter(tool => tool.premium);
+        break;
+      case 'free':
+        tools = tools.filter(tool => !tool.premium);
+        break;
+    }
+
+    // Search filter
+    if (searchQuery) {
+      tools = tools.filter(tool => 
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'popular':
+        return tools.sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+      case 'name':
+        return tools.sort((a, b) => a.name.localeCompare(b.name));
+      case 'category':
+        return tools.sort((a, b) => a.category.localeCompare(b.category));
+      case 'new':
+        return tools.sort((a, b) => (b.new ? 1 : 0) - (a.new ? 1 : 0));
+      default:
+        return tools;
+    }
+  }, [allTools, selectedCategory, filterBy, searchQuery, sortBy]);
+
+  const handleToolClick = (tool: any) => {
+    if (tool.page) {
+      setCurrentPage(tool.page as PageType);
+    } else {
+      setSelectedTool(tool.id);
+      setCurrentPage('tool-detail' as PageType);
+    }
+  };
+
+  const renderToolCard = (tool: any, index: number) => {
+    const IconComponent = tool.icon;
+    const isAccessible = !tool.premium || userRole === 'pro';
+
+    return (
+      <motion.div
+        key={tool.id}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: index * 0.05 }}
+        whileHover={{ y: -4 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <Card 
+          className={`cursor-pointer ff-card-interactive text-center group relative overflow-hidden ${
+            !isAccessible ? 'opacity-75' : ''
+          }`}
+          onClick={() => isAccessible && handleToolClick(tool)}
+        >
+          <CardContent className="p-6">
+            {/* Tool badges */}
+            <div className="absolute top-3 right-3 flex gap-1">
+              {tool.popular && (
+                <Badge variant="secondary" className="text-xs bg-orange-500/20 text-orange-400 border-orange-500/30">
+                  <Star className="h-3 w-3 mr-1" />
+                  Popular
+                </Badge>
+              )}
+              {tool.new && (
+                <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-400 border-green-500/30">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  New
+                </Badge>
+              )}
+              {tool.premium && (
+                <Badge variant="secondary" className="text-xs bg-purple-500/20 text-purple-400 border-purple-500/30">
+                  <Crown className="h-3 w-3 mr-1" />
+                  Pro
+                </Badge>
+              )}
+            </div>
+
+            {/* Tool icon */}
+            <div className={`aspect-square bg-gradient-to-br ${tool.color} rounded-xl mb-4 flex items-center justify-center mx-auto w-16 h-16 group-hover:scale-110 transition-transform duration-300 relative`}>
+              <IconComponent className="h-8 w-8 text-white" />
+              {!isAccessible && (
+                <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                  <Crown className="h-6 w-6 text-white/80" />
+                </div>
+              )}
+            </div>
+
+            {/* Tool info */}
+            <h3 className="font-semibold mb-2">{tool.name}</h3>
+            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{tool.description}</p>
+            
+            {/* Tool features */}
+            {tool.features && tool.features.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-3">
+                {tool.features.slice(0, 2).map((feature: string, idx: number) => (
+                  <Badge key={idx} variant="outline" className="text-xs">
+                    {feature}
+                  </Badge>
+                ))}
+                {tool.features.length > 2 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{tool.features.length - 2} more
+                  </Badge>
+                )}
+              </div>
+            )}
+
+            {/* Pricing info */}
+            {tool.pricing && (
+              <div className="flex items-center justify-between mt-auto">
+                <Badge variant="outline" className="text-xs">
+                  {tool.pricing.free ? 'Free' : 'Pro Only'}
+                </Badge>
+                {tool.pricing.credits > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {tool.pricing.credits} credits
+                  </span>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  const renderToolListItem = (tool: any, index: number) => {
+    const IconComponent = tool.icon;
+    const isAccessible = !tool.premium || userRole === 'pro';
+
+    return (
+      <motion.div
+        key={tool.id}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.02 }}
+        whileHover={{ x: 4 }}
+      >
+        <Card 
+          className={`cursor-pointer ff-card-interactive mb-3 ${
+            !isAccessible ? 'opacity-75' : ''
+          }`}
+          onClick={() => isAccessible && handleToolClick(tool)}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              {/* Tool icon */}
+              <div className={`w-12 h-12 bg-gradient-to-br ${tool.color} rounded-lg flex items-center justify-center flex-shrink-0 relative`}>
+                <IconComponent className="h-6 w-6 text-white" />
+                {!isAccessible && (
+                  <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                    <Crown className="h-4 w-4 text-white/80" />
+                  </div>
+                )}
+              </div>
+
+              {/* Tool info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold truncate">{tool.name}</h3>
+                  <div className="flex gap-1">
+                    {tool.popular && (
+                      <Badge variant="secondary" className="text-xs bg-orange-500/20 text-orange-400">
+                        Popular
+                      </Badge>
+                    )}
+                    {tool.new && (
+                      <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-400">
+                        New
+                      </Badge>
+                    )}
+                    {tool.premium && (
+                      <Badge variant="secondary" className="text-xs bg-purple-500/20 text-purple-400">
+                        Pro
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mb-2 line-clamp-1">{tool.description}</p>
+                
+                {/* Features */}
+                {tool.features && tool.features.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {tool.features.slice(0, 3).map((feature: string, idx: number) => (
+                      <Badge key={idx} variant="outline" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing and action */}
+              <div className="flex flex-col items-end gap-2">
+                {tool.pricing && (
+                  <Badge variant={tool.pricing.free ? 'secondary' : 'default'} className="text-xs">
+                    {tool.pricing.free ? 'Free' : 'Pro'}
+                  </Badge>
+                )}
+                <Button variant="ghost" size="sm">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  return (
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <h1>AI Tools</h1>
+          <p className="text-muted-foreground">
+            Powerful AI tools to accelerate your development. {filteredTools.length} tools available.
+          </p>
+        </div>
+        
+        {/* Quick stats */}
+        <div className="flex gap-4">
+          <div className="text-center">
+            <div className="text-xl font-bold text-primary">{popularTools.length}</div>
+            <div className="text-xs text-muted-foreground">Popular</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-secondary">{newTools.length}</div>
+            <div className="text-xs text-muted-foreground">New</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-accent">{premiumTools.length}</div>
+            <div className="text-xs text-muted-foreground">Premium</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and filters */}
+      <Card className="p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search tools..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
+          {/* Category filter */}
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full lg:w-48">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {toolCategories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Filter by type */}
+          <Select value={filterBy} onValueChange={setFilterBy}>
+            <SelectTrigger className="w-full lg:w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Tools</SelectItem>
+              <SelectItem value="popular">Popular</SelectItem>
+              <SelectItem value="new">New</SelectItem>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="premium">Premium</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Sort */}
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-full lg:w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="popular">Popular</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="category">Category</SelectItem>
+              <SelectItem value="new">Newest</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* View mode toggle */}
+          <div className="flex gap-1 p-1 bg-muted rounded-lg">
+            <Button
+              variant={viewMode === 'grid' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <Grid3X3 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Tools content */}
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-7 lg:w-fit lg:grid-cols-7">
+          <TabsTrigger value="all">All</TabsTrigger>
+          {toolCategories.map((category) => (
+            <TabsTrigger key={category.id} value={category.id} className="text-xs">
+              {category.name.split(' ')[0]}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        <TabsContent value="all" className="mt-6">
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ff-stagger-fade">
+              {filteredTools.map((tool, index) => renderToolCard(tool, index))}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredTools.map((tool, index) => renderToolListItem(tool, index))}
+            </div>
+          )}
+        </TabsContent>
+
+        {toolCategories.map((category) => (
+          <TabsContent key={category.id} value={category.id} className="mt-6">
+            {/* Category header */}
+            <div className="mb-6 p-6 rounded-lg border" style={{
+              background: `linear-gradient(135deg, ${category.color.replace('from-', '').replace('to-', ', ')})`,
+              opacity: 0.1
+            }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-12 h-12 bg-gradient-to-br ${category.color} rounded-xl flex items-center justify-center`}>
+                  <category.icon className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">{category.name}</h2>
+                  <p className="text-muted-foreground">{category.description}</p>
+                </div>
+              </div>
+              <Badge variant="secondary">
+                {category.tools.length} tools
+              </Badge>
+            </div>
+
+            {/* Category tools */}
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ff-stagger-fade">
+                {category.tools.map((tool, index) => renderToolCard(tool, index))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {category.tools.map((tool, index) => renderToolListItem(tool, index))}
+              </div>
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
+
+      {/* Empty state */}
+      {filteredTools.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-12"
+        >
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <Search className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="font-semibold mb-2">No tools found</h3>
+          <p className="text-muted-foreground mb-4">
+            Try adjusting your search or filters to find what you're looking for.
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedCategory('all');
+              setFilterBy('all');
+            }}
+          >
+            Clear filters
+          </Button>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
