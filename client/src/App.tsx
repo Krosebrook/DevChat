@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import ProjectDetails from "@/pages/project-details";
+import FigmaDemo from "@/pages/figma-demo";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -12,6 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/project/:id" component={ProjectDetails} />
+      <Route path="/figma-demo" component={FigmaDemo} />
       <Route component={NotFound} />
     </Switch>
   );

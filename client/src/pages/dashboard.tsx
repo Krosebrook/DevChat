@@ -108,6 +108,39 @@ export default function Dashboard() {
             <div className="mt-8">
               <FeatureRoadmap />
             </div>
+
+            {/* Enhanced Components Preview Section */}
+            <div className="mt-8">
+              <div className="bg-white rounded-xl border shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">FlashFusion Enhanced Components</h2>
+                    <p className="text-sm text-gray-600">Comprehensive design system with advanced animations and premium styling</p>
+                  </div>
+                  <a 
+                    href="/figma-demo" 
+                    className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-200 text-sm font-medium"
+                  >
+                    View Full Demo →
+                  </a>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <h3 className="font-medium text-blue-900 mb-2">✨ Advanced Animations</h3>
+                    <p className="text-sm text-blue-700">Smooth framer-motion animations with hover effects and transitions</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+                    <h3 className="font-medium text-purple-900 mb-2">🎨 Glassmorphism Effects</h3>
+                    <p className="text-sm text-purple-700">Modern glass-like styling with backdrop blur and transparency</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                    <h3 className="font-medium text-green-900 mb-2">🔧 Premium Components</h3>
+                    <p className="text-sm text-green-700">Enhanced cards, buttons, inputs, and interactive elements</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

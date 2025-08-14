@@ -1,5 +1,5 @@
 import * as React from "react";
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -72,7 +72,7 @@ interface EnhancedTableRowProps extends React.ComponentProps<"tr"> {
   onClick?: () => void;
 }
 
-function EnhancedTableRow({ className, interactive = false, onClick, ...props }: EnhancedTableRowProps) {
+function EnhancedTableRow({ className, interactive = false, onClick, children, ...props }: EnhancedTableRowProps) {
   return (
     <motion.tr
       className={cn(
@@ -83,8 +83,9 @@ function EnhancedTableRow({ className, interactive = false, onClick, ...props }:
       onClick={onClick}
       whileHover={interactive ? { scale: 1.01 } : {}}
       transition={{ duration: 0.2 }}
-      {...props}
-    />
+    >
+      {children}
+    </motion.tr>
   );
 }
 
