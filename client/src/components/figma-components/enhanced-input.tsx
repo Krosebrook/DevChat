@@ -1,5 +1,4 @@
 import * as React from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface EnhancedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -45,10 +44,10 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
     const currentState = error ? "error" : success ? "success" : "default";
 
     const inputElement = (
-      <motion.input
+      <input
         type={type}
         className={cn(
-          "flex w-full rounded-lg border transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-lg border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
           variants[variant],
           sizes[inputSize],
           states[currentState],
@@ -57,8 +56,7 @@ const EnhancedInput = React.forwardRef<HTMLInputElement, EnhancedInputProps>(
           className
         )}
         ref={ref}
-        whileFocus={{ scale: 1.01 }}
-        transition={{ duration: 0.2 }}
+        {...props}
       />
     );
 

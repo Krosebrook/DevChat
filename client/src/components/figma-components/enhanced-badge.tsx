@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const enhancedBadgeVariants = cva(
@@ -67,30 +66,27 @@ function EnhancedBadge({
   ...props 
 }: EnhancedBadgeProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className={cn(enhancedBadgeVariants({ variant, size, animation }), className)}
+    <div
+      className={cn(
+        enhancedBadgeVariants({ variant, size, animation }),
+        "hover:scale-105 active:scale-95",
+        className
+      )}
       {...props}
     >
       {icon && <span className="mr-1">{icon}</span>}
       {children}
       {closable && (
-        <motion.button
-          whileHover={{ scale: 1.2 }}
-          whileTap={{ scale: 0.8 }}
+        <button
           onClick={onClose}
-          className="ml-1 rounded-full hover:bg-black/20 p-0.5"
+          className="ml-1 rounded-full hover:bg-black/20 p-0.5 hover:scale-110 active:scale-90"
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
-        </motion.button>
+        </button>
       )}
-    </motion.div>
+    </div>
   );
 }
 

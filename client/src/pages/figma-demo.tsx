@@ -1,5 +1,5 @@
-import { FigmaDemoSection } from '@/components/figma-components/figma-demo-section';
+import { SimpleFigmaDemo } from '@/components/figma-components/simple-figma-demo';
 
 export default function FigmaDemo() {
-  return <FigmaDemoSection />;
+  return <SimpleFigmaDemo />;
 }
