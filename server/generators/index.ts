@@ -24,7 +24,7 @@ export interface GenerationResult {
 
 export class ProjectGenerator {
   private errorRecovery = new ErrorRecoveryManager();
-  private generators = new Map([
+  private generators = new Map<string, BaseGenerator>([
     ['react', new ReactGenerator()],
     ['nextjs', new NextJSGenerator()],
     ['svelte', new SvelteGenerator()],
@@ -66,15 +66,20 @@ export class ProjectGenerator {
           onProgress?.(30, 'Generating project structure');
           
           const generationResult = await generator.generate({
-      name: project.name,
-      description: project.description || '',
-      platform: project.platform,
-      framework: project.framework,
-      features: project.features || [],
-      configuration: project.configuration || {},
-    });
+            name: project.name,
+            description: project.description || '',
+            platform: project.platform,
+            framework: project.framework,
+            features: project.features || [],
+            configuration: project.configuration || {},
+          });
 
-    console.log(`Generation completed for ${project.name}`);
+          console.log(`Generation completed for ${project.name}`);
+          return generationResult;
+        }
+      )
+    );
+
     return result;
   }
 
