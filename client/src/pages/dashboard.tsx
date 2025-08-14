@@ -7,6 +7,7 @@ import { RecentProjects } from '@/components/recent-projects';
 import { FeatureRoadmap } from '@/components/feature-roadmap';
 import { FeatureProgress } from '@/components/feature-progress';
 import { ProgressModal } from '@/components/progress-modal';
+import { FigmaEnhancedSection } from '@/components/figma-components/figma-enhanced-section';
 import { useProjectStore } from '@/stores/projectStore';
 import { useConfigStore } from '@/stores/configStore';
 import { websocketManager } from '@/lib/websocket';
@@ -87,6 +88,11 @@ export default function Dashboard() {
 
             {/* Configuration Wizard */}
             <ConfigWizard />
+
+            {/* Figma Enhanced Section */}
+            <div className="mt-8">
+              <FigmaEnhancedSection />
+            </div>
 
             {/* Recent Projects */}
             <div className="mt-8">
